@@ -2,11 +2,11 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RJAnalyser AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RJAnalyser AI</title>
 
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -25,7 +25,7 @@
 
 <h2>🤖 AI Brain</h2>
 
-<p>Status : Online</p>
+<p>Status : <span id="brainStatus">ONLINE</span></p>
 
 <button>Start AI</button>
 
@@ -37,7 +37,17 @@
 
 <input type="text" id="chartLink" placeholder="Paste Trading Chart Link">
 
-<button onclick="analyzeChart()">Analyze Chart</button>
+<button onclick="analyzeChart()">Analyze Link</button>
+
+<hr><br>
+
+<h3>📷 Upload Chart Screenshot</h3>
+
+<input type="file" id="chartImage" accept="image/*">
+
+<button onclick="scanScreenshot()">
+Scan Screenshot
+</button>
 
 </div>
 
@@ -45,9 +55,14 @@
 
 <h2>🧠 Learning Engine</h2>
 
-<textarea id="teachAI" placeholder="Teach your AI new strategy..."></textarea>
+<textarea id="teachAI"
+placeholder="Teach your AI new strategy..."></textarea>
 
-<button onclick="saveLearning()">Save Learning</button>
+<button onclick="saveLearning()">
+
+Save Learning
+
+</button>
 
 </div>
 
@@ -55,9 +70,29 @@
 
 <h2>💾 AI Memory</h2>
 
-<p id="memoryStatus">Memory Ready...</p>
+<p id="memoryStatus">
 
-<button onclick="openMemory()">Open Memory</button>
+Memory Ready...
+
+</p>
+
+<button onclick="openMemory()">
+
+Open Memory
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>📜 Analysis History</h2>
+
+<p>
+
+Coming Soon...
+
+</p>
 
 </div>
 
