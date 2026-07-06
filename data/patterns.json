@@ -1,1 +1,24 @@
-
+{
+  "patterns": [
+    {
+      "name": "Bullish Engulfing",
+      "type": "Bullish",
+      "confidence": 70
+    },
+    {
+      "name": "Bearish Engulfing",
+      "type": "Bearish",
+      "confidence": 70
+    },
+    {
+      "name": "Hammer",
+      "type": "Bullish",
+      "confidence": 65
+    },
+    {
+      "name": "Doji",
+      "type": "Neutral",
+      "confidence": 50
+    }
+  ]
+}
