@@ -1,1 +1,32 @@
-
+{
+  "version": "1.0",
+  "categories": {
+    "trend": [
+      "Bullish",
+      "Bearish",
+      "Sideways"
+    ],
+    "marketStructure": [
+      "Higher High",
+      "Higher Low",
+      "Lower High",
+      "Lower Low",
+      "Break of Structure",
+      "Change of Character"
+    ],
+    "priceAction": [
+      "Support",
+      "Resistance",
+      "Breakout",
+      "Pullback",
+      "Retest"
+    ],
+    "candlestick": [
+      "Bullish Engulfing",
+      "Bearish Engulfing",
+      "Hammer",
+      "Shooting Star",
+      "Doji"
+    ]
+  }
+}
