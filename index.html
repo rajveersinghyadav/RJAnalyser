@@ -1,42 +1,92 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RJAnalyser AI</title>
 
-  <title>AI Viral Dashboard V3</title>
-<link rel="stylesheet" href="style.css">
-
-
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>🧠 RajNova AI Studio</h1>
-<p>Your AI Command Center</p>
+<header>
 
-<div class="box">
+<h1>📈 RJAnalyser</h1>
 
-  <input id="title" placeholder="Video Title">
+<p>AI Powered Trading Analysis Platform</p>
 
-  <input id="genre" placeholder="Genre (Suspense / History / Sci-fi)">
+</header>
 
-  <input id="concept" placeholder="Core Concept">
+<div class="container">
 
-  <br><br>
+<div class="card">
 
-  <button onclick="generate()">Generate Viral Script</button>
+<h2>🤖 AI Brain</h2>
+
+<p>Status : Online</p>
+
+<button>Start AI</button>
+
+</div>
+
+<div class="card">
+
+<h2>📊 Chart Analysis</h2>
+
+<input type="text" id="chartLink" placeholder="Paste Trading Chart Link">
+
+<button onclick="analyzeChart()">Analyze Chart</button>
 
 </div>
 
-<div class="box">
+<div class="card">
 
-  <h2>📊 VIRAL OUTPUT</h2>
+<h2>🧠 Learning Engine</h2>
 
-  <div id="out" class="output"></div>
+<textarea id="teachAI" placeholder="Teach your AI new strategy..."></textarea>
+
+<button onclick="saveLearning()">Save Learning</button>
 
 </div>
+
+<div class="card">
+
+<h2>💾 AI Memory</h2>
+
+<p id="memoryStatus">Memory Ready...</p>
+
+<button onclick="openMemory()">Open Memory</button>
+
+</div>
+
+<div class="card">
+
+<h2>⚙️ Settings</h2>
+
+<button>AI Settings</button>
+
+<button>Future Modules</button>
+
+</div>
+
+<div class="card output">
+
+<h2>📋 AI Result</h2>
+
+<div id="result">
+
+Waiting for Analysis...
+
+</div>
+
+</div>
+
+</div>
+
 <script src="script.js"></script>
+
 </body>
+
 </html>
-  
