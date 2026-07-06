@@ -1,62 +1,76 @@
-function generate(){
+function analyzeChart() {
 
-let t = document.getElementById("title").value || "Untitled Story";
-let g = document.getElementById("genre").value || "General";
-let c = document.getElementById("concept").value || "No concept";
+    const chart = document.getElementById("chartLink").value;
+    const result = document.getElementById("result");
 
-let hook = `⚡ STOP SCROLLING...`;
-let emotionalHook = `This is something you were never told about ${c}...`;
+    if(chart.trim() === ""){
+        result.innerHTML = "⚠️ Please paste a Trading Chart link first.";
+        return;
+    }
 
-let script = `
+    result.innerHTML = `
+📈 RJAnalyser AI
 
-🎬 TITLE: ${t}
+Chart Received Successfully.
 
-📚 GENRE: ${g}
+━━━━━━━━━━━━━━━━━━
 
-🔥 VIRAL HOOK:
+Status : Processing...
 
-${hook}
+✔ Trend Detection : Pending
 
-🧠 EMOTIONAL OPENING:
+✔ Pattern Recognition : Pending
 
-${emotionalHook}
+✔ Learning Engine : Ready
 
-✍️ STORY SCRIPT:
+✔ AI Brain : Active
 
-Long ago, everything was normal...
+━━━━━━━━━━━━━━━━━━
 
-But then ${c} changed everything forever...
+This is Version 1.
 
-Nobody expected what happened next...
-
-History took a shocking turn...
-
-🎬 SCENE FLOW:
-
-1. Shock Hook (0-3 sec)
-
-2. Mystery Question
-
-3. Rising Conflict
-
-4. Big Twist
-
-5. Emotional Ending
-
-📈 VIRAL TITLE IDEAS:
-
-- You Won’t Believe the Truth of ${t}
-
-- The Dark Secret Behind ${c}
-
-- This Changed Everything Forever
-
-🔥 HASHTAGS:
-
-#viral #story #history #ai #youtube #shorts
-
+In Version 2 AI will automatically analyse Trading Charts.
 `;
+}
 
-document.getElementById("out").innerText = script;
+function saveLearning(){
+
+    const learning = document.getElementById("teachAI").value;
+
+    if(learning.trim()==""){
+        alert("Please teach something to AI first.");
+        return;
+    }
+
+    localStorage.setItem("RJAI_LEARNING",learning);
+
+    document.getElementById("memoryStatus").innerHTML="✅ Learning Saved Successfully";
+}
+
+function openMemory(){
+
+    let data=localStorage.getItem("RJAI_LEARNING");
+
+    if(data==null){
+
+        alert("Memory Empty");
+
+    }else{
+
+        alert("AI Memory\n\n"+data);
+
+    }
+
+}
+
+window.onload=function(){
+
+let data=localStorage.getItem("RJAI_LEARNING");
+
+if(data){
+
+document.getElementById("memoryStatus").innerHTML="🧠 Memory Loaded";
+
+}
 
 }
