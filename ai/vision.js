@@ -1,40 +1,63 @@
 /*
 =========================================
-RJAnalyser Vision Engine V1
+RJAnalyser Vision Engine V2
 =========================================
 */
 
 const RJVision = {
 
-    version: "1.0",
+    version: "2.0",
 
     image: null,
 
+    info: null,
+
     load(file) {
 
-        this.image = file;
+        return new Promise((resolve) => {
 
-        return {
+            const reader = new FileReader();
 
-            success: true,
+            reader.onload = (e) => {
 
-            filename: file.name,
+                const img = new Image();
 
-            size: file.size
+                img.onload = () => {
 
-        };
+                    this.image = img;
+
+                    this.info = {
+
+                        name: file.name,
+                        size: file.size,
+                        width: img.width,
+                        height: img.height,
+                        type: file.type
+
+                    };
+
+                    resolve(this.info);
+
+                };
+
+                img.src = e.target.result;
+
+            };
+
+            reader.readAsDataURL(file);
+
+        });
 
     },
 
     analyse() {
 
-        if (!this.image) {
+        if (!this.info) {
 
             return {
 
                 success: false,
-
-                message: "No chart selected."
+                message: "No image loaded."
 
             };
 
@@ -44,13 +67,19 @@ const RJVision = {
 
             success: true,
 
+            message: "Image processed successfully.",
+
+            width: this.info.width,
+
+            height: this.info.height,
+
+            size: this.info.size,
+
             trend: "Unknown",
 
             pattern: "Scanning...",
 
-            confidence: 0,
-
-            message: "Vision Engine Ready"
+            confidence: 0
 
         };
 
