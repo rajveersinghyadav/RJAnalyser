@@ -1,71 +1,48 @@
-/*
-=========================================
-RJAnalyser Knowledge Engine V1
-=========================================
-*/
+// 🧠 RJAnalyser - Knowledge Engine
 
-const RJKnowledge = {
+const KnowledgeBase = {
 
-    version: "1.0",
+  // Basic understanding layer
+  intents: {
+    greeting: ["hello", "hi", "hey"],
+    name_query: ["what is my name", "my name"],
+  },
 
-    concepts: {
+  // Basic responses (starter knowledge)
+  responses: {
+    greeting: "Hello! I am RJAnalyser AI System.",
+    unknown: "I am still learning... please teach me more."
+  },
 
-        trend: [
-            "Bullish",
-            "Bearish",
-            "Sideways"
-        ],
+  // Function: detect intent
+  detectIntent(input){
+    input = input.toLowerCase();
 
-        marketStructure: [
-            "Higher High",
-            "Higher Low",
-            "Lower High",
-            "Lower Low",
-            "BOS",
-            "CHOCH"
-        ],
-
-        smartMoney: [
-            "Liquidity",
-            "Order Block",
-            "Fair Value Gap"
-        ],
-
-        candlestick: [
-            "Bullish Engulfing",
-            "Bearish Engulfing",
-            "Hammer",
-            "Doji"
-        ]
-
-    },
-
-    get(category){
-
-        return this.concepts[category] || [];
-
-    },
-
-    search(word){
-
-        let result=[];
-
-        Object.values(this.concepts).forEach(group=>{
-
-            group.forEach(item=>{
-
-                if(item.toLowerCase().includes(word.toLowerCase())){
-
-                    result.push(item);
-
-                }
-
-            });
-
-        });
-
-        return result;
-
+    if(this.intents.greeting.some(word => input.includes(word))){
+      return "greeting";
     }
+
+    if(this.intents.name_query.some(word => input.includes(word))){
+      return "name_query";
+    }
+
+    return "unknown";
+  },
+
+  // Function: get response
+  getResponse(input){
+
+    const intent = this.detectIntent(input);
+
+    if(intent === "greeting"){
+      return this.responses.greeting;
+    }
+
+    if(intent === "name_query"){
+      return "Name will come from Memory Engine (next step).";
+    }
+
+    return this.responses.unknown;
+  }
 
 };
