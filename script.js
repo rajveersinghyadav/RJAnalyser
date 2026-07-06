@@ -4,11 +4,13 @@ function analyzeChart() {
     const result = document.getElementById("result");
 
     if (chart.trim() === "") {
+
         result.innerHTML = "⚠️ Please paste a Trading Chart link first.";
+
         return;
+
     }
 
-    // Run RJ Engine
     const output = RJEngine.analyse(chart);
 
     result.innerHTML = `
@@ -44,72 +46,109 @@ ${output.decision.reason}
 
 }
 
-function scanScreenshot() {
+async function scanScreenshot() {
 
-    const file = document.querySelector('input[type="file"]').files[0];
+    const file = document.getElementById("chartImage").files[0];
     const result = document.getElementById("result");
 
     if (!file) {
 
-        result.innerHTML = "⚠️ Please select a chart screenshot.";
+        result.innerHTML = "⚠️ Please select a Trading Chart Screenshot.";
 
         return;
+
     }
 
-    const vision = RJVision.load(file);
+    try {
 
-    const report = RJVision.analyse();
+        const info = await RJVision.load(file);
 
-    RJMemory.add("screenshot", file.name);
+        const report = RJVision.analyse();
 
-    result.innerHTML = `
-📷 Screenshot Loaded
+        RJMemory.add("Screenshot", info.name);
+
+        result.innerHTML = `
+📷 Screenshot Loaded Successfully
 
 ━━━━━━━━━━━━━━━━━━
 
-File :
-${vision.filename}
+📄 File :
+${info.name}
 
-Size :
-${Math.round(vision.size / 1024)} KB
+🖼 Type :
+${info.type}
 
-Vision :
+📐 Resolution :
+${info.width} × ${info.height}
+
+💾 Size :
+${(info.size / 1024).toFixed(2)} KB
+
+━━━━━━━━━━━━━━━━━━
+
+👁 Vision Status :
 ${report.message}
 
-Trend :
+📈 Trend :
 ${report.trend}
 
-Pattern :
+📊 Pattern :
 ${report.pattern}
 
-Confidence :
+🎯 Confidence :
 ${report.confidence}%
 
 ━━━━━━━━━━━━━━━━━━
+
+✅ Ready For AI Analysis
 `;
+
+    } catch (error) {
+
+        result.innerHTML = `
+❌ Vision Engine Error
+
+${error.message}
+`;
+
+    }
+
 }
 
 function saveLearning() {
 
     const learning = document.getElementById("teachAI").value;
 
-    if (learning.trim() == "") {
+    if (learning.trim() === "") {
 
         alert("Please teach something to AI first.");
 
         return;
+
     }
 
     localStorage.setItem("RJAI_LEARNING", learning);
 
-    RJMemory.add("learning", learning);
+    RJMemory.add("Learning", learning);
 
-    document.getElementById("memoryStatus").innerHTML = "✅ Learning Saved Successfully";
+    document.getElementById("memoryStatus").innerHTML =
+        "✅ Learning Saved Successfully";
+
 }
 
 function openMemory() {
 
-    alert(JSON.stringify(RJMemory.all(), null, 2));
+    const memory = RJMemory.all();
+
+    if (memory.length === 0) {
+
+        alert("Memory Empty");
+
+        return;
+
+    }
+
+    alert(JSON.stringify(memory, null, 2));
 
 }
 
@@ -117,11 +156,14 @@ window.onload = function () {
 
     RJBrain.start();
 
+    document.getElementById("brainStatus").innerHTML = RJBrain.status;
+
     let data = localStorage.getItem("RJAI_LEARNING");
 
     if (data) {
 
-        document.getElementById("memoryStatus").innerHTML = "🧠 Memory Loaded";
+        document.getElementById("memoryStatus").innerHTML =
+            "🧠 Memory Loaded";
 
     }
 
