@@ -3,74 +3,126 @@ function analyzeChart() {
     const chart = document.getElementById("chartLink").value;
     const result = document.getElementById("result");
 
-    if(chart.trim() === ""){
+    if (chart.trim() === "") {
         result.innerHTML = "⚠️ Please paste a Trading Chart link first.";
         return;
     }
 
+    // Run RJ Engine
+    const output = RJEngine.analyse(chart);
+
     result.innerHTML = `
-📈 RJAnalyser AI
-
-Chart Received Successfully.
+📈 RJAnalyser AI Report
 
 ━━━━━━━━━━━━━━━━━━
 
-Status : Processing...
+Chart :
+${output.input}
 
-✔ Trend Detection : Pending
+Pattern :
+${output.pattern ? output.pattern.name : "Not Found"}
 
-✔ Pattern Recognition : Pending
+Decision :
+${output.decision.action}
 
-✔ Learning Engine : Ready
+Confidence :
+${output.decision.confidence}%
 
-✔ AI Brain : Active
+Reason :
+${output.decision.reason}
 
 ━━━━━━━━━━━━━━━━━━
 
-This is Version 1.
+🧠 Brain : ${RJBrain.status}
 
-In Version 2 AI will automatically analyse Trading Charts.
+💾 Memory Entries : ${RJMemory.all().length}
+
+📚 Knowledge Engine : Ready
+
+🤖 Version : ${RJBrain.version}
 `;
+
 }
 
-function saveLearning(){
+function scanScreenshot() {
 
-    const learning = document.getElementById("teachAI").value;
+    const file = document.querySelector('input[type="file"]').files[0];
+    const result = document.getElementById("result");
 
-    if(learning.trim()==""){
-        alert("Please teach something to AI first.");
+    if (!file) {
+
+        result.innerHTML = "⚠️ Please select a chart screenshot.";
+
         return;
     }
 
-    localStorage.setItem("RJAI_LEARNING",learning);
+    const vision = RJVision.load(file);
 
-    document.getElementById("memoryStatus").innerHTML="✅ Learning Saved Successfully";
+    const report = RJVision.analyse();
+
+    RJMemory.add("screenshot", file.name);
+
+    result.innerHTML = `
+📷 Screenshot Loaded
+
+━━━━━━━━━━━━━━━━━━
+
+File :
+${vision.filename}
+
+Size :
+${Math.round(vision.size / 1024)} KB
+
+Vision :
+${report.message}
+
+Trend :
+${report.trend}
+
+Pattern :
+${report.pattern}
+
+Confidence :
+${report.confidence}%
+
+━━━━━━━━━━━━━━━━━━
+`;
 }
 
-function openMemory(){
+function saveLearning() {
 
-    let data=localStorage.getItem("RJAI_LEARNING");
+    const learning = document.getElementById("teachAI").value;
 
-    if(data==null){
+    if (learning.trim() == "") {
 
-        alert("Memory Empty");
+        alert("Please teach something to AI first.");
 
-    }else{
+        return;
+    }
 
-        alert("AI Memory\n\n"+data);
+    localStorage.setItem("RJAI_LEARNING", learning);
+
+    RJMemory.add("learning", learning);
+
+    document.getElementById("memoryStatus").innerHTML = "✅ Learning Saved Successfully";
+}
+
+function openMemory() {
+
+    alert(JSON.stringify(RJMemory.all(), null, 2));
+
+}
+
+window.onload = function () {
+
+    RJBrain.start();
+
+    let data = localStorage.getItem("RJAI_LEARNING");
+
+    if (data) {
+
+        document.getElementById("memoryStatus").innerHTML = "🧠 Memory Loaded";
 
     }
 
-}
-
-window.onload=function(){
-
-let data=localStorage.getItem("RJAI_LEARNING");
-
-if(data){
-
-document.getElementById("memoryStatus").innerHTML="🧠 Memory Loaded";
-
-}
-
-}
+};
