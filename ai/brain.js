@@ -1,61 +1,76 @@
 /*
 =========================================
-RJAnalyser AI Brain V1
-Created By: Rajveer + ChatGPT
+RJAnalyser Brain V2
+Main Controller
 =========================================
 */
 
 const RJBrain = {
 
-    version: "1.0",
+    version: "2.0",
 
-    status: "ONLINE",
+    status: "OFFLINE",
 
-    learning: true,
+    modules: {
+        memory: false,
+        knowledge: false,
+        learning: false,
+        reasoning: false,
+        pattern: false,
+        decision: false
+    },
 
-    memory: [],
+    start() {
 
-    analyse(chart){
+        this.status = "ONLINE";
+
+        this.modules.memory = true;
+        this.modules.knowledge = true;
+        this.modules.learning = true;
+        this.modules.reasoning = true;
+        this.modules.pattern = true;
+        this.modules.decision = true;
+
+        console.log("RJBrain Started");
+
+        return true;
+
+    },
+
+    analyse(chartData) {
 
         return {
-
-            chart: chart,
-
-            trend: "Scanning...",
-
-            pattern: "Searching...",
-
-            confidence: "0%",
-
-            recommendation: "Waiting for AI Engine"
-
+            status: "Scanning",
+            chart: chartData,
+            result: "Waiting for Pattern Engine..."
         };
 
     },
 
-    learn(rule){
+    learn(rule) {
 
-        this.memory.push(rule);
-
-        localStorage.setItem(
-            "RJ_AI_MEMORY",
-            JSON.stringify(this.memory)
-        );
+        if (typeof RJLearning !== "undefined") {
+            RJLearning.teach("Custom Rule", rule);
+        }
 
     },
 
-    load(){
+    getStatus() {
 
-        let data=localStorage.getItem("RJ_AI_MEMORY");
-
-        if(data){
-
-            this.memory=JSON.parse(data);
-
-        }
+        return {
+            version: this.version,
+            status: this.status,
+            modules: this.modules
+        };
 
     }
 
 };
 
-RJBrain.load();
+window.onload = () => {
+
+    RJBrain.start();
+
+    console.log(RJBrain.getStatus());
+
+};
