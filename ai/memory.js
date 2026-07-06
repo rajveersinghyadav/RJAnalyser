@@ -1,35 +1,66 @@
-// 🧠 RJAnalyser - Memory Engine
+/*
+=========================================
+RJAnalyser Memory Engine V1
+=========================================
+*/
 
-const MemoryEngine = {
+const RJMemory = {
 
-  // Save memory permanently
-  save(key, value){
-    let memory = JSON.parse(localStorage.getItem("rjanalyser_memory")) || {};
-    memory[key] = value;
-    localStorage.setItem("rjanalyser_memory", JSON.stringify(memory));
-  },
+    database: [],
 
-  // Get memory
-  get(key){
-    let memory = JSON.parse(localStorage.getItem("rjanalyser_memory")) || {};
-    return memory[key] || null;
-  },
+    load() {
 
-  // Delete specific memory
-  delete(key){
-    let memory = JSON.parse(localStorage.getItem("rjanalyser_memory")) || {};
-    delete memory[key];
-    localStorage.setItem("rjanalyser_memory", JSON.stringify(memory));
-  },
+        const data = localStorage.getItem("RJ_MEMORY");
 
-  // Clear all memory
-  clear(){
-    localStorage.removeItem("rjanalyser_memory");
-  },
+        if (data) {
 
-  // Show all memory
-  getAll(){
-    return JSON.parse(localStorage.getItem("rjanalyser_memory")) || {};
-  }
+            this.database = JSON.parse(data);
+
+        }
+
+    },
+
+    save() {
+
+        localStorage.setItem(
+            "RJ_MEMORY",
+            JSON.stringify(this.database)
+        );
+
+    },
+
+    add(type, value) {
+
+        this.database.push({
+
+            id: Date.now(),
+
+            type: type,
+
+            value: value,
+
+            time: new Date().toLocaleString()
+
+        });
+
+        this.save();
+
+    },
+
+    all() {
+
+        return this.database;
+
+    },
+
+    clear() {
+
+        this.database = [];
+
+        this.save();
+
+    }
 
 };
+
+RJMemory.load();
