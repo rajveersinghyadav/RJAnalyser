@@ -223,7 +223,18 @@ let strength = buyerSellerEngine(candles);
 
 console.log("RJAnalyser Buyer Seller Strength:", strength);
 alert(
+/* =====================================
+   RJAnalyser Signal Connection
+===================================== */
 
+
+let signal = RJSignalEngine(candles);
+
+
+console.log(
+"RJAnalyser AI Signal:",
+signal
+);
 "Buyer Strength: " + strength.buyer +
 "\nSeller Strength: " + strength.seller +
 "\n" + strength.control
