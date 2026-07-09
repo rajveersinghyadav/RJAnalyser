@@ -28,11 +28,11 @@
 
 <div class="dashboard">
 
-<!-- LEFT SIDEBAR -->
+<!-- LEFT PANEL -->
 
-<div class="sidebar">
+<aside class="sidebar">
 
-<h2>📊 Assets</h2>
+<h2>📊 Markets</h2>
 
 <div class="category">
 
@@ -66,11 +66,11 @@
 
 </div>
 
-</div>
+</aside>
 
-<!-- CENTER -->
+<!-- CENTER PANEL -->
 
-<div class="main">
+<main class="main">
 
 <div class="topinfo">
 
@@ -95,182 +95,95 @@
 <div class="timeframes">
 
 <button>1m</button>
-
 <button>3m</button>
-
 <button>5m</button>
-
 <button>15m</button>
-
 <button>30m</button>
-
 <button>1H</button>
-
 <button>4H</button>
-
 <button>1D</button>
 
 </div>
 
 <div class="chart">
 
-<h2>📈 LIVE CHART</h2>
-
-<div class="chart">
-
-<h2>📈 LIVE CHART</h2>
-
 <div id="tradingview_chart" style="height:100%;width:100%;"></div>
 
 </div>
 
-</div>
-
-</div>
+</main>
 
 <!-- RIGHT PANEL -->
 
-<div class="analysis">
+<aside class="analysis">
 
 <h2>🤖 AI Analysis</h2>
 
 <div class="box">
-
 <b>Trend</b>
-
 <p id="trend">Waiting...</p>
-
 </div>
 
 <div class="box">
-
 <b>Signal</b>
-
 <p id="signal">Waiting...</p>
-
 </div>
 
 <div class="box">
-
 <b>Confidence</b>
-
 <p id="confidence">0%</p>
-
 </div>
 
 <div class="box">
-
 <b>Expected Move</b>
-
 <p id="move">0 Points</p>
-
 </div>
 
 <div class="box">
-
-<b>Expected Duration</b>
-
-<p id="duration">Waiting...</p>
-
-</div>
-
-<div class="box">
-
 <b>Entry</b>
-
 <p id="entry">--</p>
-
 </div>
 
 <div class="box">
-
 <b>Stop Loss</b>
-
 <p id="sl">--</p>
-
 </div>
 
 <div class="box">
-
 <b>Target 1</b>
-
 <p id="tp1">--</p>
-
 </div>
 
 <div class="box">
-
 <b>Target 2</b>
-
 <p id="tp2">--</p>
-
 </div>
 
 <div class="box">
-
 <b>Target 3</b>
-
 <p id="tp3">--</p>
-
 </div>
 
 <div class="box">
-
 <b>AI Score</b>
-
 <p id="score">0 / 100</p>
-
 </div>
 
 <div class="box">
-
 <b>Reason</b>
+<p id="reason">Waiting...</p>
+</div>
 
-<p id="reason">
-
-Waiting for AI...
-
-</p>
+</aside>
 
 </div>
 
-<div class="box">
+<!-- MARKET FILES -->
 
-<b>Brain</b>
+<script src="market/assets.js"></script>
+<script src="market/state.js"></script>
 
-<p>Connected</p>
-
-</div>
-
-<div class="box">
-
-<b>Learning</b>
-
-<p>Ready</p>
-
-</div>
-
-<div class="box">
-
-<b>Memory</b>
-
-<p>Ready</p>
-
-</div>
-
-<div class="box">
-
-<b>Version</b>
-
-<p>RJAnalyser V2</p>
-
-</div>
-
-</div>
-
-</div>
-
-<script src="data/assets.js"></script>
+<!-- AI FILES -->
 
 <script src="ai/memory.js"></script>
 <script src="ai/knowledge.js"></script>
@@ -281,6 +194,14 @@ Waiting for AI...
 <script src="ai/vision.js"></script>
 <script src="ai/brain.js"></script>
 <script src="ai/engine.js"></script>
+
+<!-- TRADINGVIEW -->
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<script src="market/tradingview.js"></script>
+
+<!-- MAIN -->
 
 <script src="script.js"></script>
 
