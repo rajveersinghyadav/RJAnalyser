@@ -130,3 +130,117 @@ function highlight(asset){
     });
 
 }
+/* ==========================================
+   RJAnalyser AI
+   AI Analysis Engine V1
+========================================== */
+
+function fakeAI() {
+
+    const trendList = [
+        "Strong Bullish",
+        "Bullish",
+        "Sideways",
+        "Bearish",
+        "Strong Bearish"
+    ];
+
+    const signalList = [
+        "BUY",
+        "SELL",
+        "WAIT"
+    ];
+
+    const trend =
+        trendList[Math.floor(Math.random() * trendList.length)];
+
+    const signal =
+        signalList[Math.floor(Math.random() * signalList.length)];
+
+    const confidence =
+        Math.floor(Math.random() * 20) + 80;
+
+    const score =
+        Math.floor(Math.random() * 15) + 85;
+
+    const move =
+        Math.floor(Math.random() * 350) + 50;
+
+    const entry =
+        (Math.random() * 100000).toFixed(2);
+
+    const sl =
+        (entry - (Math.random() * 200)).toFixed(2);
+
+    const tp1 =
+        (Number(entry) + 100).toFixed(2);
+
+    const tp2 =
+        (Number(entry) + 200).toFixed(2);
+
+    const tp3 =
+        (Number(entry) + 350).toFixed(2);
+
+    document.getElementById("trend").innerHTML = trend;
+
+    document.getElementById("signal").innerHTML = signal;
+
+    document.getElementById("confidence").innerHTML =
+        confidence + "%";
+
+    document.getElementById("move").innerHTML =
+        move + " Points";
+
+    document.getElementById("entry").innerHTML =
+        entry;
+
+    document.getElementById("sl").innerHTML =
+        sl;
+
+    document.getElementById("tp1").innerHTML =
+        tp1;
+
+    document.getElementById("tp2").innerHTML =
+        tp2;
+
+    document.getElementById("tp3").innerHTML =
+        tp3;
+
+    document.getElementById("score").innerHTML =
+        score + " / 100";
+
+    document.getElementById("reason").innerHTML =
+        "AI detected market structure, trend momentum and possible continuation.";
+}
+
+/* ==========================================
+   Timeframe Change
+========================================== */
+
+document.querySelectorAll(".timeframes button")
+.forEach(button => {
+
+    button.onclick = function () {
+
+        document.querySelectorAll(".timeframes button")
+        .forEach(btn => btn.classList.remove("active"));
+
+        this.classList.add("active");
+
+        RJState.timeframe = this.innerText;
+
+        selectAsset(RJState.asset);
+
+    };
+
+});
+
+/* ==========================================
+   Start AI
+========================================== */
+
+setTimeout(() => {
+
+    fakeAI();
+
+},1000);
