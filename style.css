@@ -121,46 +121,41 @@ body{
     border-radius:12px;
 }
 /* =====================
- BOTTOM NAV
+   BOTTOM NAVIGATION
 ===================== */
+.bottom-nav{
+    height:70px;
+    background:#11151c;
+    border-top:1px solid #252b35;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    padding:5px 4px;
+}
 .bottom-nav button{
-
     background:none;
     border:none;
-
     color:#8b949e;
-
+    width:55px;
+    height:60px;
     display:flex;
     flex-direction:column;
-
-    align-items:center;
     justify-content:center;
-
-    width:60px;
-    height:55px;
-
-    gap:3px;
-
-    font-size:12px;
-
+    align-items:center;
+    gap:4px;
+    font-size:11px;
+    cursor:pointer;
 }
-
-
-.bottom-nav button span{
-
-    display:block;
-
-    text-align:center;
-
-    line-height:14px;
-
-}
-
-
-.bottom-nav button:first-line{
-
+.nav-icon{
     font-size:22px;
-
+    line-height:22px;
+}
+.bottom-nav button span:last-child{
+    font-size:11px;
+    line-height:14px;
+}
+.bottom-nav button.active{
+    color:#00ff88;
 }
 /* ======================
    QUOTES SCREEN
