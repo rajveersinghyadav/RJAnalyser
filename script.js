@@ -223,6 +223,7 @@ if(!asset.includes("USDT")){
 
 
 let candles = await getCandles(asset);
+alert("RJAnalyser Received Candles: " + candles.length);
 console.log("RJAnalyser Candles:", candles);
 
 
