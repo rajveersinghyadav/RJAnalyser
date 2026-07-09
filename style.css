@@ -1,7 +1,7 @@
 /* =====================================
    RJAnalyser AI
-   Professional Trading Dashboard
-====================================== */
+   Version 2
+===================================== */
 
 *{
 margin:0;
@@ -19,6 +19,10 @@ color:white;
 overflow:hidden;
 
 }
+
+/* =======================
+Top Bar
+======================= */
 
 .topbar{
 
@@ -40,134 +44,46 @@ border-bottom:1px solid #30363d;
 
 .topbar h1{
 
-font-size:28px;
-
-color:#58a6ff;
+font-size:26px;
 
 }
 
 .status{
 
-color:#00ff95;
+background:#238636;
+
+padding:8px 18px;
+
+border-radius:30px;
 
 font-weight:bold;
 
 }
 
+/* =======================
+Dashboard
+======================= */
+
 .dashboard{
 
 display:grid;
 
-grid-template-columns:260px 1fr 330px;
+grid-template-columns:260px 1fr 320px;
 
 height:calc(100vh - 70px);
 
 }
 
-/* LEFT */
+/* =======================
+Sidebar
+======================= */
 
 .sidebar{
 
 background:#161b22;
 
-padding:20px;
-
-overflow:auto;
-
-border-right:1px solid #30363d;
-
-}
-
-.sidebar h2{
-
-margin-bottom:20px;
-
-color:#58a6ff;
-
-}
-
-.category{
-
-margin-bottom:30px;
-
-}
-
-.category h3{
-
-margin-bottom:10px;
-
-color:#00d9ff;
-
-font-size:16px;
-
-}
-
-.asset{
-
-background:#21262d;
-
-padding:10px;
-
-margin-bottom:8px;
-
-border-radius:8px;
-
-cursor:pointer;
-
-transition:.3s;
-
-}
-
-.asset:hover{
-
-background:#30363d;
-
-transform:translateX(4px);
-
-}
-
-/* CENTER */
-
-.main{
+overflow-y:auto;
 
 padding:20px;
 
-display:flex;
-
-flex-direction:column;
-
-}
-
-.topinfo{
-
-display:flex;
-
-justify-content:space-between;
-
-margin-bottom:20px;
-
-}
-
-.topinfo div{
-
-background:#161b22;
-
-padding:15px;
-
-border-radius:10px;
-
-width:48%;
-
-border:1px solid #30363d;
-
-}
-
-.timeframes{
-
-margin-bottom:20px;
-
-}
-
-.timeframes button{
-
-background
+border-right:1px solid #303
