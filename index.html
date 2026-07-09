@@ -186,31 +186,44 @@ Waiting for market analysis...
 </main>
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
+
 <button onclick="showPage('quotes')">
-📋
+<span class="nav-icon">📋</span>
 <span>Quotes</span>
 </button>
-<button class="active">
-📈
-<button onclick="showPage('quotes')">
-📋
-<span>Quotes</span>
+
+
+<button onclick="showPage('chart')">
+<span class="nav-icon">📈</span>
+<span>Chart</span>
 </button>
-💼
+
+
+<button onclick="showPage('trade')">
+<span class="nav-icon">💼</span>
 <span>Trade</span>
 </button>
-<button>
-🕒
+
+
+<button onclick="showPage('history')">
+<span class="nav-icon">🕒</span>
 <span>History</span>
 </button>
-<button>
-⚙️
+
+
+<button onclick="showPage('settings')">
+<span class="nav-icon">⚙️</span>
 <span>Settings</span>
 </button>
-</nav>
+
+
 <button onclick="showPage('ai')">
 <span class="nav-icon">🤖</span>
 <span>AI</span>
+</button>
+
+
+</nav>
 </button>
 <!-- EXISTING FILES -->
 <script src="market/assets.js"></script>
