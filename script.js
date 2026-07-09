@@ -463,5 +463,78 @@ function buyerSellerEngine(candles){
 
     };
 
+}
+/* ======================================
+   RJAnalyser App Navigation V1
+====================================== */
+
+
+function showPage(page){
+
+
+    document.querySelectorAll(".page")
+    .forEach(p=>{
+
+        p.style.display="none";
+
+    });
+
+
+
+    if(page==="quotes"){
+
+        document.getElementById("quotesPage")
+        .style.display="block";
+
+    }
+
+
+
+    if(page==="chart"){
+
+        document.querySelector(".chart-section")
+        .style.display="flex";
+
+        document.querySelector(".ai-panel")
+        .style.display="block";
+
+    }
+
 
 }
+
+
+
+document.querySelectorAll(".bottom-nav button")
+.forEach((btn,index)=>{
+
+
+    btn.onclick=function(){
+
+
+        document.querySelectorAll(".bottom-nav button")
+        .forEach(b=>b.classList.remove("active"));
+
+
+        this.classList.add("active");
+
+
+
+        if(index===0){
+
+            showPage("quotes");
+
+        }
+
+
+        if(index===1){
+
+            showPage("chart");
+
+        }
+
+
+    };
+
+
+});
