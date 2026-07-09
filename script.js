@@ -1,3 +1,4 @@
+alert("RJAnalyser Script Loaded");
 /* ==========================================
    RJAnalyser AI
    Main Script V3 - Real Candle Engine
