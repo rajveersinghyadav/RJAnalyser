@@ -605,26 +605,29 @@ let chat=document.getElementById("aiChatBox");
 
 
 
-chat.innerHTML += `
+function askRJAI(){
 
-<div class="user-message">
+    let input = document.getElementById("aiQuestion");
 
-👤 ${question}
+    let question = input.value;
 
-</div>
+    if(question === "") return;
 
+    let chat = document.getElementById("aiChatBox");
 
-<div class="ai-message">
+    chat.innerHTML += `
+        <div class="user-message">
+            👤 ${question}
+        </div>
 
-🤖 RJ AI is analyzing...
+        <div class="ai-message">
+            🤖 RJ AI is analyzing...
+        </div>
+    `;
 
-</div>
+    input.value = "";
 
-
-
-
-
-input.value="";
+}
 
 
 }
