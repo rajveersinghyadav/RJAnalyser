@@ -2,609 +2,90 @@
 <html lang="en">
 
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RJAnalyser AI</title>
 
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>RJAnalyser AI</title>
-
-<link rel="stylesheet" href="style.css">
-
+  <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
+<header>
 
-<!-- TOP BAR -->
+<h1>📈 RJAnalyser</h1>
 
-<header class="topbar">
-
-<div class="brand">
-
-<h1>🤖 RJAnalyser AI</h1>
-
-<span>🟢 Live</span>
-
-</div>
-
-
-<button class="market-selector" id="selectedAsset">
-
-BTCUSDT ▼
-
-</button>
-
+<p>AI Powered Trading Analysis Platform</p>
 
 </header>
 
+<div class="container">
 
+<div class="card">
 
+<h2>🤖 AI Brain</h2>
 
+<p>Status : Online</p>
 
-<!-- QUOTES PAGE -->
-
-<section id="quotesPage" class="page">
-
-
-<div class="quotes-header">
-
-
-<h2>📋 Quotes</h2>
-
-
-<div class="search-box">
-
-
-<input
-
-id="quoteSearch"
-
-type="text"
-
-placeholder="Search Market..."
-
-onkeyup="searchQuotes()"
-
-/>
-
+<button>Start AI</button>
 
 </div>
 
+<div class="card">
+
+<h2>📊 Chart Analysis</h2>
+
+<input type="text" id="chartLink" placeholder="Paste Trading Chart Link">
+
+<button onclick="analyzeChart()">Analyze Chart</button>
 
 </div>
 
+<div class="card">
 
+<h2>🧠 Learning Engine</h2>
 
+<textarea id="teachAI" placeholder="Teach your AI new strategy..."></textarea>
 
-<div id="quotesList" class="quotes-list">
-
-</div>
-
-
-
-<button class="add-market">
-
-➕ Add Symbol
-
-</button>
-
-
-
-</section>
-
-
-
-
-
-
-
-<!-- CHART AREA -->
-
-<main class="app">
-
-
-<section class="chart-section">
-
-
-<div class="timeframes">
-
-
-<button>1m</button>
-
-<button>5m</button>
-
-<button>15m</button>
-
-<button>1H</button>
-
-<button>4H</button>
-
-<button>1D</button>
-
+<button onclick="saveLearning()">Save Learning</button>
 
 </div>
 
+<div class="card">
 
+<h2>💾 AI Memory</h2>
 
+<p id="memoryStatus">Memory Ready...</p>
 
-<div class="chart-box">
-
-
-<div id="tradingview_chart"></div>
-
-
-</div>
-
-
-
-</section>
-
-
-
-
-
-
-<!-- AI ANALYSIS PANEL -->
-
-
-<section class="ai-panel">
-
-
-<h2>🤖 RJ AI Analysis</h2>
-
-
-
-<div class="ai-grid">
-
-
-
-<div>
-
-<label>Trend</label>
-
-<p id="trend">Waiting...</p>
+<button onclick="openMemory()">Open Memory</button>
 
 </div>
 
+<div class="card">
 
+<h2>⚙️ Settings</h2>
 
+<button>AI Settings</button>
 
-<div>
-
-<label>Signal</label>
-
-<p id="signal">Waiting...</p>
-
-</div>
-
-
-
-
-<div>
-
-<label>Confidence</label>
-
-<p id="confidence">0%</p>
+<button>Future Modules</button>
 
 </div>
 
+<div class="card output">
 
+<h2>📋 AI Result</h2>
 
+<div id="result">
 
-<div>
-
-<label>AI Signal</label>
-
-<p id="aiSignal">
-
-Waiting...
-
-</p>
+Waiting for Analysis...
 
 </div>
 
-
-
-
-<div>
-
-<label>Signal Strength</label>
-
-<p id="signalStrength">
-
-0%
-
-</p>
+</div>
 
 </div>
 
-
-
-
-<div>
-
-<label>Buyer Power</label>
-
-<p id="buyerPower">
-
-0%
-
-</p>
-
-</div>
-
-
-
-
-<div>
-
-<label>Seller Power</label>
-
-<p id="sellerPower">
-
-0%
-
-</p>
-
-</div>
-
-
-
-
-<div>
-
-<label>Buyer Strength</label>
-
-<p id="buyerStrength">
-
---
-
-</p>
-
-</div>
-
-
-
-
-<div>
-
-<label>Seller Strength</label>
-
-<p id="sellerStrength">
-
---
-
-</p>
-
-</div>
-
-
-
-
-<div>
-
-<label>Dynamic Target</label>
-
-<p id="dynamicTarget">
-
---
-
-</p>
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-<div class="reason-box">
-
-
-<b>AI Reason</b>
-
-
-<p id="reason">
-
-Waiting for market analysis...
-
-</p>
-
-
-</div>
-
-
-
-</section>
-
-
-
-</main>
-<!-- AI ASSISTANT PAGE -->
-
-<section id="aiPage" class="page">
-
-
-<div class="ai-top">
-
-
-<h2>🤖 RJ AI Assistant</h2>
-
-
-<p>Personal Trading Intelligence</p>
-
-
-</div>
-
-
-
-
-
-<div class="ai-chat" id="aiChatBox">
-
-
-<div class="ai-message">
-
-
-🤖 Hello Rajveer, I am ready.
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-<div class="ai-input">
-
-
-<input
-
-id="aiQuestion"
-
-placeholder="Ask RJ AI..."
-
->
-
-
-<button onclick="askRJAI()">
-
-➤
-
-</button>
-
-
-</div>
-
-
-
-
-
-<div class="ai-memory">
-
-
-
-<div class="memory-card">
-
-
-<h3>🧠 AI Learning</h3>
-
-
-<p id="learningStatus">
-
-Learning system active...
-
-</p>
-
-
-</div>
-
-
-
-
-
-<div class="memory-card">
-
-
-<h3>📊 Data Status</h3>
-
-
-<p id="dataStatus">
-
-Waiting for market data...
-
-</p>
-
-
-</div>
-
-
-
-</div>
-
-
-
-</section>
-
-
-
-
-
-
-
-
-<!-- BOTTOM NAVIGATION -->
-
-
-<nav class="bottom-nav">
-
-
-
-<button onclick="showPage('quotes')">
-
-<span class="nav-icon">📋</span>
-
-<span>Quotes</span>
-
-</button>
-
-
-
-
-
-<button onclick="showPage('chart')">
-
-
-<span class="nav-icon">📈</span>
-
-<span>Chart</span>
-
-
-</button>
-
-
-
-
-
-<button onclick="showPage('trade')">
-
-
-<span class="nav-icon">💼</span>
-
-<span>Trade</span>
-
-
-</button>
-
-
-
-
-
-<button onclick="showPage('history')">
-
-
-<span class="nav-icon">🕒</span>
-
-<span>History</span>
-
-
-</button>
-
-
-
-
-
-<button onclick="showPage('settings')">
-
-
-<span class="nav-icon">⚙️</span>
-
-<span>Settings</span>
-
-
-</button>
-
-
-
-
-
-<button onclick="showPage('ai')">
-
-
-<span class="nav-icon">🤖</span>
-
-<span>AI</span>
-
-
-</button>
-
-
-
-
-</nav>
-
-
-
-
-
-
-
-
-
-<!-- MARKET MODULES -->
-
-
-<script src="market/assets.js"></script>
-
-<script src="market/quotes.js"></script>
-
-<script src="market/state.js"></script>
-
-<script src="market/tradingview.js"></script>
-
-
-
-
-
-
-
-
-<!-- AI MODULES -->
-
-
-<script src="ai/memory.js"></script>
-
-<script src="ai/knowledge.js"></script>
-
-<script src="ai/pattern.js"></script>
-
-<script src="ai/decision.js"></script>
-
-<script src="ai/learning.js"></script>
-
-<script src="ai/reasoning.js"></script>
-
-<script src="ai/vision.js"></script>
-
-<script src="ai/brain.js"></script>
-
-<script src="ai/engine.js"></script>
-
-<script src="ai/signalEngine.js"></script>
-
-
-
-
-
-
-
-
-<!-- TRADINGVIEW -->
-
-
-<script src="https://s3.tradingview.com/tv.js"></script>
-
-
-
-
-
-
-
-
-<!-- MAIN SCRIPT -->
-
-
-<script src="script.js?v=3"></script>
-
-
+<script src="script.js"></script>
 
 </body>
 
