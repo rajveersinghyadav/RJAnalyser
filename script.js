@@ -452,3 +452,517 @@ async function analyseMarket(){
     Math.floor(Math.random()*10+90)+"/100";
 
 }
+/* =====================================================
+   RJAnalyser AI V4
+   SCRIPT.JS
+   PART 5
+   RJ AI ASSISTANT
+===================================================== */
+
+/* ======================================
+   AI CHAT HISTORY
+====================================== */
+
+let RJChatHistory = [];
+
+/* ======================================
+   ASK RJ AI
+====================================== */
+
+function askRJAI(){
+
+    let input = document.getElementById("aiQuestion");
+
+    if(!input) return;
+
+    let question = input.value.trim();
+
+    if(question==="") return;
+
+    addUserMessage(question);
+
+    input.value="";
+
+    processRJAI(question);
+
+}
+
+/* ======================================
+   USER MESSAGE
+====================================== */
+
+function addUserMessage(text){
+
+    let chat=document.getElementById("aiChatBox");
+
+    if(!chat) return;
+
+    chat.innerHTML += `
+
+    <div class="user-message">
+        👤 ${text}
+    </div>
+
+    `;
+
+    chat.scrollTop=chat.scrollHeight;
+
+}
+
+/* ======================================
+   AI MESSAGE
+====================================== */
+
+function addAIMessage(text){
+
+    let chat=document.getElementById("aiChatBox");
+
+    if(!chat) return;
+
+    chat.innerHTML += `
+
+    <div class="ai-message">
+        🤖 ${text}
+    </div>
+
+    `;
+
+    chat.scrollTop=chat.scrollHeight;
+
+}
+
+/* ======================================
+   PROCESS AI
+====================================== */
+
+function processRJAI(question){
+
+    RJChatHistory.push(question);
+
+    let q = question.toLowerCase();
+
+    let answer = "";
+
+    if(q.includes("signal")){
+
+        answer =
+        "Current AI Signal : " +
+        document.getElementById("aiSignal").innerHTML;
+
+    }
+
+    else if(q.includes("trend")){
+
+        answer =
+        "Current Trend : " +
+        document.getElementById("trend").innerHTML;
+
+    }
+
+    else if(q.includes("buyer")){
+
+        answer =
+        "Buyer Power : " +
+        document.getElementById("buyerPower").innerHTML;
+
+    }
+
+    else if(q.includes("seller")){
+
+        answer =
+        "Seller Power : " +
+        document.getElementById("sellerPower").innerHTML;
+
+    }
+
+    else if(q.includes("confidence")){
+
+        answer =
+        "Confidence : " +
+        document.getElementById("confidence").innerHTML;
+
+    }
+
+    else if(q.includes("asset")){
+
+        answer =
+        "Current Asset : " +
+        RJ.asset;
+
+    }
+
+    else{
+
+        answer =
+        "I understood your request. Advanced AI Brain will answer this after Brain Engine is connected.";
+
+    }
+
+    setTimeout(function(){
+
+        addAIMessage(answer);
+
+    },500);
+
+}
+/* =====================================================
+   RJAnalyser AI V4
+   SCRIPT.JS
+   PART 6
+   MEMORY + LOCAL STORAGE
+===================================================== */
+
+/* ======================================
+   SAVE APP STATE
+====================================== */
+
+function saveRJState(){
+
+    localStorage.setItem("RJ_ASSET",RJ.asset);
+
+    localStorage.setItem("RJ_TIMEFRAME",RJ.timeframe);
+
+    localStorage.setItem("RJ_PAGE",RJ.currentPage);
+
+}
+
+/* ======================================
+   LOAD APP STATE
+====================================== */
+
+function loadRJState(){
+
+    let asset = localStorage.getItem("RJ_ASSET");
+
+    let timeframe = localStorage.getItem("RJ_TIMEFRAME");
+
+    let page = localStorage.getItem("RJ_PAGE");
+
+    if(asset){
+
+        RJ.asset = asset;
+
+    }
+
+    if(timeframe){
+
+        RJ.timeframe = timeframe;
+
+    }
+
+    if(page){
+
+        RJ.currentPage = page;
+
+    }
+
+}
+
+/* ======================================
+   SAVE CHAT HISTORY
+====================================== */
+
+function saveChatHistory(){
+
+    localStorage.setItem(
+
+        "RJ_CHAT",
+
+        JSON.stringify(RJChatHistory)
+
+    );
+
+}
+
+/* ======================================
+   LOAD CHAT HISTORY
+====================================== */
+
+function loadChatHistory(){
+
+    let data = localStorage.getItem("RJ_CHAT");
+
+    if(!data) return;
+
+    RJChatHistory = JSON.parse(data);
+
+}
+
+/* ======================================
+   AUTO SAVE
+====================================== */
+
+setInterval(function(){
+
+    saveRJState();
+
+    saveChatHistory();
+
+},5000);
+
+/* ======================================
+   RESTORE APP
+====================================== */
+
+window.addEventListener("load",function(){
+
+    loadRJState();
+
+    loadChatHistory();
+
+    document.getElementById("selectedAsset").innerHTML = RJ.asset;
+
+});
+/* =====================================================
+   RJAnalyser AI V4
+   SCRIPT.JS
+   PART 7
+   STABILITY + AUTO REFRESH + ERROR HANDLING
+===================================================== */
+
+/* ======================================
+   APP STATUS
+====================================== */
+
+let RJStatus = {
+
+    online: navigator.onLine,
+
+    loading: false,
+
+    lastUpdate: null
+
+};
+
+/* ======================================
+   INTERNET STATUS
+====================================== */
+
+window.addEventListener("online",function(){
+
+    RJStatus.online=true;
+
+    console.log("RJAnalyser : Internet Connected");
+
+    analyseMarket();
+
+});
+
+window.addEventListener("offline",function(){
+
+    RJStatus.online=false;
+
+    console.log("RJAnalyser : Internet Disconnected");
+
+});
+
+/* ======================================
+   SAFE ANALYSIS
+====================================== */
+
+async function safeAnalyse(){
+
+    if(RJStatus.loading) return;
+
+    if(!RJStatus.online) return;
+
+    RJStatus.loading=true;
+
+    try{
+
+        await analyseMarket();
+
+        RJStatus.lastUpdate=new Date();
+
+    }
+
+    catch(error){
+
+        console.log("RJAnalyser Error :",error);
+
+    }
+
+    RJStatus.loading=false;
+
+}
+
+/* ======================================
+   SAFE AUTO REFRESH
+====================================== */
+
+clearInterval(window.RJRefreshLoop);
+
+window.RJRefreshLoop=setInterval(function(){
+
+    safeAnalyse();
+
+},30000);
+
+/* ======================================
+   PAGE VISIBILITY
+====================================== */
+
+document.addEventListener("visibilitychange",function(){
+
+    if(document.hidden){
+
+        console.log("RJAnalyser Paused");
+
+    }
+
+    else{
+
+        console.log("RJAnalyser Resumed");
+
+        safeAnalyse();
+
+    }
+
+});
+
+/* ======================================
+   GLOBAL ERROR HANDLER
+====================================== */
+
+window.onerror=function(msg,file,line){
+
+    console.log(
+
+        "RJ ERROR:",
+
+        msg,
+
+        file,
+
+        line
+
+    );
+
+    return true;
+
+};
+
+/* ======================================
+   STARTUP CHECK
+====================================== */
+
+setTimeout(function(){
+
+    safeAnalyse();
+
+},1000);
+/* =====================================================
+   RJAnalyser AI V4
+   SCRIPT.JS
+   PART 8 (FINAL)
+===================================================== */
+
+/* ======================================
+   UTILITY FUNCTIONS
+====================================== */
+
+function formatPrice(price){
+
+    return Number(price).toFixed(2);
+
+}
+
+function formatPercent(value){
+
+    return Number(value).toFixed(0) + "%";
+
+}
+
+function currentTime(){
+
+    return new Date().toLocaleTimeString();
+
+}
+
+/* ======================================
+   APP INFORMATION
+====================================== */
+
+const RJVersion={
+
+    name:"RJAnalyser AI",
+
+    version:"4.0",
+
+    build:"Founder Edition",
+
+    developer:"Rajveer"
+
+};
+
+console.log(
+    RJVersion.name,
+    RJVersion.version,
+    RJVersion.build
+);
+
+/* ======================================
+   COMPLETE STARTUP
+====================================== */
+
+window.addEventListener("load",function(){
+
+    console.log("RJAnalyser Started");
+
+    loadRJState();
+
+    document.getElementById("selectedAsset").innerHTML=RJ.asset;
+
+    showPage(RJ.currentPage || "chartPage");
+
+    loadTradingView();
+
+    safeAnalyse();
+
+});
+
+/* ======================================
+   KEYBOARD SUPPORT
+====================================== */
+
+document.addEventListener("keydown",function(e){
+
+    if(e.key==="Enter"){
+
+        let input=document.getElementById("aiQuestion");
+
+        if(document.activeElement===input){
+
+            askRJAI();
+
+        }
+
+    }
+
+});
+
+/* ======================================
+   PERFORMANCE INFO
+====================================== */
+
+setInterval(function(){
+
+    console.log(
+
+        "RJ AI Running |",
+
+        "Asset:",RJ.asset,
+
+        "| TF:",RJ.timeframe,
+
+        "| Time:",currentTime()
+
+    );
+
+},60000);
+
+/* ======================================
+   SCRIPT.JS FINAL
+====================================== */
+
+console.log("SCRIPT.JS LOCKED");
