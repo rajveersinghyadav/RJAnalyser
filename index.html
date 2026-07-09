@@ -4,6 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>RJAnalyser AI</title>
@@ -12,60 +13,103 @@
 
 </head>
 
+
 <body>
 
-<!-- =========================
-TOP HEADER
-========================= -->
 
-<header class="top-header">
+<!-- TOP BAR -->
 
-<div class="logo">
+<header class="topbar">
 
-📈 <span>RJAnalyser AI</span>
+<div class="brand">
 
-</div>
+<h1>🤖 RJAnalyser AI</h1>
 
-<div class="status">
-
-🟢 AI ONLINE
+<span>🟢 Live</span>
 
 </div>
+
+
+<button class="market-selector" id="selectedAsset">
+
+BTCUSDT ▼
+
+</button>
+
 
 </header>
 
-<!-- =========================
-APP CONTAINER
-========================= -->
 
-<div class="app">
 
-<!-- =========================
-CHART PAGE
-(Default Screen)
-========================= -->
 
-<section id="chartPage" class="page active-page">
 
-<div class="chart-header">
+<!-- QUOTES PAGE -->
 
-<div class="asset-info">
+<section id="quotesPage" class="page">
 
-<h2 id="selectedAsset">
 
-BTCUSDT
+<div class="quotes-header">
 
-</h2>
 
-<p id="currentPrice">
+<h2>📋 Quotes</h2>
 
-Loading...
 
-</p>
+<div class="search-box">
+
+
+<input
+
+id="quoteSearch"
+
+type="text"
+
+placeholder="Search Market..."
+
+onkeyup="searchQuotes()"
+
+/>
+
 
 </div>
 
+
+</div>
+
+
+
+
+<div id="quotesList" class="quotes-list">
+
+</div>
+
+
+
+<button class="add-market">
+
+➕ Add Symbol
+
+</button>
+
+
+
+</section>
+
+
+
+
+
+
+
+<!-- CHART AREA -->
+
+<main class="app">
+
+
+<section class="chart-section">
+
+
 <div class="timeframes">
+
 
 <button>1m</button>
 
@@ -79,294 +123,489 @@ Loading...
 
 <button>1D</button>
 
-</div>
 
 </div>
 
-<!-- TradingView Chart -->
+
+
 
 <div class="chart-box">
 
+
 <div id="tradingview_chart"></div>
 
+
 </div>
 
-<!-- AI Analysis -->
 
-<div class="analysis-box">
 
-<div class="analysis-grid">
+</section>
 
-<div class="card">
-<h4>Signal</h4>
-<p id="aiSignal">WAIT</p>
-</div>
 
-<div class="card">
-<h4>Strength</h4>
-<p id="signalStrength">0%</p>
-</div>
 
-<div class="card">
-<h4>Buyer</h4>
-<p id="buyerPower">0%</p>
-</div>
 
-<div class="card">
-<h4>Seller</h4>
-<p id="sellerPower">0%</p>
-</div>
 
-<div class="card">
-<h4>Trend</h4>
+
+<!-- AI ANALYSIS PANEL -->
+
+
+<section class="ai-panel">
+
+
+<h2>🤖 RJ AI Analysis</h2>
+
+
+
+<div class="ai-grid">
+
+
+
+<div>
+
+<label>Trend</label>
+
 <p id="trend">Waiting...</p>
+
 </div>
 
-<div class="card">
-<h4>Confidence</h4>
+
+
+
+<div>
+
+<label>Signal</label>
+
+<p id="signal">Waiting...</p>
+
+</div>
+
+
+
+
+<div>
+
+<label>Confidence</label>
+
 <p id="confidence">0%</p>
-</div>
-
-<div class="card">
-<h4>Entry</h4>
-<p id="entry">--</p>
-</div>
-
-<div class="card">
-<h4>Score</h4>
-<p id="score">0/100</p>
-</div>
 
 </div>
+
+
+
+
+<div>
+
+<label>AI Signal</label>
+
+<p id="aiSignal">
+
+Waiting...
+
+</p>
+
+</div>
+
+
+
+
+<div>
+
+<label>Signal Strength</label>
+
+<p id="signalStrength">
+
+0%
+
+</p>
+
+</div>
+
+
+
+
+<div>
+
+<label>Buyer Power</label>
+
+<p id="buyerPower">
+
+0%
+
+</p>
+
+</div>
+
+
+
+
+<div>
+
+<label>Seller Power</label>
+
+<p id="sellerPower">
+
+0%
+
+</p>
+
+</div>
+
+
+
+
+<div>
+
+<label>Buyer Strength</label>
+
+<p id="buyerStrength">
+
+--
+
+</p>
+
+</div>
+
+
+
+
+<div>
+
+<label>Seller Strength</label>
+
+<p id="sellerStrength">
+
+--
+
+</p>
+
+</div>
+
+
+
+
+<div>
+
+<label>Dynamic Target</label>
+
+<p id="dynamicTarget">
+
+--
+
+</p>
+
+</div>
+
+
+
+</div>
+
+
+
+
 
 <div class="reason-box">
 
-<h4>AI Reason</h4>
+
+<b>AI Reason</b>
+
 
 <p id="reason">
 
-Waiting for analysis...
+Waiting for market analysis...
 
 </p>
 
-</div>
 
 </div>
 
-</section>
-<!-- =========================
-QUOTES PAGE
-========================= -->
 
-<section id="quotesPage" class="page">
-
-<div class="page-title">📋 Quotes</div>
-
-<input
-id="quoteSearch"
-class="search-box"
-type="text"
-placeholder="Search Market...">
-
-<div id="quotesList" class="quotes-list"></div>
-
-<button class="add-market">
-
-➕ Add Market
-
-</button>
 
 </section>
 
 
-<!-- =========================
-TRADE PAGE
-========================= -->
 
-<section id="tradePage" class="page">
-
-<div class="page-title">
-
-💼 Running Trades
-
-</div>
-
-<div class="trade-card">
-
-<h3>Wallet Balance</h3>
-
-<p id="walletBalance">
-
-$10,000
-
-</p>
-
-</div>
-
-<div class="trade-card">
-
-<h3>Open Trades</h3>
-
-<div id="runningTrades">
-
-No Active Trade
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =========================
-HISTORY PAGE
-========================= -->
-
-<section id="historyPage" class="page">
-
-<div class="page-title">
-
-🕒 Trade History
-
-</div>
-
-<div id="historyList">
-
-No Trade History
-
-</div>
-
-</section>
-
-
-<!-- =========================
-SETTINGS PAGE
-========================= -->
-
-<section id="settingsPage" class="page">
-
-<div class="page-title">
-
-⚙️ Settings
-
-</div>
-
-<div class="setting-item">
-
-Dark Theme
-
-</div>
-
-<div class="setting-item">
-
-Notification
-
-</div>
-
-<div class="setting-item">
-
-AI Refresh Speed
-
-</div>
-
-</section>
-
-
-<!-- =========================
-AI PAGE
-========================= -->
+</main>
+<!-- AI ASSISTANT PAGE -->
 
 <section id="aiPage" class="page">
 
-<div class="page-title">
 
-🤖 RJ AI Assistant
+<div class="ai-top">
+
+
+<h2>🤖 RJ AI Assistant</h2>
+
+
+<p>Personal Trading Intelligence</p>
+
 
 </div>
 
-<div
-id="aiChatBox"
-class="chat-box">
+
+
+
+
+<div class="ai-chat" id="aiChatBox">
+
+
+<div class="ai-message">
+
+
+🤖 Hello Rajveer, I am ready.
+
 
 </div>
 
-<div class="chat-input">
+
+</div>
+
+
+
+
+
+<div class="ai-input">
+
 
 <input
+
 id="aiQuestion"
-type="text"
-placeholder="Ask RJ AI...">
 
-<button
-onclick="askRJAI()">
+placeholder="Ask RJ AI..."
 
-Send
+>
+
+
+<button onclick="askRJAI()">
+
+➤
 
 </button>
 
+
 </div>
 
+
+
+
+
+<div class="ai-memory">
+
+
+
+<div class="memory-card">
+
+
+<h3>🧠 AI Learning</h3>
+
+
+<p id="learningStatus">
+
+Learning system active...
+
+</p>
+
+
+</div>
+
+
+
+
+
+<div class="memory-card">
+
+
+<h3>📊 Data Status</h3>
+
+
+<p id="dataStatus">
+
+Waiting for market data...
+
+</p>
+
+
+</div>
+
+
+
+</div>
+
+
+
 </section>
-<!-- =========================
-BOTTOM NAVIGATION
-========================= -->
+
+
+
+
+
+
+
+
+<!-- BOTTOM NAVIGATION -->
+
 
 <nav class="bottom-nav">
 
-<button class="nav-btn active" onclick="showPage('quotesPage')">
-<div class="nav-icon">📋</div>
-<div class="nav-text">Quotes</div>
+
+
+<button onclick="showPage('quotes')">
+
+<span class="nav-icon">📋</span>
+
+<span>Quotes</span>
+
 </button>
 
-<button class="nav-btn" onclick="showPage('chartPage')">
-<div class="nav-icon">📈</div>
-<div class="nav-text">Chart</div>
+
+
+
+
+<button onclick="showPage('chart')">
+
+
+<span class="nav-icon">📈</span>
+
+<span>Chart</span>
+
+
 </button>
 
-<button class="nav-btn" onclick="showPage('tradePage')">
-<div class="nav-icon">💼</div>
-<div class="nav-text">Trade</div>
+
+
+
+
+<button onclick="showPage('trade')">
+
+
+<span class="nav-icon">💼</span>
+
+<span>Trade</span>
+
+
 </button>
 
-<button class="nav-btn" onclick="showPage('historyPage')">
-<div class="nav-icon">🕒</div>
-<div class="nav-text">History</div>
+
+
+
+
+<button onclick="showPage('history')">
+
+
+<span class="nav-icon">🕒</span>
+
+<span>History</span>
+
+
 </button>
 
-<button class="nav-btn" onclick="showPage('settingsPage')">
-<div class="nav-icon">⚙️</div>
-<div class="nav-text">Settings</div>
+
+
+
+
+<button onclick="showPage('settings')">
+
+
+<span class="nav-icon">⚙️</span>
+
+<span>Settings</span>
+
+
 </button>
 
-<button class="nav-btn" onclick="showPage('aiPage')">
-<div class="nav-icon">🤖</div>
-<div class="nav-text">AI</div>
+
+
+
+
+<button onclick="showPage('ai')">
+
+
+<span class="nav-icon">🤖</span>
+
+<span>AI</span>
+
+
 </button>
+
+
+
 
 </nav>
 
-<!-- =========================
-SCRIPTS
-========================= -->
+
+
+
+
+
+
+
+
+<!-- MARKET MODULES -->
+
 
 <script src="market/assets.js"></script>
+
+<script src="market/quotes.js"></script>
+
 <script src="market/state.js"></script>
+
 <script src="market/tradingview.js"></script>
 
+
+
+
+
+
+
+
+<!-- AI MODULES -->
+
+
 <script src="ai/memory.js"></script>
+
 <script src="ai/knowledge.js"></script>
+
 <script src="ai/pattern.js"></script>
+
 <script src="ai/decision.js"></script>
+
 <script src="ai/learning.js"></script>
+
 <script src="ai/reasoning.js"></script>
+
 <script src="ai/vision.js"></script>
+
 <script src="ai/brain.js"></script>
+
 <script src="ai/engine.js"></script>
+
 <script src="ai/signalEngine.js"></script>
+
+
+
+
+
+
+
+
+<!-- TRADINGVIEW -->
+
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 
-<script src="script.js"></script>
+
+
+
+
+
+
+
+<!-- MAIN SCRIPT -->
+
+
+<script src="script.js?v=3"></script>
+
+
 
 </body>
+
 </html>
