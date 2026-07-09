@@ -223,10 +223,18 @@ if(!asset.includes("USDT")){
 
 
 let candles = await getCandles(asset);
-   alert("RJAnalyser Received Candles: " + candles.length);
-alert("Candle Data Received: " + candles.length);
+   let strength = buyerSellerEngine(candles);
 
+console.log("Buyer Strength:", strength);
+   alert(
 
+"Buyer Strength: " + strength.buyer +
+
+"\nSeller Strength: " + strength.seller +
+
+"\n" + strength.control
+
+);
 if(!candles) return;
 
 
@@ -289,7 +297,67 @@ confidence+"%";
 document.getElementById("entry").innerHTML =
 last.close.toFixed(2);
 
+let volatility = 0;
 
+candles.forEach(c => {
+    volatility += (c.high - c.low);
+});
+
+volatility = volatility / candles.length;
+
+
+let entry = last.close;
+
+let stopLoss;
+let target1;
+let target2;
+let target3;
+
+
+if(signal === "BUY"){
+
+    stopLoss = entry - volatility;
+
+    target1 = entry + volatility;
+
+    target2 = entry + (volatility * 2);
+
+    target3 = entry + (volatility * 3);
+
+}
+
+
+if(signal === "SELL"){
+
+    stopLoss = entry + volatility;
+
+    target1 = entry - volatility;
+
+    target2 = entry - (volatility * 2);
+
+    target3 = entry - (volatility * 3);
+
+}
+
+
+document.getElementById("sl").innerHTML =
+stopLoss.toFixed(2);
+
+
+document.getElementById("tp1").innerHTML =
+target1.toFixed(2);
+
+
+document.getElementById("tp2").innerHTML =
+target2.toFixed(2);
+
+
+document.getElementById("tp3").innerHTML =
+target3.toFixed(2);
+
+
+document.getElementById("move").innerHTML =
+volatility.toFixed(2)+" Points";
 
 document.getElementById("reason").innerHTML =
 
@@ -347,3 +415,119 @@ setInterval(()=>{
 analyseMarket();
 
 },30000);
+/* ==========================================
+   RJAnalyser Buyer Seller Strength Engine V1
+========================================== */
+
+function buyerSellerEngine(candles){
+
+    let buyerScore = 0;
+    let sellerScore = 0;
+
+
+    // Last 10 candles analysis
+
+    let recentCandles = candles.slice(-10);
+
+
+    recentCandles.forEach(candle => {
+
+
+        let body = candle.close - candle.open;
+
+        let range = candle.high - candle.low;
+
+
+        if(range === 0) return;
+
+
+        let strength = Math.abs(body) / range * 100;
+
+
+        // Buyer pressure
+
+        if(body > 0){
+
+            buyerScore += strength;
+
+        }
+
+
+        // Seller pressure
+
+        if(body < 0){
+
+            sellerScore += strength;
+
+        }
+
+
+        // Close position analysis
+
+        if(candle.close > candle.open){
+
+            buyerScore += 5;
+
+        }
+        else{
+
+            sellerScore += 5;
+
+        }
+
+
+    });
+
+
+
+    // Convert to percentage
+
+    let total = buyerScore + sellerScore;
+
+
+    if(total === 0){
+
+        total = 1;
+
+    }
+
+
+    buyerScore =
+    Math.round((buyerScore / total) * 100);
+
+
+    sellerScore =
+    Math.round((sellerScore / total) * 100);
+
+
+
+    let control="NEUTRAL";
+
+
+    if(buyerScore > sellerScore){
+
+        control="BUYERS DOMINATING";
+
+    }
+
+
+    if(sellerScore > buyerScore){
+
+        control="SELLERS DOMINATING";
+
+    }
+
+
+
+    return {
+
+        buyer: buyerScore,
+
+        seller: sellerScore,
+
+        control: control
+
+    };
+
+
+}
