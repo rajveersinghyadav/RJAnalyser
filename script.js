@@ -1,120 +1,132 @@
-// =========================================
-// RJAnalyser Script V3
-// =========================================
+/* ==========================================
+   RJAnalyser AI
+   Main Script V2
+========================================== */
 
-function analyzeChart() {
+window.onload = function () {
 
-    const chart = document.getElementById("chartLink").value;
-    const result = document.getElementById("result");
+    loadMarket();
 
-    if (chart.trim() === "") {
+    loadTradingView();
 
-        result.innerHTML = "⚠️ Please paste a Trading Chart link first.";
+};
 
-        return;
+/* ===========================
+   Load Market
+=========================== */
 
-    }
+function loadMarket(){
 
-    const output = RJEngine.analyse(chart);
+    createList("forexList",RJAssets.forex);
 
-    result.innerHTML = `
-📈 RJAnalyser AI Report
+    createList("cryptoList",RJAssets.crypto);
 
-━━━━━━━━━━━━━━━━━━
+    createList("commodityList",RJAssets.commodities);
 
-📊 Chart
-${output.input}
-
-🧩 Pattern
-${output.pattern ? output.pattern.name : "Not Found"}
-
-🤖 Decision
-${output.decision.action}
-
-🎯 Confidence
-${output.decision.confidence}%
-
-💡 Reason
-${output.decision.reason}
-
-━━━━━━━━━━━━━━━━━━
-
-🧠 Brain : ${RJBrain.status}
-
-💾 Memory : ${RJMemory.all().length} Records
-
-📚 Knowledge : Ready
-
-🤖 Version : ${RJBrain.version}
-`;
+    createList("indicesList",RJAssets.indices);
 
 }
 
-async function scanScreenshot() {
+/* ===========================
+   Create List
+=========================== */
 
-    const file = document.getElementById("chartImage").files[0];
-    const result = document.getElementById("result");
+function createList(id,list){
 
-    if (!file) {
+    const box=document.getElementById(id);
 
-        result.innerHTML = "⚠️ Please select a Trading Chart Screenshot.";
+    box.innerHTML="";
 
-        return;
+    list.forEach(asset=>{
 
-    }
+        const div=document.createElement("div");
 
-    try {
+        div.className="asset";
 
-        const info = await RJVision.load(file);
+        div.innerHTML=asset;
 
-        const report = RJVision.analyse();
+        if(asset==RJState.asset){
 
-        RJMemory.add("Screenshot", info.name);
+            div.classList.add("active");
 
-        result.innerHTML = `
-📷 Screenshot Loaded
+        }
 
-━━━━━━━━━━━━━━━━━━
+        div.onclick=function(){
 
-📄 File
-${info.name}
+            selectAsset(asset);
 
-🖼 Type
-${info.type}
+        };
 
-📐 Resolution
-${info.width} × ${info.height}
+        box.appendChild(div);
 
-💾 Size
-${(info.size / 1024).toFixed(2)} KB
-
-━━━━━━━━━━━━━━━━━━
-
-👁 Vision
-${report.message}
-
-📈 Trend
-${report.trend}
-
-📊 Pattern
-${report.pattern}
-
-🎯 Confidence
-${report.confidence}%
-
-━━━━━━━━━━━━━━━━━━
-
-✅ Ready For AI Analysis
-`;
-
-    } catch (err) {
-
-        result.innerHTML = "❌ " + err.message;
-
-    }
+    });
 
 }
 
-function saveLearning() {
+/* ===========================
+   Select Asset
+=========================== */
 
-    const learning = document.getElementById("teachAI").
+function selectAsset(asset){
+
+    RJState.asset=asset;
+
+    document.getElementById("selectedAsset").innerHTML=asset;
+
+    removeSelection();
+
+    highlight(asset);
+
+    let symbol="BINANCE:"+asset;
+
+    if(RJAssets.forex.includes(asset)){
+
+        symbol="FX:"+asset;
+
+    }
+
+    if(RJAssets.commodities.includes(asset)){
+
+        symbol="OANDA:"+asset;
+
+    }
+
+    if(RJAssets.indices.includes(asset)){
+
+        symbol="FOREXCOM:"+asset;
+
+    }
+
+    loadTradingView(symbol,RJState.timeframe);
+
+    fakeAI();
+
+}
+
+/* ===========================
+   Highlight
+=========================== */
+
+function removeSelection(){
+
+    document.querySelectorAll(".asset").forEach(item=>{
+
+        item.classList.remove("active");
+
+    });
+
+}
+
+function highlight(asset){
+
+    document.querySelectorAll(".asset").forEach(item=>{
+
+        if(item.innerHTML===asset){
+
+            item.classList.add("active");
+
+        }
+
+    });
+
+}
