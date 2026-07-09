@@ -176,18 +176,13 @@ async function getCandles(symbol="BTCUSDT"){
 
 
 alert("Binance Data Received");
+       
         return data.map(c=>({
-
-            open:Number(c[1]),
-
+           open:Number(c[1]),
             high:Number(c[2]),
-
             low:Number(c[3]),
-
             close:Number(c[4]),
-
             volume:Number(c[5])
-
         }));
 
 
