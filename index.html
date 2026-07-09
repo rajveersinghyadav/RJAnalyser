@@ -1,9 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>RJAnalyser AI</title>
@@ -14,203 +16,207 @@
 
 <body>
 
+<!-- TOP BAR -->
+
 <header class="topbar">
 
-<h1>📈 RJAnalyser AI</h1>
+<div class="brand">
 
-<div class="status">
+<h1>🤖 RJAnalyser AI</h1>
 
-🟢 AI Online
+<span>🟢 Live</span>
 
 </div>
+
+<button class="market-selector" id="selectedAsset">
+
+BTCUSDT ▼
+
+</button>
 
 </header>
 
-<div class="dashboard">
+<!-- MAIN APP -->
 
-<!-- LEFT PANEL -->
+<main class="app">
 
-<aside class="sidebar">
+<!-- CHART AREA -->
 
-<h2>📊 Markets</h2>
-
-<div class="category">
-
-<h3>FOREX</h3>
-
-<div id="forexList"></div>
-
-</div>
-
-<div class="category">
-
-<h3>CRYPTO</h3>
-
-<div id="cryptoList"></div>
-
-</div>
-
-<div class="category">
-
-<h3>COMMODITIES</h3>
-
-<div id="commodityList"></div>
-
-</div>
-
-<div class="category">
-
-<h3>INDICES</h3>
-
-<div id="indicesList"></div>
-
-</div>
-
-</aside>
-
-<!-- CENTER PANEL -->
-
-<main class="main">
-
-<div class="topinfo">
-
-<div>
-
-<h3>Selected Asset</h3>
-
-<p id="selectedAsset">BTCUSDT</p>
-
-</div>
-
-<div>
-
-<h3>Current Price</h3>
-
-<p id="currentPrice">Loading...</p>
-
-</div>
-
-</div>
+<section class="chart-section">
 
 <div class="timeframes">
 
-<button onclick="changeTimeframe('1')">1m</button>
+<button>1m</button>
 
-<button onclick="changeTimeframe('3')">3m</button>
+<button>5m</button>
 
-<button onclick="changeTimeframe('5')">5m</button>
+<button>15m</button>
 
-<button onclick="changeTimeframe('15')">15m</button>
+<button>1H</button>
 
-<button onclick="changeTimeframe('30')">30m</button>
+<button>4H</button>
 
-<button onclick="changeTimeframe('60')">1H</button>
-
-<button onclick="changeTimeframe('240')">4H</button>
-
-<button onclick="changeTimeframe('1D')">1D</button>
+<button>1D</button>
 
 </div>
 
-<div class="chart">
+<div class="chart-box">
 
-<div id="tradingview_chart" style="height:100%;width:100%;"></div>
+<div id="tradingview_chart"></div>
 
 </div>
+
+</section>
+
+<!-- AI INDICATOR PANEL -->
+
+<section class="ai-panel">
+
+<h2>🤖 RJ AI Analysis</h2>
+
+<div class="ai-grid">
+
+<div>
+
+<label>Trend</label>
+
+<p id="trend">Waiting...</p>
+
+</div>
+
+<div>
+
+<label>Signal</label>
+
+<p id="signal">Waiting...</p>
+
+</div>
+
+<div>
+
+<label>Confidence</label>
+
+<p id="confidence">0%</p>
+
+</div>
+
+<div>
+
+<label>Buyer Strength</label>
+
+<p id="buyerStrength">--</p>
+
+</div>
+
+<div>
+
+<label>Seller Strength</label>
+
+<p id="sellerStrength">--</p>
+
+</div>
+
+<div>
+
+<label>Dynamic Target</label>
+
+<p id="dynamicTarget">--</p>
+
+</div>
+
+</div>
+
+<div class="reason-box">
+
+<b>AI Reason</b>
+
+<p id="reason">
+
+Waiting for market analysis...
+
+</p>
+
+</div>
+
+</section>
 
 </main>
 
-<!-- RIGHT PANEL -->
+<!-- BOTTOM NAV -->
 
-<aside class="analysis">
+<nav class="bottom-nav">
 
-<h2>🤖 AI Analysis</h2>
+<button>
 
-<div class="box">
-<b>Trend</b>
-<p id="trend">Waiting...</p>
-</div>
+📋
 
-<div class="box">
-<b>Signal</b>
-<p id="signal">Waiting...</p>
-</div>
+<span>Quotes</span>
 
-<div class="box">
-<b>Confidence</b>
-<p id="confidence">0%</p>
-</div>
+</button>
 
-<div class="box">
-<b>Expected Move</b>
-<p id="move">0 Points</p>
-</div>
+<button class="active">
 
-<div class="box">
-<b>Entry</b>
-<p id="entry">--</p>
-</div>
+📈
 
-<div class="box">
-<b>Stop Loss</b>
-<p id="sl">--</p>
-</div>
+<span>Chart</span>
 
-<div class="box">
-<b>Target 1</b>
-<p id="tp1">--</p>
-</div>
+</button>
 
-<div class="box">
-<b>Target 2</b>
-<p id="tp2">--</p>
-</div>
+<button>
 
-<div class="box">
-<b>Target 3</b>
-<p id="tp3">--</p>
-</div>
+💼
 
-<div class="box">
-<b>AI Score</b>
-<p id="score">0 / 100</p>
-</div>
+<span>Trade</span>
 
-<div class="box">
-<b>Reason</b>
-<p id="reason">Waiting...</p>
-</div>
+</button>
 
-</aside>
+<button>
 
-</div>
+🕒
 
-<!-- MARKET FILES -->
+<span>History</span>
+
+</button>
+
+<button>
+
+⚙️
+
+<span>Settings</span>
+
+</button>
+
+</nav>
+
+<!-- EXISTING FILES -->
 
 <script src="market/assets.js"></script>
+
 <script src="market/state.js"></script>
 
-<!-- AI FILES -->
-
 <script src="ai/memory.js"></script>
-<script src="ai/knowledge.js"></script>
-<script src="ai/pattern.js"></script>
-<script src="ai/decision.js"></script>
-<script src="ai/learning.js"></script>
-<script src="ai/reasoning.js"></script>
-<script src="ai/vision.js"></script>
-<script src="ai/brain.js"></script>
-<script src="ai/engine.js"></script>
 
-<!-- TRADINGVIEW -->
+<script src="ai/knowledge.js"></script>
+
+<script src="ai/pattern.js"></script>
+
+<script src="ai/decision.js"></script>
+
+<script src="ai/learning.js"></script>
+
+<script src="ai/reasoning.js"></script>
+
+<script src="ai/vision.js"></script>
+
+<script src="ai/brain.js"></script>
+
+<script src="ai/engine.js"></script>
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 
 <script src="market/tradingview.js"></script>
 
-<!-- MAIN -->
-
-<script src="script.js"></script>
+<script src="script.js?v=3"></script>
 
 </body>
 
