@@ -284,7 +284,7 @@ if(last.close > previous.close){
 
     trend="Bullish";
 
-    signal="BUY";
+    marketSignal="BUY";
 
 }
 
@@ -294,7 +294,7 @@ if(last.close < previous.close){
 
     trend="Bearish";
 
-    signal="SELL";
+    marketSignal="SELL";
 
 }
 
@@ -313,7 +313,7 @@ trend;
 
 
 document.getElementById("signal").innerHTML =
-signal;
+marketSignal;
 
 
 
