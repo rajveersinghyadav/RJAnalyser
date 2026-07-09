@@ -229,3 +229,155 @@ BOTTOM NAVIGATION
     font-size:12px;
 
 }
+/* =====================================
+   STYLE PART 2
+   CHART SCREEN
+===================================== */
+
+.chart-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+    gap:15px;
+    flex-wrap:wrap;
+
+}
+
+.asset-info h2{
+
+    font-size:28px;
+    font-weight:bold;
+
+}
+
+.asset-info p{
+
+    color:#58a6ff;
+    font-size:18px;
+    margin-top:5px;
+
+}
+
+/* ===========================
+TIMEFRAMES
+=========================== */
+
+.timeframes{
+
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+
+}
+
+.timeframes button{
+
+    background:#21262d;
+    color:#ffffff;
+    border:none;
+    border-radius:8px;
+    padding:8px 14px;
+    cursor:pointer;
+    transition:.25s;
+
+}
+
+.timeframes button:hover{
+
+    background:#30363d;
+
+}
+
+/* ===========================
+CHART
+=========================== */
+
+.chart-box{
+
+    width:100%;
+    height:55vh;
+    background:#161b22;
+    border:1px solid #30363d;
+    border-radius:14px;
+    overflow:hidden;
+    margin-bottom:15px;
+
+}
+
+#tradingview_chart{
+
+    width:100%;
+    height:100%;
+
+}
+
+/* ===========================
+AI ANALYSIS
+=========================== */
+
+.analysis-box{
+
+    background:#161b22;
+    border-radius:14px;
+    padding:15px;
+    border:1px solid #30363d;
+
+}
+
+.analysis-grid{
+
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+
+}
+
+.card{
+
+    background:#21262d;
+    border-radius:12px;
+    padding:12px;
+    text-align:center;
+
+}
+
+.card h4{
+
+    color:#8b949e;
+    font-size:13px;
+    margin-bottom:6px;
+
+}
+
+.card p{
+
+    color:#ffffff;
+    font-size:18px;
+    font-weight:bold;
+
+}
+
+.reason-box{
+
+    margin-top:15px;
+    background:#21262d;
+    border-radius:12px;
+    padding:15px;
+
+}
+
+.reason-box h4{
+
+    margin-bottom:8px;
+    color:#58a6ff;
+
+}
+
+.reason-box p{
+
+    line-height:1.6;
+    color:#c9d1d9;
+
+}
