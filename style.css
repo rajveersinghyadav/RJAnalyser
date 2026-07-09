@@ -1,7 +1,8 @@
-/* =====================================
+/* =====================================================
    RJAnalyser AI V4
-   STYLE PART 1
-===================================== */
+   STYLE.CSS
+   PART 1
+===================================================== */
 
 *{
     margin:0;
@@ -10,25 +11,32 @@
     font-family:Arial,Helvetica,sans-serif;
 }
 
-body{
+html,body{
 
+    width:100%;
+    height:100%;
+    overflow:hidden;
     background:#0d1117;
     color:#ffffff;
-    overflow:hidden;
 
 }
 
-/* ===========================
+body{
+
+    display:flex;
+    flex-direction:column;
+
+}
+
+/* ===================================
 HEADER
-=========================== */
+=================================== */
 
 .top-header{
 
     height:65px;
 
     background:#161b22;
-
-    border-bottom:1px solid #30363d;
 
     display:flex;
 
@@ -38,13 +46,27 @@ HEADER
 
     padding:0 18px;
 
+    border-bottom:1px solid #30363d;
+
 }
 
 .logo{
 
-    font-size:22px;
+    font-size:24px;
 
     font-weight:bold;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.logo span{
+
+    color:#58a6ff;
 
 }
 
@@ -52,9 +74,9 @@ HEADER
 
     background:#238636;
 
-    padding:8px 14px;
+    padding:7px 14px;
 
-    border-radius:20px;
+    border-radius:30px;
 
     font-size:13px;
 
@@ -62,45 +84,35 @@ HEADER
 
 }
 
-/* ===========================
+/* ===================================
 APP
-=========================== */
+=================================== */
 
 .app{
 
-    position:relative;
-
-    width:100%;
-
-    height:calc(100vh - 65px);
+    flex:1;
 
     overflow:hidden;
 
+    position:relative;
+
 }
 
-/* ===========================
+/* ===================================
 PAGES
-=========================== */
+=================================== */
 
 .page{
 
-    position:absolute;
-
-    top:0;
-
-    left:0;
+    display:none;
 
     width:100%;
 
     height:100%;
 
-    display:none;
-
     overflow-y:auto;
 
-    padding:15px;
-
-    padding-bottom:90px;
+    padding:18px;
 
 }
 
@@ -110,65 +122,11 @@ PAGES
 
 }
 
-/* ===========================
-PAGE TITLE
-=========================== */
-
-.page-title{
-
-    font-size:24px;
-
-    font-weight:bold;
-
-    margin-bottom:20px;
-
-}
-
-/* ===========================
-SEARCH
-=========================== */
-
-.search-box{
-
-    width:100%;
-
-    padding:14px;
-
-    background:#21262d;
-
-    border:none;
-
-    border-radius:12px;
-
-    color:white;
-
-    font-size:16px;
-
-    margin-bottom:20px;
-
-}
-
-.search-box:focus{
-
-    outline:none;
-
-    border:1px solid #58a6ff;
-
-}
-
-/* ===========================
+/* ===================================
 BOTTOM NAVIGATION
-=========================== */
+=================================== */
 
 .bottom-nav{
-
-    position:fixed;
-
-    left:0;
-
-    bottom:0;
-
-    width:100%;
 
     height:75px;
 
@@ -181,8 +139,6 @@ BOTTOM NAVIGATION
     justify-content:space-around;
 
     align-items:center;
-
-    z-index:999;
 
 }
 
@@ -208,6 +164,8 @@ BOTTOM NAVIGATION
 
     cursor:pointer;
 
+    transition:.25s;
+
 }
 
 .nav-btn.active{
@@ -216,11 +174,17 @@ BOTTOM NAVIGATION
 
 }
 
+.nav-btn:hover{
+
+    background:#21262d;
+
+}
+
 .nav-icon{
 
     font-size:24px;
 
-    margin-bottom:4px;
+    margin-bottom:5px;
 
 }
 
@@ -229,18 +193,45 @@ BOTTOM NAVIGATION
     font-size:12px;
 
 }
-/* =====================================
-   STYLE PART 2
-   CHART SCREEN
-===================================== */
+
+/* ===================================
+PAGE TITLE
+=================================== */
+
+.page-title{
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    margin-bottom:20px;
+
+    color:#58a6ff;
+
+}
+/* =====================================================
+   RJAnalyser AI V4
+   STYLE.CSS
+   PART 2
+   CHART + ANALYSIS
+===================================================== */
+
+/* ===========================
+CHART HEADER
+=========================== */
 
 .chart-header{
 
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
-    margin-bottom:15px;
+
     gap:15px;
+
+    margin-bottom:18px;
+
     flex-wrap:wrap;
 
 }
@@ -248,15 +239,18 @@ BOTTOM NAVIGATION
 .asset-info h2{
 
     font-size:28px;
-    font-weight:bold;
+
+    color:#58a6ff;
 
 }
 
 .asset-info p{
 
-    color:#58a6ff;
-    font-size:18px;
-    margin-top:5px;
+    margin-top:6px;
+
+    color:#8b949e;
+
+    font-size:15px;
 
 }
 
@@ -267,7 +261,9 @@ TIMEFRAMES
 .timeframes{
 
     display:flex;
+
     gap:8px;
+
     flex-wrap:wrap;
 
 }
@@ -275,12 +271,20 @@ TIMEFRAMES
 .timeframes button{
 
     background:#21262d;
-    color:#ffffff;
-    border:none;
-    border-radius:8px;
+
+    color:white;
+
+    border:1px solid #30363d;
+
     padding:8px 14px;
+
+    border-radius:8px;
+
     cursor:pointer;
+
     transition:.25s;
+
+    font-weight:bold;
 
 }
 
@@ -290,25 +294,40 @@ TIMEFRAMES
 
 }
 
+.timeframes button.active{
+
+    background:#238636;
+
+    border-color:#238636;
+
+}
+
 /* ===========================
-CHART
+TRADINGVIEW
 =========================== */
 
 .chart-box{
 
     width:100%;
-    height:55vh;
+
+    height:430px;
+
     background:#161b22;
+
     border:1px solid #30363d;
+
     border-radius:14px;
+
     overflow:hidden;
-    margin-bottom:15px;
+
+    margin-bottom:20px;
 
 }
 
 #tradingview_chart{
 
     width:100%;
+
     height:100%;
 
 }
@@ -319,65 +338,561 @@ AI ANALYSIS
 
 .analysis-box{
 
-    background:#161b22;
-    border-radius:14px;
-    padding:15px;
-    border:1px solid #30363d;
+    width:100%;
 
 }
 
 .analysis-grid{
 
     display:grid;
+
     grid-template-columns:repeat(2,1fr);
+
     gap:12px;
 
 }
 
 .card{
 
-    background:#21262d;
+    background:#161b22;
+
+    border:1px solid #30363d;
+
     border-radius:12px;
-    padding:12px;
-    text-align:center;
+
+    padding:16px;
 
 }
 
 .card h4{
 
     color:#8b949e;
-    font-size:13px;
-    margin-bottom:6px;
+
+    font-size:14px;
+
+    margin-bottom:8px;
 
 }
 
 .card p{
 
-    color:#ffffff;
-    font-size:18px;
+    font-size:20px;
+
     font-weight:bold;
+
+    color:#58a6ff;
 
 }
 
+/* ===========================
+AI REASON
+=========================== */
+
 .reason-box{
 
-    margin-top:15px;
-    background:#21262d;
+    margin-top:18px;
+
+    background:#161b22;
+
+    border:1px solid #30363d;
+
     border-radius:12px;
-    padding:15px;
+
+    padding:18px;
 
 }
 
 .reason-box h4{
 
-    margin-bottom:8px;
     color:#58a6ff;
+
+    margin-bottom:10px;
 
 }
 
 .reason-box p{
 
-    line-height:1.6;
     color:#c9d1d9;
 
+    line-height:1.6;
+
 }
+/* =====================================================
+   RJAnalyser AI V4
+   STYLE.CSS
+   PART 3
+   QUOTES + TRADE + HISTORY + SETTINGS + AI CHAT
+===================================================== */
+
+/* ===========================
+SEARCH BOX
+=========================== */
+
+.search-box{
+
+    width:100%;
+    margin:15px 0 20px;
+
+}
+
+.search-box input,
+.search-box{
+
+    width:100%;
+    height:48px;
+
+    background:#161b22;
+
+    border:1px solid #30363d;
+
+    border-radius:10px;
+
+    color:white;
+
+    padding:0 15px;
+
+    font-size:15px;
+
+    outline:none;
+
+}
+
+.search-box input::placeholder{
+
+    color:#8b949e;
+
+}
+
+/* ===========================
+QUOTES LIST
+=========================== */
+
+.quotes-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    margin-bottom:20px;
+
+}
+
+.quote-item{
+
+    background:#161b22;
+
+    border:1px solid #30363d;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.quote-item:hover{
+
+    background:#21262d;
+
+    border-color:#58a6ff;
+
+}
+
+.quote-name{
+
+    font-size:17px;
+
+    font-weight:bold;
+
+}
+
+.quote-price{
+
+    color:#58a6ff;
+
+    font-weight:bold;
+
+}
+
+/* ===========================
+ADD MARKET
+=========================== */
+
+.add-market{
+
+    width:100%;
+
+    height:48px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#238636;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+/* ===========================
+TRADE & HISTORY
+=========================== */
+
+.trade-card{
+
+    background:#161b22;
+
+    border:1px solid #30363d;
+
+    border-radius:12px;
+
+    padding:18px;
+
+    margin-bottom:15px;
+
+}
+
+.trade-card h3{
+
+    margin-bottom:10px;
+
+    color:#58a6ff;
+
+}
+
+.trade-card p{
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
+
+/* ===========================
+SETTINGS
+=========================== */
+
+.setting-item{
+
+    background:#161b22;
+
+    border:1px solid #30363d;
+
+    border-radius:12px;
+
+    padding:18px;
+
+    margin-bottom:15px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.setting-item:hover{
+
+    background:#21262d;
+
+}
+
+/* ===========================
+AI CHAT
+=========================== */
+
+.chat-box{
+
+    height:420px;
+
+    overflow-y:auto;
+
+    background:#161b22;
+
+    border:1px solid #30363d;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+}
+
+.user-message{
+
+    background:#238636;
+
+    color:white;
+
+    padding:10px 14px;
+
+    border-radius:12px;
+
+    margin-bottom:12px;
+
+    margin-left:50px;
+
+}
+
+.ai-message{
+
+    background:#21262d;
+
+    color:white;
+
+    padding:10px 14px;
+
+    border-radius:12px;
+
+    margin-bottom:12px;
+
+    margin-right:50px;
+
+}
+
+.chat-input{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.chat-input input{
+
+    flex:1;
+
+    height:48px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#161b22;
+
+    border:1px solid #30363d;
+
+    color:white;
+
+    padding:0 15px;
+
+}
+
+.chat-input button{
+
+    width:90px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#238636;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+/* =====================================================
+   RJAnalyser AI V4
+   STYLE.CSS
+   PART 4 (FINAL)
+===================================================== */
+
+/* ===========================
+SCROLLBAR
+=========================== */
+
+::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#0d1117;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#30363d;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#58a6ff;
+
+}
+
+/* ===========================
+ANIMATIONS
+=========================== */
+
+.page{
+
+    animation:fadePage .25s ease;
+
+}
+
+@keyframes fadePage{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(10px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+.card,
+.trade-card,
+.setting-item,
+.quote-item,
+.reason-box{
+
+    transition:all .25s ease;
+
+}
+
+.card:hover,
+.trade-card:hover,
+.setting-item:hover,
+.quote-item:hover{
+
+    transform:translateY(-3px);
+
+    border-color:#58a6ff;
+
+    box-shadow:0 0 15px rgba(88,166,255,.18);
+
+}
+
+/* ===========================
+BUTTON EFFECT
+=========================== */
+
+button{
+
+    transition:.25s;
+
+}
+
+button:active{
+
+    transform:scale(.96);
+
+}
+
+/* ===========================
+MOBILE
+=========================== */
+
+@media(max-width:900px){
+
+    .chart-box{
+
+        height:320px;
+
+    }
+
+    .analysis-grid{
+
+        grid-template-columns:1fr 1fr;
+
+    }
+
+}
+
+@media(max-width:600px){
+
+    .top-header{
+
+        padding:0 12px;
+
+    }
+
+    .logo{
+
+        font-size:20px;
+
+    }
+
+    .status{
+
+        font-size:11px;
+
+        padding:6px 10px;
+
+    }
+
+    .chart-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+    .analysis-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .nav-icon{
+
+        font-size:22px;
+
+    }
+
+    .nav-text{
+
+        font-size:11px;
+
+    }
+
+    .chat-box{
+
+        height:350px;
+
+    }
+
+}
+
+/* ===========================
+END OF STYLE.CSS
+=========================== */
