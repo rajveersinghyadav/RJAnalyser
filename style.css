@@ -1,203 +1,162 @@
-/* =====================================
+/* ======================================
    RJAnalyser AI
-   Version 2
-===================================== */
-
+   iOS Trading Terminal UI V1
+====================================== */
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,Helvetica,sans-serif;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
 }
-
 body{
-
-background:#0d1117;
-
-color:white;
-
-overflow:hidden;
-
+    background:#05070b;
+    color:white;
+    height:100vh;
+    overflow:hidden;
 }
-
-/* =======================
-Top Bar
-======================= */
-
+/* =====================
+ TOP BAR
+===================== */
 .topbar{
-
-height:70px;
-
-background:#161b22;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-padding:0 25px;
-
-border-bottom:1px solid #30363d;
-
+    height:65px;
+    background:#11151c;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 15px;
+    border-bottom:1px solid #252b35;
 }
-
-.topbar h1{
-
-font-size:26px;
-
+.brand h1{
+    font-size:20px;
 }
-
-.status{
-
-background:#238636;
-
-padding:8px 18px;
-
-border-radius:30px;
-
-font-weight:bold;
-
+.brand span{
+    font-size:12px;
+    color:#00ff88;
 }
-
-/* =======================
-Dashboard
-======================= */
-
-.dashboard{
-
-display:grid;
-
-grid-template-columns:260px 1fr 320px;
-
-height:calc(100vh - 70px);
-
+.market-selector{
+    background:#1c2430;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:20px;
+    font-weight:bold;
 }
-
-/* =======================
-Sidebar
-======================= */
-
-.sidebar{
-
-background:#161b22;
-
-overflow-y:auto;
-
-padding:20px;
-
-border-right:1px solid #30363d;
-
+/* =====================
+ MAIN APP
+===================== */
+.app{
+    height:calc(100vh - 125px);
+    display:flex;
+    flex-direction:column;
 }
-
-.sidebar h2{
-
-margin-bottom:20px;
-
+/* =====================
+ CHART
+===================== */
+.chart-section{
+    flex:1;
+    display:flex;
+    flex-direction:column;
 }
-
-.category{
-
-margin-bottom:30px;
-
-}
-
-.category h3{
-
-margin-bottom:10px;
-
-color:#58a6ff;
-
-}
-
-.asset{
-
-padding:10px;
-
-margin-bottom:8px;
-
-background:#21262d;
-
-border-radius:8px;
-
-cursor:pointer;
-
-transition:.25s;
-
-}
-
-.asset:hover{
-
-background:#30363d;
-
-}
-
-.asset.active{
-
-background:#238636;
-
-}
-
-/* =======================
-Center
-======================= */
-
-.main{
-
-display:flex;
-
-flex-direction:column;
-
-padding:15px;
-
-}
-
-.topinfo{
-
-display:flex;
-
-justify-content:space-between;
-
-margin-bottom:15px;
-
-}
-
-.topinfo div{
-
-background:#161b22;
-
-padding:15px;
-
-border-radius:10px;
-
-width:48%;
-
-}
-
 .timeframes{
-
-display:flex;
-
-gap:10px;
-
-margin-bottom:15px;
-
-flex-wrap:wrap;
-
+    display:flex;
+    gap:8px;
+    padding:8px;
+    overflow-x:auto;
 }
-
 .timeframes button{
-
-padding:8px 18px;
-
-background:#21262d;
-
-color:white;
-
-border:none;
-
-border-radius:8px;
-
-cursor:pointer;
-
-transition:.3
+    background:#171d26;
+    color:white;
+    border:none;
+    padding:7px 14px;
+    border-radius:15px;
+}
+.chart-box{
+    flex:1;
+    background:#000;
+    border-radius:12px;
+    overflow:hidden;
+    margin:0 8px;
+}
+#tradingview_chart{
+    width:100%;
+    height:100%;
+}
+/* =====================
+ AI PANEL
+===================== */
+.ai-panel{
+    background:#11151c;
+    margin:8px;
+    padding:15px;
+    border-radius:18px;
+    max-height:230px;
+    overflow:auto;
+}
+.ai-panel h2{
+    font-size:18px;
+    margin-bottom:12px;
+}
+.ai-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+.ai-grid div{
+    background:#1a202b;
+    padding:10px;
+    border-radius:12px;
+}
+.ai-grid label{
+    font-size:12px;
+    color:#8b949e;
+}
+.ai-grid p{
+    margin-top:5px;
+    font-weight:bold;
+}
+.reason-box{
+    margin-top:12px;
+    background:#1a202b;
+    padding:10px;
+    border-radius:12px;
+}
+/* =====================
+ BOTTOM NAV
+===================== */
+.bottom-nav{
+    height:60px;
+    background:#11151c;
+    border-top:1px solid #252b35;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+}
+.bottom-nav button{
+    background:none;
+    border:none;
+    color:#8b949e;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    font-size:12px;
+}
+.bottom-nav button span{
+    margin-top:3px;
+}
+.bottom-nav .active{
+    color:#00ff88;
+}
+/* =====================
+ MOBILE OPTIMIZATION
+===================== */
+@media(max-width:600px){
+.ai-grid{
+    grid-template-columns:repeat(2,1fr);
+}
+.brand h1{
+    font-size:17px;
+}
+.chart-box{
+    margin:0 5px;
+}
+}
