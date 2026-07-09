@@ -276,7 +276,7 @@ let previous = candles[candles.length-2];
 
 let trend="Sideways";
 
-let signal="WAIT";
+let marketSignal="WAIT";
 
 
 
