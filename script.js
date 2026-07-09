@@ -177,27 +177,6 @@ async function getCandles(symbol="BTCUSDT"){
 
 alert("Binance Data Received");
 
-    document.getElementById("aiSignal").innerHTML =
-    aiResult.signal;
-
-
-    document.getElementById("signalStrength").innerHTML =
-    aiResult.strength + "%";
-
-
-    document.getElementById("buyerPower").innerHTML =
-    aiResult.buyer + "%";
-
-
-    document.getElementById("sellerPower").innerHTML =
-    aiResult.seller + "%";
-
-
-    document.getElementById("reason").innerHTML =
-    aiResult.reason;
-
-
-}
         return data.map(c=>({
            open:Number(c[1]),
             high:Number(c[2]),
@@ -280,12 +259,11 @@ if(signal){
     signal.seller + "%";
 
 
+    document.getElementById("reason").innerHTML =
+    signal.reason;
+
+
 }
-"Buyer Strength: " + strength.buyer +
-"\nSeller Strength: " + strength.seller +
-"\n" + strength.control
-);
-if(!candles) return;
 
 
 
