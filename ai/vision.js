@@ -1,12 +1,12 @@
 /*
 =========================================
-RJAnalyser Vision Engine V2
+RJAnalyser Vision Engine V3
 =========================================
 */
 
 const RJVision = {
 
-    version: "2.0",
+    version: "3.0",
 
     image: null,
 
@@ -14,7 +14,7 @@ const RJVision = {
 
     load(file) {
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
 
             const reader = new FileReader();
 
@@ -40,13 +40,49 @@ const RJVision = {
 
                 };
 
+                img.onerror = () => {
+
+                    reject(new Error("Image could not be loaded."));
+
+                };
+
                 img.src = e.target.result;
+
+            };
+
+            reader.onerror = () => {
+
+                reject(new Error("File could not be read."));
 
             };
 
             reader.readAsDataURL(file);
 
         });
+
+    },
+
+    checkOpenCV() {
+
+        if (typeof cv === "undefined") {
+
+            return {
+
+                success: false,
+
+                message: "OpenCV Not Loaded"
+
+            };
+
+        }
+
+        return {
+
+            success: true,
+
+            message: "OpenCV Loaded Successfully"
+
+        };
 
     },
 
@@ -57,6 +93,7 @@ const RJVision = {
             return {
 
                 success: false,
+
                 message: "No image loaded."
 
             };
@@ -67,7 +104,7 @@ const RJVision = {
 
             success: true,
 
-            message: "Image processed successfully.",
+            message: "Image Ready For Analysis",
 
             width: this.info.width,
 
