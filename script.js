@@ -539,21 +539,32 @@ function buyerSellerEngine(candles){
 function showPage(page){
 
     // Hide all pages
-    document.querySelectorAll(".page").forEach(function(p){
-        p.style.display="none";
-    });
+    document.getElementById("quotesPage").style.display = "none";
+    document.getElementById("aiPage").style.display = "none";
 
-    // Show selected page
+    // Show Dashboard
+    document.querySelector(".app").style.display = "flex";
+
     if(page==="quotes"){
-        document.getElementById("quotesPage").style.display="block";
+
+        document.querySelector(".app").style.display = "none";
+        document.getElementById("quotesPage").style.display = "block";
+
     }
 
     if(page==="chart"){
-        document.getElementById("chartPage").style.display="block";
+
+        document.querySelector(".app").style.display = "flex";
+
     }
 
     if(page==="ai"){
-        document.getElementById("aiPage").style.display="block";
+
+        document.querySelector(".app").style.display = "none";
+        document.getElementById("aiPage").style.display = "block";
+
     }
+
+}
 
 }
