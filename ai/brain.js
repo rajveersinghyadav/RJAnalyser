@@ -1,47 +1,61 @@
-// 🧠 RJAnalyser - REAL AI BRAIN ENGINE
+/*
+=========================================
+RJAnalyser AI Brain V1
+Created By: Rajveer + ChatGPT
+=========================================
+*/
 
-const Brain = {
+const RJBrain = {
 
-  process(input){
+    version: "1.0",
 
-    if(!input) return "No input received";
+    status: "ONLINE",
 
-    input = input.toLowerCase();
+    learning: true,
 
-    // 1. Check Memory first
-    let rememberedName = MemoryEngine.get("name");
+    memory: [],
 
-    // 2. Knowledge base response
-    let knowledgeResponse = KnowledgeBase.getResponse(input);
+    analyse(chart){
 
-    // 3. Name saving logic
-    if(input.includes("my name is")){
-      let name = input.split("my name is")[1].trim();
-      MemoryEngine.save("name", name);
-      return "🧠 Got it! I will remember your name " + name;
+        return {
+
+            chart: chart,
+
+            trend: "Scanning...",
+
+            pattern: "Searching...",
+
+            confidence: "0%",
+
+            recommendation: "Waiting for AI Engine"
+
+        };
+
+    },
+
+    learn(rule){
+
+        this.memory.push(rule);
+
+        localStorage.setItem(
+            "RJ_AI_MEMORY",
+            JSON.stringify(this.memory)
+        );
+
+    },
+
+    load(){
+
+        let data=localStorage.getItem("RJ_AI_MEMORY");
+
+        if(data){
+
+            this.memory=JSON.parse(data);
+
+        }
+
     }
-
-    // 4. Name recall
-    if(input.includes("what is my name")){
-      if(rememberedName){
-        return "🧠 Your name is " + rememberedName;
-      } else {
-        return "🧠 I don't know your name yet. Tell me!";
-      }
-    }
-
-    // 5. Greeting override
-    if(input.includes("hello") || input.includes("hi")){
-      return "👋 Hello! I am RJAnalyser Brain. How can I help you?";
-    }
-
-    // 6. If knowledge has answer
-    if(knowledgeResponse && knowledgeResponse !== "unknown"){
-      return knowledgeResponse;
-    }
-
-    // 7. Default fallback (learning mode)
-    return "🧠 I am analyzing your input... I will learn from this.";
-  }
 
 };
+
+RJBrain.load();
