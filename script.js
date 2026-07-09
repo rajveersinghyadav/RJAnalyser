@@ -235,6 +235,30 @@ console.log(
 "RJAnalyser AI Signal:",
 signal
 );
+   // =====================================
+// Show AI Signal On Dashboard
+// =====================================
+
+if(signal){
+
+
+    document.getElementById("aiSignal").innerHTML =
+    signal.signal;
+
+
+    document.getElementById("signalStrength").innerHTML =
+    signal.strength + "%";
+
+
+    document.getElementById("buyerPower").innerHTML =
+    signal.buyer + "%";
+
+
+    document.getElementById("sellerPower").innerHTML =
+    signal.seller + "%";
+
+
+}
 "Buyer Strength: " + strength.buyer +
 "\nSeller Strength: " + strength.seller +
 "\n" + strength.control
