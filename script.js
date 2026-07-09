@@ -327,9 +327,12 @@ last.close.toFixed(2);
 
 
 
-document.getElementById("reason").innerHTML =
+if(!signal){
 
-"AI analyzed live candle movement, price action and recent market momentum.";
+    document.getElementById("reason").innerHTML =
+    "AI analyzed live candle movement, price action and recent market momentum.";
+
+}
 
 
 
@@ -617,45 +620,8 @@ chat.innerHTML += `
 
 </div>
 
-`;
 
 
-
-input.value="";
-
-
-}
-function askRJAI(){
-
-
-let input=document.getElementById("aiQuestion");
-
-let text=input.value;
-
-
-if(text==="") return;
-
-
-
-let chat=document.getElementById("aiChatBox");
-
-
-chat.innerHTML += `
-
-<div class="user-message">
-
-👤 ${text}
-
-</div>
-
-
-<div class="ai-message">
-
-🤖 Processing your request...
-
-</div>
-
-`;
 
 
 input.value="";
