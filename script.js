@@ -218,10 +218,16 @@ if(!asset.includes("USDT")){
 
 
 let candles = await getCandles(asset);
-alert("RJAnalyser Received Candles: " + candles.length);
-console.log("RJAnalyser Candles:", candles);
 
+let strength = buyerSellerEngine(candles);
 
+console.log("RJAnalyser Buyer Seller Strength:", strength);
+alert(
+
+"Buyer Strength: " + strength.buyer +
+"\nSeller Strength: " + strength.seller +
+"\n" + strength.control
+);
 if(!candles) return;
 
 
