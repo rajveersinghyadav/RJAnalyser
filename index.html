@@ -2,91 +2,284 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RJAnalyser AI</title>
 
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RJAnalyser AI</title>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-<header>
+<header class="topbar">
 
-<h1>📈 RJAnalyser</h1>
+<h1>📈 RJAnalyser AI</h1>
 
-<p>AI Powered Trading Analysis Platform</p>
+<div class="status">
+
+🟢 AI Online
+
+</div>
 
 </header>
 
-<div class="container">
+<div class="dashboard">
 
-<div class="card">
+<!-- LEFT SIDEBAR -->
 
-<h2>🤖 AI Brain</h2>
+<div class="sidebar">
 
-<p>Status : Online</p>
+<h2>📊 Assets</h2>
 
-<button>Start AI</button>
+<div class="category">
 
-</div>
+<h3>FOREX</h3>
 
-<div class="card">
-
-<h2>📊 Chart Analysis</h2>
-
-<input type="text" id="chartLink" placeholder="Paste Trading Chart Link">
-
-<button onclick="analyzeChart()">Analyze Chart</button>
+<div id="forexList"></div>
 
 </div>
 
-<div class="card">
+<div class="category">
 
-<h2>🧠 Learning Engine</h2>
+<h3>CRYPTO</h3>
 
-<textarea id="teachAI" placeholder="Teach your AI new strategy..."></textarea>
-
-<button onclick="saveLearning()">Save Learning</button>
+<div id="cryptoList"></div>
 
 </div>
 
-<div class="card">
+<div class="category">
 
-<h2>💾 AI Memory</h2>
+<h3>COMMODITIES</h3>
 
-<p id="memoryStatus">Memory Ready...</p>
-
-<button onclick="openMemory()">Open Memory</button>
+<div id="commodityList"></div>
 
 </div>
 
-<div class="card">
+<div class="category">
 
-<h2>⚙️ Settings</h2>
+<h3>INDICES</h3>
 
-<button>AI Settings</button>
-
-<button>Future Modules</button>
-
-</div>
-
-<div class="card output">
-
-<h2>📋 AI Result</h2>
-
-<div id="result">
-
-Waiting for Analysis...
+<div id="indicesList"></div>
 
 </div>
 
 </div>
 
+<!-- CENTER -->
+
+<div class="main">
+
+<div class="topinfo">
+
+<div>
+
+<h3>Selected Asset</h3>
+
+<p id="selectedAsset">BTCUSDT</p>
+
 </div>
 
-<script src="ai/brain.js"></script>
+<div>
+
+<h3>Current Price</h3>
+
+<p id="currentPrice">Loading...</p>
+
+</div>
+
+</div>
+
+<div class="timeframes">
+
+<button>1m</button>
+
+<button>3m</button>
+
+<button>5m</button>
+
+<button>15m</button>
+
+<button>30m</button>
+
+<button>1H</button>
+
+<button>4H</button>
+
+<button>1D</button>
+
+</div>
+
+<div class="chart">
+
+<h2>📈 LIVE CHART</h2>
+
+<div id="chartArea">
+
+TradingView will be loaded here...
+
+</div>
+
+</div>
+
+</div>
+
+<!-- RIGHT PANEL -->
+
+<div class="analysis">
+
+<h2>🤖 AI Analysis</h2>
+
+<div class="box">
+
+<b>Trend</b>
+
+<p id="trend">Waiting...</p>
+
+</div>
+
+<div class="box">
+
+<b>Signal</b>
+
+<p id="signal">Waiting...</p>
+
+</div>
+
+<div class="box">
+
+<b>Confidence</b>
+
+<p id="confidence">0%</p>
+
+</div>
+
+<div class="box">
+
+<b>Expected Move</b>
+
+<p id="move">0 Points</p>
+
+</div>
+
+<div class="box">
+
+<b>Expected Duration</b>
+
+<p id="duration">Waiting...</p>
+
+</div>
+
+<div class="box">
+
+<b>Entry</b>
+
+<p id="entry">--</p>
+
+</div>
+
+<div class="box">
+
+<b>Stop Loss</b>
+
+<p id="sl">--</p>
+
+</div>
+
+<div class="box">
+
+<b>Target 1</b>
+
+<p id="tp1">--</p>
+
+</div>
+
+<div class="box">
+
+<b>Target 2</b>
+
+<p id="tp2">--</p>
+
+</div>
+
+<div class="box">
+
+<b>Target 3</b>
+
+<p id="tp3">--</p>
+
+</div>
+
+<div class="box">
+
+<b>AI Score</b>
+
+<p id="score">0 / 100</p>
+
+</div>
+
+<div class="box">
+
+<b>Reason</b>
+
+<p id="reason">
+
+Waiting for AI...
+
+</p>
+
+</div>
+
+<div class="box">
+
+<b>Brain</b>
+
+<p>Connected</p>
+
+</div>
+
+<div class="box">
+
+<b>Learning</b>
+
+<p>Ready</p>
+
+</div>
+
+<div class="box">
+
+<b>Memory</b>
+
+<p>Ready</p>
+
+</div>
+
+<div class="box">
+
+<b>Version</b>
+
+<p>RJAnalyser V2</p>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="data/assets.js"></script>
+
+<script src="ai/memory.js"></script>
+<script src="ai/knowledge.js"></script>
+<script src="ai/pattern.js"></script>
+<script src="ai/decision.js"></script>
 <script src="ai/learning.js"></script>
+<script src="ai/reasoning.js"></script>
+<script src="ai/vision.js"></script>
+<script src="ai/brain.js"></script>
+<script src="ai/engine.js"></script>
+
 <script src="script.js"></script>
 
 </body>
