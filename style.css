@@ -123,35 +123,44 @@ body{
 /* =====================
  BOTTOM NAV
 ===================== */
-.bottom-nav{
-    height:60px;
-    background:#11151c;
-    border-top:1px solid #252b35;
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-}
 .bottom-nav button{
 
     background:none;
     border:none;
+
     color:#8b949e;
 
     display:flex;
     flex-direction:column;
-    justify-content:center;
-    align-items:center;
 
-    gap:4px;
+    align-items:center;
+    justify-content:center;
+
+    width:60px;
+    height:55px;
+
+    gap:3px;
 
     font-size:12px;
 
 }
+
+
 .bottom-nav button span{
-    margin-top:3px;
+
+    display:block;
+
+    text-align:center;
+
+    line-height:14px;
+
 }
-.bottom-nav .active{
-    color:#00ff88;
+
+
+.bottom-nav button:first-line{
+
+    font-size:22px;
+
 }
 /* =====================
  MOBILE OPTIMIZATION
