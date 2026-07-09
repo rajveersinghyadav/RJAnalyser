@@ -123,6 +123,31 @@ body{
 /* =====================
  BOTTOM NAV
 ===================== */
+.bottom-nav{
+
+position:fixed;
+
+left:0;
+
+bottom:0;
+
+width:100%;
+
+height:70px;
+
+background:#11151c;
+
+border-top:1px solid #252b35;
+
+display:flex;
+
+justify-content:space-around;
+
+align-items:center;
+
+z-index:999;
+
+}
 .bottom-nav button{
 
     background:none;
