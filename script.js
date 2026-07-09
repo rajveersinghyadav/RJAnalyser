@@ -223,7 +223,7 @@ if(!asset.includes("USDT")){
 
 
 let candles = await getCandles(asset);
-
+alert("Candle Data Received: " + candles.length);
 
 
 if(!candles) return;
