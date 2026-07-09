@@ -538,3 +538,42 @@ document.querySelectorAll(".bottom-nav button")
 
 
 });
+function askRJAI(){
+
+
+let input=document.getElementById("aiQuestion");
+
+let question=input.value;
+
+
+if(question==="") return;
+
+
+
+let chat=document.getElementById("aiChatBox");
+
+
+
+chat.innerHTML += `
+
+<div class="user-message">
+
+👤 ${question}
+
+</div>
+
+
+<div class="ai-message">
+
+🤖 RJ AI is analyzing...
+
+</div>
+
+`;
+
+
+
+input.value="";
+
+
+}
