@@ -177,16 +177,6 @@ async function getCandles(symbol="BTCUSDT"){
 
 alert("Binance Data Received");
 
-       // =====================================
-// RJ AI Live Signal Update
-// =====================================
-
-let aiResult = RJSignalEngine(candles);
-
-
-if(aiResult){
-
-
     document.getElementById("aiSignal").innerHTML =
     aiResult.signal;
 
@@ -253,11 +243,12 @@ let candles = await getCandles(asset);
 let strength = buyerSellerEngine(candles);
 
 console.log("RJAnalyser Buyer Seller Strength:", strength);
-alert(
-/* =====================================
-   RJAnalyser Signal Connection
-===================================== */
 
+// =====================================
+
+// RJAnalyser Signal Connection
+
+// ====================================
 
 let signal = RJSignalEngine(candles);
 
