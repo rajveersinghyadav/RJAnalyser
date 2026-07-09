@@ -499,7 +499,20 @@ function showPage(page){
         .style.display="block";
 
     }
+if(page==="ai"){
 
+document.getElementById("aiPage")
+.style.display="block";
+
+
+document.querySelector(".chart-section")
+.style.display="none";
+
+
+document.querySelector(".ai-panel")
+.style.display="none";
+
+}
 
 }
 
