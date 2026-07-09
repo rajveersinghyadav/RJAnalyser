@@ -175,7 +175,7 @@ async function getCandles(symbol="BTCUSDT"){
         let data = await response.json();
 
 
-
+alert("Binance Data Received");
         return data.map(c=>({
 
             open:Number(c[1]),
