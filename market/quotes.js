@@ -54,14 +54,22 @@ function loadQuotes(){
 
         item.onclick=function(){
 
-            selectAsset(asset);
+    RJState.asset = asset;
+
+    document.getElementById("selectedAsset").innerHTML =
+    asset + " ▼";
 
 
-            // Open Chart Tab
+    showPage("chart");
 
-            showPage("chart");
 
-        };
+    if(typeof loadTradingView === "function"){
+
+        loadTradingView();
+
+    }
+
+};
 
 
         box.appendChild(item);
