@@ -123,53 +123,60 @@ body{
 /* =====================
  BOTTOM NAV
 ===================== */
+
 .bottom-nav{
 
-position:fixed;
+    position:fixed;
 
-left:0;
+    left:0;
 
-bottom:0;
+    bottom:0;
 
-width:100%;
+    width:100%;
 
-height:70px;
+    height:70px;
 
-background:#11151c;
+    background:#11151c;
 
-border-top:1px solid #252b35;
+    border-top:1px solid #252b35;
 
-display:flex;
+    display:flex;
 
-justify-content:space-around;
+    justify-content:space-around;
 
-align-items:center;
+    align-items:center;
 
-z-index:999;
+    z-index:999;
 
 }
+
 .bottom-nav button{
 
+    flex:1;
+
+    height:100%;
+
     background:none;
+
     border:none;
 
     color:#8b949e;
 
     display:flex;
+
     flex-direction:column;
 
-    align-items:center;
     justify-content:center;
 
-    width:50px;
-    height:45px;
+    align-items:center;
 
-    gap:2px;
+    gap:4px;
 
     font-size:11px;
 
-}
+    cursor:pointer;
 
+}
 
 .bottom-nav button span{
 
@@ -181,10 +188,15 @@ z-index:999;
 
 }
 
-
 .bottom-nav button:first-line{
 
     font-size:20px;
+
+}
+
+.bottom-nav button.active{
+
+    color:#00ff88;
 
 }
 /* =====================
