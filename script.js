@@ -1,3 +1,7 @@
+// =========================================
+// RJAnalyser Script V3
+// =========================================
+
 function analyzeChart() {
 
     const chart = document.getElementById("chartLink").value;
@@ -18,28 +22,28 @@ function analyzeChart() {
 
 ━━━━━━━━━━━━━━━━━━
 
-Chart :
+📊 Chart
 ${output.input}
 
-Pattern :
+🧩 Pattern
 ${output.pattern ? output.pattern.name : "Not Found"}
 
-Decision :
+🤖 Decision
 ${output.decision.action}
 
-Confidence :
+🎯 Confidence
 ${output.decision.confidence}%
 
-Reason :
+💡 Reason
 ${output.decision.reason}
 
 ━━━━━━━━━━━━━━━━━━
 
 🧠 Brain : ${RJBrain.status}
 
-💾 Memory Entries : ${RJMemory.all().length}
+💾 Memory : ${RJMemory.all().length} Records
 
-📚 Knowledge Engine : Ready
+📚 Knowledge : Ready
 
 🤖 Version : ${RJBrain.version}
 `;
@@ -68,34 +72,34 @@ async function scanScreenshot() {
         RJMemory.add("Screenshot", info.name);
 
         result.innerHTML = `
-📷 Screenshot Loaded Successfully
+📷 Screenshot Loaded
 
 ━━━━━━━━━━━━━━━━━━
 
-📄 File :
+📄 File
 ${info.name}
 
-🖼 Type :
+🖼 Type
 ${info.type}
 
-📐 Resolution :
+📐 Resolution
 ${info.width} × ${info.height}
 
-💾 Size :
+💾 Size
 ${(info.size / 1024).toFixed(2)} KB
 
 ━━━━━━━━━━━━━━━━━━
 
-👁 Vision Status :
+👁 Vision
 ${report.message}
 
-📈 Trend :
+📈 Trend
 ${report.trend}
 
-📊 Pattern :
+📊 Pattern
 ${report.pattern}
 
-🎯 Confidence :
+🎯 Confidence
 ${report.confidence}%
 
 ━━━━━━━━━━━━━━━━━━
@@ -103,13 +107,9 @@ ${report.confidence}%
 ✅ Ready For AI Analysis
 `;
 
-    } catch (error) {
+    } catch (err) {
 
-        result.innerHTML = `
-❌ Vision Engine Error
-
-${error.message}
-`;
+        result.innerHTML = "❌ " + err.message;
 
     }
 
@@ -117,54 +117,4 @@ ${error.message}
 
 function saveLearning() {
 
-    const learning = document.getElementById("teachAI").value;
-
-    if (learning.trim() === "") {
-
-        alert("Please teach something to AI first.");
-
-        return;
-
-    }
-
-    localStorage.setItem("RJAI_LEARNING", learning);
-
-    RJMemory.add("Learning", learning);
-
-    document.getElementById("memoryStatus").innerHTML =
-        "✅ Learning Saved Successfully";
-
-}
-
-function openMemory() {
-
-    const memory = RJMemory.all();
-
-    if (memory.length === 0) {
-
-        alert("Memory Empty");
-
-        return;
-
-    }
-
-    alert(JSON.stringify(memory, null, 2));
-
-}
-
-window.onload = function () {
-
-    RJBrain.start();
-
-    document.getElementById("brainStatus").innerHTML = RJBrain.status;
-
-    let data = localStorage.getItem("RJAI_LEARNING");
-
-    if (data) {
-
-        document.getElementById("memoryStatus").innerHTML =
-            "🧠 Memory Loaded";
-
-    }
-
-};
+    const learning = document.getElementById("teachAI").
