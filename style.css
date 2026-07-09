@@ -45,9 +45,10 @@ body{
  MAIN APP
 ===================== */
 .app{
-    height:calc(100vh - 125px);
+    flex:1;
     display:flex;
     flex-direction:column;
+    padding-bottom:80px;
 }
 /* =====================
  CHART
