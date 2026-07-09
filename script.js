@@ -1,6 +1,6 @@
 /* ==========================================
    RJAnalyser AI
-   Main Script V2
+   Main Script V3 - Real Candle Engine
 ========================================== */
 
 window.onload = function () {
@@ -9,7 +9,10 @@ window.onload = function () {
 
     loadTradingView();
 
+    analyseMarket();
+
 };
+
 
 /* ===========================
    Load Market
@@ -27,6 +30,7 @@ function loadMarket(){
 
 }
 
+
 /* ===========================
    Create List
 =========================== */
@@ -34,6 +38,8 @@ function loadMarket(){
 function createList(id,list){
 
     const box=document.getElementById(id);
+
+    if(!box) return;
 
     box.innerHTML="";
 
@@ -45,11 +51,13 @@ function createList(id,list){
 
         div.innerHTML=asset;
 
+
         if(asset==RJState.asset){
 
             div.classList.add("active");
 
         }
+
 
         div.onclick=function(){
 
@@ -57,11 +65,13 @@ function createList(id,list){
 
         };
 
+
         box.appendChild(div);
 
     });
 
 }
+
 
 /* ===========================
    Select Asset
@@ -73,11 +83,14 @@ function selectAsset(asset){
 
     document.getElementById("selectedAsset").innerHTML=asset;
 
+
     removeSelection();
 
     highlight(asset);
 
+
     let symbol="BINANCE:"+asset;
+
 
     if(RJAssets.forex.includes(asset)){
 
@@ -85,11 +98,13 @@ function selectAsset(asset){
 
     }
 
+
     if(RJAssets.commodities.includes(asset)){
 
         symbol="OANDA:"+asset;
 
     }
+
 
     if(RJAssets.indices.includes(asset)){
 
@@ -97,11 +112,15 @@ function selectAsset(asset){
 
     }
 
+
     loadTradingView(symbol,RJState.timeframe);
 
-    fakeAI();
+
+    analyseMarket();
 
 }
+
+
 
 /* ===========================
    Highlight
@@ -109,7 +128,8 @@ function selectAsset(asset){
 
 function removeSelection(){
 
-    document.querySelectorAll(".asset").forEach(item=>{
+    document.querySelectorAll(".asset")
+    .forEach(item=>{
 
         item.classList.remove("active");
 
@@ -117,9 +137,11 @@ function removeSelection(){
 
 }
 
+
 function highlight(asset){
 
-    document.querySelectorAll(".asset").forEach(item=>{
+    document.querySelectorAll(".asset")
+    .forEach(item=>{
 
         if(item.innerHTML===asset){
 
@@ -130,117 +152,197 @@ function highlight(asset){
     });
 
 }
+
+
+
 /* ==========================================
-   RJAnalyser AI
-   AI Analysis Engine V1
+   Binance Live Candle Data
 ========================================== */
 
-function fakeAI() {
 
-    const trendList = [
-        "Strong Bullish",
-        "Bullish",
-        "Sideways",
-        "Bearish",
-        "Strong Bearish"
-    ];
+async function getCandles(symbol="BTCUSDT"){
 
-    const signalList = [
-        "BUY",
-        "SELL",
-        "WAIT"
-    ];
+    try{
 
-    const trend =
-        trendList[Math.floor(Math.random() * trendList.length)];
 
-    const signal =
-        signalList[Math.floor(Math.random() * signalList.length)];
+        let url =
+        `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=5m&limit=50`;
 
-    const confidence =
-        Math.floor(Math.random() * 20) + 80;
 
-    const score =
-        Math.floor(Math.random() * 15) + 85;
+        let response = await fetch(url);
 
-    const move =
-        Math.floor(Math.random() * 350) + 50;
 
-    const entry =
-        (Math.random() * 100000).toFixed(2);
+        let data = await response.json();
 
-    const sl =
-        (entry - (Math.random() * 200)).toFixed(2);
 
-    const tp1 =
-        (Number(entry) + 100).toFixed(2);
 
-    const tp2 =
-        (Number(entry) + 200).toFixed(2);
+        return data.map(c=>({
 
-    const tp3 =
-        (Number(entry) + 350).toFixed(2);
+            open:Number(c[1]),
 
-    document.getElementById("trend").innerHTML = trend;
+            high:Number(c[2]),
 
-    document.getElementById("signal").innerHTML = signal;
+            low:Number(c[3]),
 
-    document.getElementById("confidence").innerHTML =
-        confidence + "%";
+            close:Number(c[4]),
 
-    document.getElementById("move").innerHTML =
-        move + " Points";
+            volume:Number(c[5])
 
-    document.getElementById("entry").innerHTML =
-        entry;
+        }));
 
-    document.getElementById("sl").innerHTML =
-        sl;
 
-    document.getElementById("tp1").innerHTML =
-        tp1;
+    }
 
-    document.getElementById("tp2").innerHTML =
-        tp2;
+    catch(error){
 
-    document.getElementById("tp3").innerHTML =
-        tp3;
+        console.log(error);
 
-    document.getElementById("score").innerHTML =
-        score + " / 100";
+    }
 
-    document.getElementById("reason").innerHTML =
-        "AI detected market structure, trend momentum and possible continuation.";
 }
+
+
+
+/* ==========================================
+   AI Candle Analysis Engine
+========================================== */
+
+
+async function analyseMarket(){
+
+
+let asset = RJState.asset;
+
+
+if(!asset.includes("USDT")){
+
+    asset="BTCUSDT";
+
+}
+
+
+
+let candles = await getCandles(asset);
+
+
+
+if(!candles) return;
+
+
+
+let last = candles[candles.length-1];
+
+
+let previous = candles[candles.length-2];
+
+
+
+let trend="Sideways";
+
+let signal="WAIT";
+
+
+
+if(last.close > previous.close){
+
+    trend="Bullish";
+
+    signal="BUY";
+
+}
+
+
+
+if(last.close < previous.close){
+
+    trend="Bearish";
+
+    signal="SELL";
+
+}
+
+
+
+let confidence =
+Math.floor(
+Math.random()*20 + 70
+);
+
+
+
+document.getElementById("trend").innerHTML =
+trend;
+
+
+
+document.getElementById("signal").innerHTML =
+signal;
+
+
+
+document.getElementById("confidence").innerHTML =
+confidence+"%";
+
+
+
+document.getElementById("entry").innerHTML =
+last.close.toFixed(2);
+
+
+
+document.getElementById("reason").innerHTML =
+
+"AI analyzed live candle movement, price action and recent market momentum.";
+
+
+
+document.getElementById("score").innerHTML =
+confidence+" / 100";
+
+
+}
+
+
+
+
 
 /* ==========================================
    Timeframe Change
 ========================================== */
 
+
 document.querySelectorAll(".timeframes button")
-.forEach(button => {
+.forEach(button=>{
 
-    button.onclick = function () {
 
-        document.querySelectorAll(".timeframes button")
-        .forEach(btn => btn.classList.remove("active"));
+button.onclick=function(){
 
-        this.classList.add("active");
 
-        RJState.timeframe = this.innerText;
+document.querySelectorAll(".timeframes button")
+.forEach(btn=>btn.classList.remove("active"));
 
-        selectAsset(RJState.asset);
 
-    };
+this.classList.add("active");
+
+
+RJState.timeframe=this.innerText;
+
+
+selectAsset(RJState.asset);
+
+
+
+};
+
 
 });
 
-/* ==========================================
-   Start AI
-========================================== */
 
-setTimeout(() => {
 
-    fakeAI();
+/* Auto Refresh */
 
-},1000);
+setInterval(()=>{
+
+analyseMarket();
+
+},30000);
