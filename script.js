@@ -176,7 +176,38 @@ async function getCandles(symbol="BTCUSDT"){
 
 
 alert("Binance Data Received");
-       
+
+       // =====================================
+// RJ AI Live Signal Update
+// =====================================
+
+let aiResult = RJSignalEngine(candles);
+
+
+if(aiResult){
+
+
+    document.getElementById("aiSignal").innerHTML =
+    aiResult.signal;
+
+
+    document.getElementById("signalStrength").innerHTML =
+    aiResult.strength + "%";
+
+
+    document.getElementById("buyerPower").innerHTML =
+    aiResult.buyer + "%";
+
+
+    document.getElementById("sellerPower").innerHTML =
+    aiResult.seller + "%";
+
+
+    document.getElementById("reason").innerHTML =
+    aiResult.reason;
+
+
+}
         return data.map(c=>({
            open:Number(c[1]),
             high:Number(c[2]),
