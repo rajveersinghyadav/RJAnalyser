@@ -590,3 +590,41 @@ input.value="";
 
 
 }
+function askRJAI(){
+
+
+let input=document.getElementById("aiQuestion");
+
+let text=input.value;
+
+
+if(text==="") return;
+
+
+
+let chat=document.getElementById("aiChatBox");
+
+
+chat.innerHTML += `
+
+<div class="user-message">
+
+👤 ${text}
+
+</div>
+
+
+<div class="ai-message">
+
+🤖 Processing your request...
+
+</div>
+
+`;
+
+
+input.value="";
+
+
+}
+
