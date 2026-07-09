@@ -12,7 +12,7 @@ body{
     background:#05070b;
     color:white;
     height:100vh;
-    overflow:auto;
+    overflow:hidden;
 }
 /* =====================
  TOP BAR
