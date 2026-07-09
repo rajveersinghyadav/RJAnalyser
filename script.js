@@ -342,3 +342,120 @@ setInterval(()=>{
 analyseMarket();
 
 },30000);
+
+/* ==========================================
+   RJAnalyser Buyer Seller Strength Engine V1
+========================================== */
+
+function buyerSellerEngine(candles){
+
+    let buyerScore = 0;
+    let sellerScore = 0;
+
+
+    // Last 10 candles analysis
+
+    let recentCandles = candles.slice(-10);
+
+
+    recentCandles.forEach(candle => {
+
+
+        let body = candle.close - candle.open;
+
+        let range = candle.high - candle.low;
+
+
+        if(range === 0) return;
+
+
+        let strength = Math.abs(body) / range * 100;
+
+
+        // Buyer pressure
+
+        if(body > 0){
+
+            buyerScore += strength;
+
+        }
+
+
+        // Seller pressure
+
+        if(body < 0){
+
+            sellerScore += strength;
+
+        }
+
+
+        // Close position analysis
+
+        if(candle.close > candle.open){
+
+            buyerScore += 5;
+
+        }
+        else{
+
+            sellerScore += 5;
+
+        }
+
+
+    });
+
+
+
+    // Convert to percentage
+
+    let total = buyerScore + sellerScore;
+
+
+    if(total === 0){
+
+        total = 1;
+
+    }
+
+
+    buyerScore =
+    Math.round((buyerScore / total) * 100);
+
+
+    sellerScore =
+    Math.round((sellerScore / total) * 100);
+
+
+
+    let control="NEUTRAL";
+
+
+    if(buyerScore > sellerScore){
+
+        control="BUYERS DOMINATING";
+
+    }
+
+
+    if(sellerScore > buyerScore){
+
+        control="SELLERS DOMINATING";
+
+    }
+
+
+
+    return {
+
+        buyer: buyerScore,
+
+        seller: sellerScore,
+
+        control: control
+
+    };
+
+
+}
