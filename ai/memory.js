@@ -132,3 +132,237 @@ RJMemory.add = function(record){
     this.saveToDisk();
 
 };
+/* ==========================================
+   RJAnalyser AI
+   Experience Memory V2
+   Part 3 - Experience Search Engine
+========================================== */
+
+// ==========================
+// Find Similar Experiences
+// ==========================
+RJMemory.findSimilar = function(current){
+
+    if(!current) return [];
+
+    return this.experiences.filter(exp=>{
+
+        return (
+
+            exp.pattern === current.pattern &&
+
+            exp.signal === current.signal &&
+
+            exp.marketBias === current.marketBias
+
+        );
+
+    });
+
+};
+
+// ==========================
+// Experience Statistics
+// ==========================
+RJMemory.getStatistics = function(current){
+
+    const list = this.findSimilar(current);
+
+    let win = 0;
+    let loss = 0;
+
+    list.forEach(exp=>{
+
+        if(exp.outcome==="WIN"){
+
+            win++;
+
+        }
+
+        if(exp.outcome==="LOSS"){
+
+            loss++;
+
+        }
+
+    });
+
+    const total = win + loss;
+
+    let success = 0;
+
+    if(total>0){
+
+        success = Number(((win/total)*100).toFixed(2));
+
+    }
+
+    return{
+
+        total:list.length,
+
+        wins:win,
+
+        losses:loss,
+
+        successRate:success
+
+    };
+
+};
+
+// ==========================
+// Best Decision
+// ==========================
+RJMemory.getRecommendation = function(current){
+
+    const stats = this.getStatistics(current);
+
+    let action = "WAIT";
+
+    if(stats.successRate >= 70){
+
+        action = current.signal;
+
+    }
+
+    return{
+
+        recommendation:action,
+
+        confidence:stats.successRate,
+
+        history:stats.total
+
+    };
+
+};
+/* ==========================================
+   RJAnalyser AI
+   Experience Memory V2
+   Part 4 - Market DNA Search
+========================================== */
+
+// ==========================
+// DNA Similarity Score
+// ==========================
+RJMemory.getDNAScore = function(current, past){
+
+    let score = 0;
+
+    // Pattern
+    if(current.pattern === past.pattern){
+        score += 20;
+    }
+
+    // Signal
+    if(current.signal === past.signal){
+        score += 15;
+    }
+
+    // Market Bias
+    if(current.marketBias === past.marketBias){
+        score += 15;
+    }
+
+    // Momentum
+    if(current.momentum === past.momentum){
+        score += 15;
+    }
+
+    // Expansion
+    if(current.expansion === past.expansion){
+        score += 10;
+    }
+
+    // Compression
+    if(current.compression === past.compression){
+        score += 10;
+    }
+
+    // Buyer Pressure
+    if(Math.abs(current.buyerPressure - past.buyerPressure) <= 10){
+        score += 7;
+    }
+
+    // Seller Pressure
+    if(Math.abs(current.sellerPressure - past.sellerPressure) <= 10){
+        score += 4;
+    }
+
+    // Market Energy
+    if(Math.abs(current.marketEnergy - past.marketEnergy) <= 10){
+        score += 4;
+    }
+
+    return score;
+
+};
+
+// ==========================
+// Find Best DNA Match
+// ==========================
+RJMemory.findBestMatch = function(current){
+
+    let best = null;
+
+    let bestScore = -1;
+
+    this.experiences.forEach(exp=>{
+
+        const score = this.getDNAScore(current, exp);
+
+        if(score > bestScore){
+
+            bestScore = score;
+
+            best = exp;
+
+        }
+
+    });
+
+    return{
+
+        match: best,
+
+        score: bestScore
+
+    };
+
+};
+
+// ==========================
+// AI Decision From DNA
+// ==========================
+RJMemory.getDNADecision = function(current){
+
+    const result = this.findBestMatch(current);
+
+    if(!result.match){
+
+        return{
+
+            recommendation:"WAIT",
+
+            confidence:0,
+
+            dnaScore:0
+
+        };
+
+    }
+
+    return{
+
+        recommendation: result.match.signal,
+
+        confidence: result.match.confidence || 50,
+
+        dnaScore: result.score,
+
+        previousOutcome: result.match.outcome || "UNKNOWN"
+
+    };
+
+};
