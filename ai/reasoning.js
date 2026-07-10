@@ -44,7 +44,17 @@ const RJReasoning = {
             report.decision = "BUY";
 
         }
+if (data.brainScore) {
 
+    report.brainScore = data.brainScore;
+
+}
+
+if (data.riskLevel) {
+
+    report.riskLevel = data.riskLevel;
+
+}
         return report;
 
     }
