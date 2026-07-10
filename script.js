@@ -3,16 +3,33 @@
    Main Script V3 - Real Candle Engine
 ========================================== */
 
-window.onload = function () {
-RJMemory.loadFromDisk();
-    loadMarket();
+window.onload = async function () {
 
-    loadTradingView();
+    try{
 
-    analyseMarket();
+        // Load AI Memory
+        if(typeof RJMemory !== "undefined"){
+            RJMemory.loadFromDisk();
+        }
+
+        // Build Asset Lists
+        loadMarket();
+
+        // Load Default Chart
+        loadTradingView();
+
+        // Run First Analysis
+        await analyseMarket();
+
+    }
+
+    catch(error){
+
+        console.error("RJAnalyser Startup Error:", error);
+
+    }
 
 };
-
 
 /* ===========================
    Load Market
@@ -77,11 +94,17 @@ function createList(id,list){
    Select Asset
 =========================== */
 
-function selectAsset(asset){
+async function selectAsset(asset){
 
-    RJState.asset=asset;
+    RJState.asset = asset;
 
-    document.getElementById("selectedAsset").innerHTML=asset;
+    const selected = document.getElementById("selectedAsset");
+
+    if(selected){
+
+        selected.innerHTML = asset;
+
+    }
 
 
     removeSelection();
@@ -113,10 +136,9 @@ function selectAsset(asset){
     }
 
 
-    loadTradingView(symbol,RJState.timeframe);
+    loadTradingView(symbol, RJState.timeframe);
 
-
-    analyseMarket();
+await analyseMarket();
 
 }
 
@@ -210,19 +232,28 @@ async function getCandles(symbol="BTCUSDT"){
 
 async function analyseMarket(){
 
+    let asset = RJState.asset;
 
-let asset = RJState.asset;
+    // Convert selected asset to Binance symbol
+    if(!asset.includes("USDT")){
+
+        if(asset === "BTCUSD") asset = "BTCUSDT";
+        else if(asset === "ETHUSD") asset = "ETHUSDT";
+        else asset = "BTCUSDT";
+
+    }
 
 
-if(!asset.includes("USDT")){
 
-    asset="BTCUSDT";
+const candles = await getCandles(asset);
+
+if(!candles || candles.length < 50){
+
+    console.warn("Not enough candle data.");
+
+    return;
 
 }
-
-
-
-let candles = await getCandles(asset);
    let strength = buyerSellerEngine(candles);
 
 console.log("Buyer Strength:", strength);
@@ -239,43 +270,31 @@ if(!candles) return;
 
 
 
-let last = candles[candles.length-1];
+// AI Core Analysis
 
+const ai = RJEngine.analyse(candles);
 
-let previous = candles[candles.length-2];
+if(!ai){
 
-
-
-let trend="Sideways";
-
-let signal="WAIT";
-
-
-
-if(last.close > previous.close){
-
-    trend="Bullish";
-
-    signal="BUY";
+    return;
 
 }
 
+const last = candles[candles.length-1];
+
+const trend = ai.features.momentum;
+
+const signal = ai.brain
+    ? ai.brain.finalDecision
+    : ai.pattern.signal;
 
 
-if(last.close < previous.close){
-
-    trend="Bearish";
-
-    signal="SELL";
-
-}
 
 
 
-let confidence =
-Math.floor(
-Math.random()*20 + 70
-);
+
+
+const confidence = ai.confidence;
 
 
 
