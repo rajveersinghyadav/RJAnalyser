@@ -46,39 +46,66 @@ const RJFeature = {
     // ==========================
     getLowerWick(candle){
 
-        return Math.min(candle.open, candle.close) - candle.low;
+    if(
+        !candle ||
+        candle.low===undefined ||
+        candle.open===undefined ||
+        candle.close===undefined
+    ){
+        return 0;
+    }
 
-    },
+    return Math.min(candle.open,candle.close)-candle.low;
+
+}
 
     // ==========================
     // Total Candle Range
     // ==========================
     getRange(candle){
 
-        return candle.high - candle.low;
+    if(
+        !candle ||
+        candle.high===undefined ||
+        candle.low===undefined
+    ){
+        return 0;
+    }
 
-    },
+    const range = candle.high - candle.low;
+
+    return range > 0 ? range : 0;
+
+}
 
     // ==========================
     // Candle Direction
     // ==========================
     getDirection(candle){
 
-        if(candle.close > candle.open){
+    if(
+        !candle ||
+        candle.open===undefined ||
+        candle.close===undefined
+    ){
+        return "UNKNOWN";
+    }
 
-            return "BULLISH";
+    if(candle.close > candle.open){
 
-        }
-
-        if(candle.close < candle.open){
-
-            return "BEARISH";
-
-        }
-
-        return "DOJI";
+        return "BULLISH";
 
     }
+
+    if(candle.close < candle.open){
+
+        return "BEARISH";
+
+    }
+
+    return "DOJI";
+
+}
 
 };
 /* ==========================================
@@ -312,18 +339,22 @@ RJFeature.getBuyerPressure = function(candles){
     if(!candles || candles.length===0) return 0;
 
     let score = 0;
+    let bullish = 0;
 
     candles.forEach(candle=>{
 
         if(candle.close > candle.open){
 
             score += this.getBodyPercent(candle);
+            bullish++;
 
         }
 
     });
 
-    return Number((score / candles.length).toFixed(2));
+    if(bullish===0) return 0;
+
+    return Number((score / bullish).toFixed(2));
 
 };
 
@@ -335,18 +366,22 @@ RJFeature.getSellerPressure = function(candles){
     if(!candles || candles.length===0) return 0;
 
     let score = 0;
+    let bearish = 0;
 
     candles.forEach(candle=>{
 
         if(candle.close < candle.open){
 
             score += this.getBodyPercent(candle);
+            bearish++;
 
         }
 
     });
 
-    return Number((score / candles.length).toFixed(2));
+    if(bearish===0) return 0;
+
+    return Number((score / bearish).toFixed(2));
 
 };
 
@@ -425,7 +460,15 @@ RJFeature.getMarketEnergy = function(candles){
 
     const speed = this.getMarketSpeed(candles);
 
-    return Number((buyer + seller + speed).toFixed(2));
+    let energy = ((buyer + seller) / 2) + speed;
+
+    if(energy > 100){
+
+        energy = 100;
+
+    }
+
+    return Number(energy.toFixed(2));
 
 };
 /* ==========================================
