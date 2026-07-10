@@ -278,7 +278,7 @@ if(!ai){
 
 }
 
-const last = candles[candles.length-1];
+const last = candles.at(-1);
 
 const trend = ai.features.momentum;
 
