@@ -11,9 +11,17 @@ const RJFeature = {
     // ==========================
     getBodySize(candle){
 
-        return Math.abs(candle.close - candle.open);
+    if(
+        !candle ||
+        candle.open===undefined ||
+        candle.close===undefined
+    ){
+        return 0;
+    }
 
-    },
+    return Math.abs(candle.close-candle.open);
+
+}
 
     // ==========================
     // Upper Wick
