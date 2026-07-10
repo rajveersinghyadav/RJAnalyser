@@ -4,7 +4,7 @@
 ========================================== */
 
 window.onload = function () {
-
+RJMemory.loadFromDisk();
     loadMarket();
 
     loadTradingView();
