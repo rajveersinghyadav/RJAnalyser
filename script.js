@@ -249,23 +249,21 @@ const candles = await getCandles(asset);
 
 if(!candles || candles.length < 50){
 
+    return;
+
+}
+
     console.warn("Not enough candle data.");
 
     return;
 
 }
-   let strength = buyerSellerEngine(candles);
+   const strength = buyerSellerEngine(candles);
 
-console.log("Buyer Strength:", strength);
-   alert(
-
-"Buyer Strength: " + strength.buyer +
-
-"\nSeller Strength: " + strength.seller +
-
-"\n" + strength.control
-
-);
+// Future Dashboard Binding
+// document.getElementById("buyerStrength").innerHTML = strength.buyer + "%";
+// document.getElementById("sellerStrength").innerHTML = strength.seller + "%";
+// document.getElementById("marketControl").innerHTML = strength.control;
 if(!candles) return;
 
 
@@ -299,17 +297,13 @@ const confidence = ai.confidence;
 
 
 document.getElementById("trend").innerHTML =
-trend;
-
-
+ai.features.momentum;
 
 document.getElementById("signal").innerHTML =
-signal;
-
-
+ai.brain.finalDecision;
 
 document.getElementById("confidence").innerHTML =
-confidence+"%";
+ai.confidence + "%";
 
 
 
@@ -380,12 +374,18 @@ volatility.toFixed(2)+" Points";
 
 document.getElementById("reason").innerHTML =
 
-"AI analyzed live candle movement, price action and recent market momentum.";
+`Pattern: ${ai.pattern.pattern}
+<br>
+Memory: ${ai.memory.recommendation}
+<br>
+Brain: ${ai.brain.finalDecision}
+<br>
+Risk: ${ai.brain.riskLevel}`;
 
 
 
 document.getElementById("score").innerHTML =
-confidence+" / 100";
+ai.brain.brainScore + " / 100";
 
 
 }
@@ -429,9 +429,19 @@ selectAsset(RJState.asset);
 
 /* Auto Refresh */
 
-setInterval(()=>{
+setInterval(async ()=>{
 
-analyseMarket();
+    try{
+
+        await analyseMarket();
+
+    }
+
+    catch(error){
+
+        console.error("Auto Analysis Error:", error);
+
+    }
 
 },30000);
 /* ==========================================
