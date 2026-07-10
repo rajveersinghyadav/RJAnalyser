@@ -28,9 +28,18 @@ const RJFeature = {
     // ==========================
     getUpperWick(candle){
 
-        return candle.high - Math.max(candle.open, candle.close);
+    if(
+        !candle ||
+        candle.high===undefined ||
+        candle.open===undefined ||
+        candle.close===undefined
+    ){
+        return 0;
+    }
 
-    },
+    return candle.high - Math.max(candle.open,candle.close);
+
+}
 
     // ==========================
     // Lower Wick
