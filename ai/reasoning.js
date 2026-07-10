@@ -16,6 +16,10 @@ const RJReasoning = {
 
             decision: "WAIT",
 
+            brainScore: 0,
+            
+            riskLevel: "LOW",
+
             reason: []
 
         };
