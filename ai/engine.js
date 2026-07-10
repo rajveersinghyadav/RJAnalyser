@@ -119,22 +119,37 @@ RJEngine.analyse = function(candles){
 
     });
 
-    // Save Last Analysis
-    this.lastAnalysis={
+    // Brain Analysis
+const brain = RJBrain.analyse({
 
-        features,
+    features,
 
-        pattern,
+    pattern,
 
-        memory,
+    memory,
 
-        confidence
+    learningConfidence: confidence
 
-    };
+});
 
-    this.totalAnalysis++;
+// Save Final Analysis
+this.lastAnalysis = {
 
-    return this.lastAnalysis;
+    features,
+
+    pattern,
+
+    memory,
+
+    confidence,
+
+    brain
+
+};
+
+this.totalAnalysis++;
+
+return this.lastAnalysis;
 
 };
 =========================================
