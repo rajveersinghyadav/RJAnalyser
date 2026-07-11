@@ -1,6 +1,6 @@
 /* =====================================================
    RJAnalyser AI
-   SCRIPT.JS - FULL INTEGRATED AUTOMATED BUILD
+   SCRIPT.JS - FULL FULLY INTEGRATED & AUTOMATED BUILD
 ===================================================== */
 
 /* ======================================
@@ -15,14 +15,18 @@ window.addEventListener("load", () => {
 ====================================== */
 function initializeApp(){
     loadQuotes();
-    loadTradingView(
-        getTVSymbol(RJState.asset),
-        RJState.timeframe.replace("m","").replace("H","60").replace("D","1D")
-    );
+    
+    if(typeof loadTradingView === "function" && typeof RJState !== "undefined") {
+        loadTradingView(
+            getTVSymbol(RJState.asset),
+            RJState.timeframe.replace("m","").replace("H","60").replace("D","1D")
+        );
+    }
+
     initTimeframes();
     updateSelectedAsset();
-    switchView("chart"); // Default view set to Chart
-    analyseMarket();
+    showPage("chart"); // Default screen
+    startBackgroundEngine();
 }
 
 /* ======================================
@@ -30,7 +34,7 @@ function initializeApp(){
 ====================================== */
 function updateSelectedAsset(){
     const btn = document.getElementById("selectedAsset");
-    if(btn){
+    if(btn && typeof RJState !== "undefined"){
         btn.innerHTML = RJState.asset + " ▼";
     }
 }
@@ -39,9 +43,11 @@ function updateSelectedAsset(){
    TRADINGVIEW SYMBOL
 ====================================== */
 function getTVSymbol(asset){
-    if(RJAssets.forex.includes(asset)) return "FX:" + asset;
-    if(RJAssets.commodities.includes(asset)) return "OANDA:" + asset;
-    if(RJAssets.indices.includes(asset)) return "FOREXCOM:" + asset;
+    if(typeof RJAssets !== "undefined") {
+        if(RJAssets.forex.includes(asset)) return "FX:" + asset;
+        if(RJAssets.commodities.includes(asset)) return "OANDA:" + asset;
+        if(RJAssets.indices.includes(asset)) return "FOREXCOM:" + asset;
+    }
     return "BINANCE:" + asset;
 }
 
@@ -49,10 +55,14 @@ function getTVSymbol(asset){
    CHANGE ASSET
 ====================================== */
 function selectAsset(asset){
-    RJState.asset = asset;
-    updateSelectedAsset();
-    loadTradingView(getTVSymbol(asset), RJState.timeframe);
-    analyseMarket();
+    if(typeof RJState !== "undefined") {
+        RJState.asset = asset;
+        updateSelectedAsset();
+        if(typeof loadTradingView === "function") {
+            loadTradingView(getTVSymbol(asset), RJState.timeframe);
+        }
+        analyseMarket();
+    }
 }
 
 /* ======================================
@@ -63,45 +73,72 @@ function initTimeframes(){
         btn.onclick = function(){
             document.querySelectorAll(".timeframes button").forEach(b=>b.classList.remove("active"));
             this.classList.add("active");
-            RJState.timeframe = this.innerText;
-            loadTradingView(getTVSymbol(RJState.asset), RJState.timeframe);
+            if(typeof RJState !== "undefined") {
+                RJState.timeframe = this.innerText;
+                if(typeof loadTradingView === "function") {
+                    loadTradingView(getTVSymbol(RJState.asset), RJState.timeframe);
+                }
+            }
             analyseMarket();
         };
     });
 }
 
 /* ======================================
-   DYNAMIC PAGE ROUTER (REPLACES OLD NAV)
+   PAGE NAVIGATION (FIXED ALIGNMENT)
 ====================================== */
-function switchView(viewName) {
-    // Structural switching alignment
-    document.querySelectorAll('.page, .app').forEach(el => {
-        el.classList.remove('active');
-        el.style.display = 'none'; // Fallback mapping compatibility
-    });
+function showPage(page){
+    // Sabhi separate screens ko hide karein
+    document.querySelectorAll(".page").forEach(p => p.style.display = "none");
     
-    const target = document.getElementById(viewName + 'Page');
-    if(target) {
-        target.classList.add('active');
-        target.style.display = (viewName === 'chart') ? 'flex' : 'block';
+    const chartSec = document.querySelector(".chart-section");
+    const aiPan = document.querySelector(".ai-panel");
+    const mainApp = document.querySelector(".app");
+    
+    if(chartSec) chartSec.style.display = "none";
+    if(aiPan) aiPan.style.display = "none";
+    if(mainApp) mainApp.style.display = "none";
+
+    // Dynamic rendering mapping targets
+    switch(page){
+        case "quotes":
+            if(document.getElementById("quotesPage")) document.getElementById("quotesPage").style.display = "block";
+            break;
+        case "ai":
+            if(document.getElementById("aiPage")) document.getElementById("aiPage").style.display = "block";
+            break;
+        case "trade":
+            if(document.getElementById("tradePage")) document.getElementById("tradePage").style.display = "block";
+            break;
+        case "history":
+            if(document.getElementById("historyPage")) document.getElementById("historyPage").style.display = "block";
+            break;
+        case "settings":
+            if(document.getElementById("settingsPage")) document.getElementById("settingsPage").style.display = "block";
+            break;
+        default:
+            // Default views (Chart view setup handles double elements)
+            if(mainApp) mainApp.style.display = "flex";
+            if(chartSec) chartSec.style.display = "flex";
+            if(aiPan) aiPan.style.display = "block";
     }
 }
 
 /* ======================================
-   BOTTOM NAVIGATION CONTROLLER
+   BOTTOM NAVIGATION (INDEX FIXED)
 ====================================== */
-document.querySelectorAll(".bottom-nav button").forEach((btn, index)=>{
+document.querySelectorAll(".bottom-nav button").forEach((btn, index) => {
     btn.onclick = function(){
-        document.querySelectorAll(".bottom-nav button").forEach(b=>b.classList.remove("active"));
+        document.querySelectorAll(".bottom-nav button").forEach(b => b.classList.remove("active"));
         this.classList.add("active");
 
         switch(index){
-            case 0: switchView("quotes"); break;
-            case 1: switchView("chart"); break;
-            case 2: switchView("trade"); break;
-            case 3: switchView("history"); break;
-            case 4: switchView("settings"); break;
-            case 5: switchView("ai"); break;
+            case 0: showPage("quotes"); break;
+            case 1: showPage("chart"); break;
+            case 2: showPage("trade"); break;
+            case 3: showPage("history"); break;
+            case 4: showPage("settings"); break;
+            case 5: showPage("ai"); break;
         }
     };
 });
@@ -124,7 +161,7 @@ function getBinanceInterval(tf){
 
 async function getCandles(){
     try{
-        if(!RJState.asset.includes("USDT")){
+        if(typeof RJState === "undefined" || !RJState.asset.includes("USDT")){
             return [];
         }
         const url = `https://api.binance.com/api/v3/klines?symbol=${RJState.asset}&interval=${getBinanceInterval(RJState.timeframe)}&limit=100`;
@@ -140,7 +177,7 @@ async function getCandles(){
         }));
     }
     catch(error){
-        console.error("Binance Error:",error);
+        console.error("Binance Error:", error);
         updateOfflineStatus();
         return [];
     }
@@ -163,7 +200,7 @@ function setText(id,value){
 }
 
 /* =====================================================
-   PART 3 - AI ENGINE CONNECTION & ROUTING LINK
+   PART 3 - AI ENGINE CONNECTION & BRIDGE LOGIC
 ===================================================== */
 
 async function analyseMarket(){
@@ -175,12 +212,16 @@ async function analyseMarket(){
 
     let aiResult;
     try{
-        aiResult = RJSignalEngine(candles);
-    } catch(error) {
+        if(typeof RJSignalEngine === "function") {
+            aiResult = RJSignalEngine(candles);
+            updateAIPanel(aiResult, candles);
+        } else {
+            // Fallback default calculation loops if standalone components disconnect
+            updateTrend(candles);
+        }
+    } catch(error){
         console.error("RJSignalEngine Error:", error);
-        return;
     }
-    updateAIPanel(aiResult, candles);
 }
 
 function updateAIPanel(result, candles){
@@ -191,7 +232,7 @@ function updateAIPanel(result, candles){
     setText("confidence", result.confidence + "%");
     setText("reason", result.reason);
 
-    updateTrend(candles, result); // Integrated result connection pass
+    updateTrend(candles);
     updateStrength(result);
     updateTarget(candles, result);
 }
@@ -213,12 +254,12 @@ function updateTrend(candles, result){
     setText("trend", trend);
     setText("signal", signal);
 
-    // ==========================================
-    // 🚀 FULL AUTOMATION LOOP (ENGINE TO BROKER BRIDGE)
-    // ==========================================
-    if (signal === "BUY" || signal === "SELL") {
-        if (typeof RJExecutor !== 'undefined' && typeof RJExecutor.executeMT5Order === 'function') {
-            console.log(`🤖 Auto-Engine Trigger: Sending global ${signal} execution command...`);
+    // ========================================================
+    // 🚀 DYNAMIC ENGINE LINK (CALLS REAL BROKER API DIRECTLY)
+    // ========================================================
+    if(signal === "BUY" || signal === "SELL") {
+        if(typeof RJExecutor !== 'undefined' && typeof RJExecutor.executeMT5Order === 'function') {
+            console.log(`🤖 Global Core Engine: Firing automatic ${signal} request payload.`);
             RJExecutor.executeMT5Order(signal, last.close);
         }
     }
@@ -238,8 +279,8 @@ function updateStrength(result){
 function updateTarget(candles, result){
     const last = candles[candles.length-1];
     let target = last.close;
-    if(result.signal==="BUY") target = last.close * 1.005;
-    else if(result.signal==="SELL") target = last.close * 0.995;
+    if(result && result.signal==="BUY") target = last.close * 1.005;
+    else if(result && result.signal==="SELL") target = last.close * 0.995;
     setText("dynamicTarget", target.toFixed(2));
 }
 
@@ -249,17 +290,18 @@ function updateTarget(candles, result){
 
 function loadQuotes(){
     const box = document.getElementById("quotesList");
-    if(!box) return;
+    if(!box || typeof RJAssets === "undefined") return;
     box.innerHTML = "";
-    const markets = [...RJAssets.crypto, ...RJAssets.forex, ...RJAssets.commodities, ...RJAssets.indices];
     
+    const markets = [...RJAssets.crypto, ...RJAssets.forex, ...RJAssets.commodities, ...RJAssets.indices];
+
     markets.forEach(asset=>{
         const item = document.createElement("div");
         item.className = "quote-item";
         item.innerHTML = `<div><b>${asset}</b><small>Tap to Open Chart</small></div><span>›</span>`;
         item.onclick = ()=>{
             selectAsset(asset);
-            switchView("chart");
+            showPage("chart");
         };
         box.appendChild(item);
     });
@@ -277,13 +319,15 @@ function askRJAI(){
     if(!input) return;
     const question = input.value.trim();
     if(question==="") return;
+    
     const chat = document.getElementById("aiChatBox");
-
     chat.innerHTML += `<div class="user-message">👤 ${question}</div>`;
+    
     const answer = generateAIReply(question);
     chat.innerHTML += `<div class="ai-message">🤖 ${answer}</div>`;
     chat.scrollTop = chat.scrollHeight;
     input.value="";
+    trimChat();
 }
 
 function generateAIReply(question){
@@ -296,11 +340,19 @@ function generateAIReply(question){
     return "Learning... This feature will become smarter after the AI Brain module is connected.";
 }
 
+function trimChat(){
+    const chat = document.getElementById("aiChatBox");
+    if(!chat) return;
+    while(chat.children.length > 40){
+        chat.removeChild(chat.firstChild);
+    }
+}
+
 window.addEventListener("load",()=>{
     const input = document.getElementById("aiQuestion");
     if(input){
         input.addEventListener("keypress", e => {
-            if(e.key==="Enter") askRJAI();
+            if(e.key === "Enter") askRJAI();
         });
     }
 });
@@ -341,9 +393,7 @@ function updateSystemStatus(){
 
 function startBackgroundEngine(){
     safeAnalyse();
-    setInterval(()=>{
-        safeAnalyse();
-    }, RJRuntime.refreshTime);
+    setInterval(safeAnalyse, RJRuntime.refreshTime);
 }
 
 document.addEventListener("visibilitychange", ()=>{
@@ -360,12 +410,7 @@ window.addEventListener("offline", ()=>{
     updateSystemStatus();
 });
 
-window.addEventListener("load", ()=>{
-    startBackgroundEngine();
-    updateSystemStatus();
-});
-
 console.log("====================================");
-console.log("RJAnalyser AI Stable Build Loaded V5.0");
-console.log("Founder: Rajveer | Status: FULLY AUTOMATED & READY");
+console.log("RJAnalyser AI Connected Build loaded");
+console.log("Founder : Rajveer | System: OPERATIONAL");
 console.log("====================================");
