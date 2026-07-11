@@ -1,125 +1,182 @@
-/*
-=========================================
-RJAnalyser Vision Engine V3
-=========================================
-*/
+/* =========================================================
+   RJAnalyser AI
+   vision.js
+   PART 1 / 2
+========================================================= */
 
 const RJVision = {
 
-    version: "3.0",
+    version: "1.0",
 
-    image: null,
+    analyse(candles = []) {
 
-    info: null,
+        if (!candles || candles.length < 30)
+            return null;
 
-    load(file) {
+        return {
 
-        return new Promise((resolve, reject) => {
+            structure: this.marketStructure(candles),
 
-            const reader = new FileReader();
+            bos: this.breakOfStructure(candles),
 
-            reader.onload = (e) => {
+            choch: this.changeOfCharacter(candles)
 
-                const img = new Image();
+        };
 
-                img.onload = () => {
+    },
 
-                    this.image = img;
+    /* =====================================
+       Market Structure
+    ===================================== */
 
-                    this.info = {
+    marketStructure(candles) {
 
-                        name: file.name,
-                        size: file.size,
-                        width: img.width,
-                        height: img.height,
-                        type: file.type
+        const recent = candles.slice(-20);
 
-                    };
+        let highs = [];
+        let lows = [];
 
-                    resolve(this.info);
+        recent.forEach(c => {
 
-                };
+            highs.push(c.high);
 
-                img.onerror = () => {
-
-                    reject(new Error("Image could not be loaded."));
-
-                };
-
-                img.src = e.target.result;
-
-            };
-
-            reader.onerror = () => {
-
-                reject(new Error("File could not be read."));
-
-            };
-
-            reader.readAsDataURL(file);
+            lows.push(c.low);
 
         });
 
-    },
+        const lastHigh = highs[highs.length - 1];
+        const prevHigh = highs[highs.length - 2];
 
-    checkOpenCV() {
+        const lastLow = lows[lows.length - 1];
+        const prevLow = lows[lows.length - 2];
 
-        if (typeof cv === "undefined") {
+        if (
+            lastHigh > prevHigh &&
+            lastLow > prevLow
+        ) {
 
-            return {
-
-                success: false,
-
-                message: "OpenCV Not Loaded"
-
-            };
-
-        }
-
-        return {
-
-            success: true,
-
-            message: "OpenCV Loaded Successfully"
-
-        };
-
-    },
-
-    analyse() {
-
-        if (!this.info) {
-
-            return {
-
-                success: false,
-
-                message: "No image loaded."
-
-            };
+            return "HH-HL";
 
         }
 
-        return {
+        if (
+            lastHigh < prevHigh &&
+            lastLow < prevLow
+        ) {
 
-            success: true,
+            return "LH-LL";
 
-            message: "Image Ready For Analysis",
+        }
 
-            width: this.info.width,
+        return "RANGE";
 
-            height: this.info.height,
+    },
 
-            size: this.info.size,
+    /* =====================================
+       Break Of Structure
+    ===================================== */
 
-            trend: "Unknown",
+    breakOfStructure(candles) {
 
-            pattern: "Scanning...",
+        const recent = candles.slice(-10);
 
-            confidence: 0
+        const last = recent[recent.length - 1];
 
-        };
+        const highest = Math.max(
+
+            ...recent.map(c => c.high)
+
+        );
+
+        const lowest = Math.min(
+
+            ...recent.map(c => c.low)
+
+        );
+
+        if (last.close > highest)
+            return "BULLISH BOS";
+
+        if (last.close < lowest)
+            return "BEARISH BOS";
+
+        return "NONE";
+
+    },
+        /* =====================================
+       Change Of Character (CHoCH)
+    ===================================== */
+
+    changeOfCharacter(candles) {
+
+        const recent = candles.slice(-6);
+
+        const last = recent[recent.length - 1];
+        const prev = recent[recent.length - 2];
+
+        // Bullish CHoCH
+        if (
+            prev.close < prev.open &&
+            last.close > last.open &&
+            last.close > prev.high
+        ) {
+
+            return "BULLISH CHOCH";
+
+        }
+
+        // Bearish CHoCH
+        if (
+            prev.close > prev.open &&
+            last.close < last.open &&
+            last.close < prev.low
+        ) {
+
+            return "BEARISH CHOCH";
+
+        }
+
+        return "NONE";
+
+    },
+
+    /* =====================================
+       Summary
+    ===================================== */
+
+    summary(data) {
+
+        if (!data)
+            return "No Structure";
+
+        return [
+
+            "Structure : " + data.structure,
+
+            "BOS : " + data.bos,
+
+            "CHoCH : " + data.choch
+
+        ].join(" | ");
 
     }
 
 };
+
+/* =====================================
+   Global Helper
+===================================== */
+
+function runVision(candles) {
+
+    const data = RJVision.analyse(candles);
+
+    return {
+
+        data,
+
+        summary: RJVision.summary(data)
+
+    };
+
+}
