@@ -65,7 +65,7 @@ function loadQuotes(){
 
     if(typeof loadTradingView === "function"){
 
-        loadTradingView();
+        selectAsset(asset);
 
     }
 
