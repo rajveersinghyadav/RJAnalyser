@@ -1,11 +1,11 @@
 /* ==========================================
    RJAnalyser AI - Telegram Copier Bridge V4
    Safe Mobile MT5 Automation (No-Glitch)
-========================================== */
+========================================= */
 
 const RJExecutor = {
-    // Yahan BotFather se mila token paste karein
-    telegramBotToken: "YOUR_TELEGRAM_BOT_TOKEN", 
+    // Aapka active Telegram Bot Token
+    telegramBotToken: "8702078214:AAFr_iKQOCzPv1yIDrQgAJYg2Om9w0xVh_0", 
     
     // Aapki personal chat ID jo image se mili thi
     telegramChatId: "6166077949", 
