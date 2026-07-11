@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RJAnalyser AI</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Fallback Styles for Page Switching toggles */
+        .page, .app { display: none; }
+        .page.active, .app.active { display: flex !important; flex-direction: column; }
+        .app.active { display: flex !important; }
+        .settings-view { display: none; color: white; padding: 20px; }
+        .settings-view.active { display: block !important; }
+    </style>
 </head>
 <body>
 
@@ -19,7 +27,8 @@
     </button>
 </header>
 
-<!-- MAIN APP -->
+<!-- MAIN APP PAGES -->
+
 <!-- AI SCREEN -->
 <section id="aiPage" class="page">
     <div class="ai-header">
@@ -58,8 +67,47 @@
     <div id="quotesList" class="quotes-list"></div>
     <button class="add-market">➕ Add Symbol</button>
 </section>
+
+<!-- TRADE VIEW (PLACEHOLDER) -->
+<section id="tradePage" class="page" style="padding:20px; color:#fff;">
+    <h2>💼 Trading Panel</h2>
+    <p>Direct manual order execution console coming soon.</p>
+</section>
+
+<!-- HISTORY VIEW (PLACEHOLDER) -->
+<section id="historyPage" class="page" style="padding:20px; color:#fff;">
+    <h2>🕒 Order History</h2>
+    <p>Logs of your automated and manual triggers will appear here.</p>
+</section>
+
+<!-- SETTINGS VIEW -->
+<section id="settingsPage" class="page" style="padding: 20px;">
+    <!-- ==========================================
+         🔌 BROKER API SETTINGS PANEL
+    ========================================== -->
+    <div class="settings-card" style="padding: 20px; background: #1e222d; border-radius: 8px; color: #fff; font-family: sans-serif; border: 1px solid #2a2e39;">
+        <h3 style="margin-top: 0;">🔌 Broker API Automation Link</h3>
+        <div style="margin-top: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">Select Platform:</label>
+            <select id="brokerPlatform" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
+                <option value="generic_webhook">Generic Webhook / Custom App</option>
+                <option value="deriv">Deriv / Binary.com API</option>
+                <option value="pocket_option">Pocket Option Token</option>
+            </select>
+
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">API Key / Token:</label>
+            <input type="password" id="brokerApiKey" placeholder="Yahan apni API Key ya Token dalein" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
+
+            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">Server URL (Optional):</label>
+            <input type="text" id="brokerUrl" placeholder="https://api.yourbroker.com/v1" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
+
+            <button onclick="saveBrokerSettings()" style="background: #2962ff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold;">Save & Link Account</button>
+        </div>
+    </div>
+</section>
   
-<main class="app">
+<!-- CHART & ANALYSIS VIEW (MAIN APP) -->
+<main id="chartPage" class="app active">
     <!-- CHART AREA -->
     <section class="chart-section">
         <div class="timeframes">
@@ -108,40 +156,17 @@
             <b>AI Reason</b>
             <p id="reason">Waiting for market analysis...</p>
         </div>
-
-        <!-- ==========================================
-             🔌 BROKER API SETTINGS PANEL (ADDED HERE)
-        ========================================== -->
-        <div class="settings-card" style="padding: 20px; background: #1e222d; border-radius: 8px; color: #fff; margin-top: 20px; font-family: sans-serif; border: 1px solid #2a2e39;">
-            <h3 style="margin-top: 0;">🔌 Broker API Automation Link</h3>
-            <div style="margin-top: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">Select Platform:</label>
-                <select id="brokerPlatform" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
-                    <option value="generic_webhook">Generic Webhook / Custom App</option>
-                    <option value="deriv">Deriv / Binary.com API</option>
-                    <option value="pocket_option">Pocket Option Token</option>
-                </select>
-
-                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">API Key / Token:</label>
-                <input type="password" id="brokerApiKey" placeholder="Yahan apni API Key ya Token dalein" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
-
-                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">Server URL (Optional):</label>
-                <input type="text" id="brokerUrl" placeholder="https://api.yourbroker.com/v1" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
-
-                <button onclick="saveBrokerSettings()" style="background: #2962ff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold;">Save & Link Account</button>
-            </div>
-        </div>
     </section>
 </main>
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-    <button onclick="showPage('quotes')">📋<span>Quotes</span></button>
-    <button onclick="showPage('chart')">📈<span>Chart</span></button>
-    <button>💼<span>Trade</span></button>
-    <button>🕒<span>History</span></button>
-    <button>⚙️<span>Settings</span></button>
-    <button onclick="showPage('ai')"><span class="nav-icon">🤖</span><span>AI</span></button>
+    <button onclick="switchView('quotes')">📋<span>Quotes</span></button>
+    <button onclick="switchView('chart')">📈<span>Chart</span></button>
+    <button onclick="switchView('trade')">💼<span>Trade</span></button>
+    <button onclick="switchView('history')">🕒<span>History</span></button>
+    <button onclick="switchView('settings')">⚙️<span>Settings</span></button>
+    <button onclick="switchView('ai')"><span class="nav-icon">🤖</span><span>AI</span></button>
 </nav>
 
 <!-- EXISTING FILES -->
@@ -163,9 +188,22 @@
 <script src="script.js?v=3"></script>
 
 <!-- ==========================================
-     ⚙️ UI SETTINGS SAVER SCRIPT
+     ⚙️ CORE NAVIGATION & STORAGE HANDLER
 ========================================== -->
 <script>
+function switchView(viewName) {
+    // Sabhi structural views ko hide karein
+    document.querySelectorAll('.page, .app').forEach(el => {
+        el.classList.remove('active');
+    });
+    
+    // Sirf targeted view ko active display karein
+    const target = document.getElementById(viewName + 'Page');
+    if(target) {
+        target.classList.add('active');
+    }
+}
+
 function saveBrokerSettings() {
     const platform = document.getElementById('brokerPlatform').value;
     const apiKey = document.getElementById('brokerApiKey').value;
