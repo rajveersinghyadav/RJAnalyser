@@ -1,118 +1,104 @@
-/* ======================================
-   RJAnalyser Quotes Module V1
-====================================== */
-
+/* =====================================================
+   RJAnalyser AI V5
+   market/quotes.js
+===================================================== */
 
 function loadQuotes(){
 
-    let box = document.getElementById("quotesList");
+    const box = document.getElementById("quotesList");
 
     if(!box) return;
 
-
     box.innerHTML = "";
 
+    const markets = [
 
-    let markets = [];
+        ...RJAssets.crypto,
 
+        ...RJAssets.forex,
 
-    if(typeof RJAssets !== "undefined"){
+        ...RJAssets.commodities,
 
-        markets = [
-            ...RJAssets.crypto,
-            ...RJAssets.forex,
-            ...RJAssets.commodities,
-            ...RJAssets.indices
-        ];
+        ...RJAssets.indices
 
-    }
-
+    ];
 
     markets.forEach(asset=>{
 
+        const item = document.createElement("div");
 
-        let item=document.createElement("div");
+        item.className = "quote-item";
 
+        item.innerHTML = `
 
-        item.className="quote-item";
+            <div>
 
+                <b>${asset}</b>
 
-        item.innerHTML=`
+                <small>Tap to Open Chart</small>
 
-        <div>
+            </div>
 
-        <b>${asset}</b>
-
-        <small>Live Market</small>
-
-        </div>
-
-        <span>›</span>
+            <span>›</span>
 
         `;
 
+        item.onclick = ()=>{
 
-        item.onclick=function(){
+            if(typeof selectAsset==="function"){
 
-    RJState.asset = asset;
+                selectAsset(asset);
 
-    document.getElementById("selectedAsset").innerHTML =
-    asset + " ▼";
+            }
 
+            if(typeof showPage==="function"){
 
-    showPage("chart");
+                showPage("chart");
 
+            }
 
-    if(typeof loadTradingView === "function"){
-
-        selectAsset(asset);
-
-    }
-
-};
-
+        };
 
         box.appendChild(item);
 
-
     });
-
 
 }
 
-
+/* ======================================
+   SEARCH
+====================================== */
 
 function searchQuotes(){
 
+    const input=document.getElementById("quoteSearch");
 
-    let input=document.getElementById("quoteSearch");
+    if(!input) return;
 
-    let value=input.value.toUpperCase();
-
+    const value=input.value.toUpperCase();
 
     document.querySelectorAll(".quote-item")
     .forEach(item=>{
 
+        item.style.display=
 
-        if(item.innerText.includes(value)){
+        item.innerText.toUpperCase().includes(value)
 
-            item.style.display="flex";
+        ?
 
-        }
+        "flex"
 
-        else{
+        :
 
-            item.style.display="none";
-
-        }
-
+        "none";
 
     });
 
-
 }
 
-
+/* ======================================
+   START
+====================================== */
 
 window.addEventListener("load",()=>{
 
