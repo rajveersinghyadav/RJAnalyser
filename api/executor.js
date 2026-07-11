@@ -4,17 +4,17 @@
 ========================================== */
 
 const RJExecutor = {
-    // Yeh dono cheezein sirf 2 minute me Telegram se mil jaati hain
+    // Yahan BotFather se mila token paste karein
     telegramBotToken: "YOUR_TELEGRAM_BOT_TOKEN", 
-    telegramChatId: "YOUR_TELEGRAM_CHAT_ID",
-    isLive: true,                           // Automation ON
+    
+    // Aapki personal chat ID jo image se mili thi
+    telegramChatId: "6166077949", 
+    
+    isLive: true,                           
     currentPosition: null,
     symbol: "BTCUSD"
 };
 
-// ==========================================
-// Send Smart Signal To Telegram Channel
-// ==========================================
 RJExecutor.executeMT5Order = async function(decision, currentPrice) {
     if (!this.isLive) return;
     if (this.currentPosition !== null) return;
@@ -25,11 +25,9 @@ RJExecutor.executeMT5Order = async function(decision, currentPrice) {
 
     if (side === "") return;
 
-    // Risk Control Settings (Chhota Loss / Bada Profit)
     let stopLoss = side === "BUY" ? currentPrice - 200 : currentPrice + 200;  
     let takeProfit = side === "BUY" ? currentPrice + 400 : currentPrice - 400; 
 
-    // Perfect Format jo Telegram Copier Bots automatic samajhte hain
     let signalMessage = `📢 **RJAnalyser AI SIGNAL**\n\n` +
                         `🔹 **Action:** ${side}\n` +
                         `🔹 **Asset:** ${this.symbol}\n` +
