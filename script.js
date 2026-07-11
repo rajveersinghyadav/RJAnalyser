@@ -1,202 +1,284 @@
-/* ==========================================
+/* =====================================================
    RJAnalyser AI
-   Main Script V3 - Real Candle Engine
-========================================== */
+   SCRIPT.JS
+   PART 1 - FOUNDATION
+===================================================== */
 
-window.onload = async function () {
+/* ======================================
+   APP START
+====================================== */
 
-    try{
+window.addEventListener("load", () => {
 
-        // Load AI Memory
-        if(typeof RJMemory !== "undefined"){
-            RJMemory.loadFromDisk();
-        }
+    initializeApp();
 
-        // Build Asset Lists
-        loadMarket();
+});
 
-        // Load Default Chart
-        loadTradingView();
+/* ======================================
+   INITIALIZE
+====================================== */
 
-        // Run First Analysis
-        await analyseMarket();
+function initializeApp(){
 
-    }
+    loadQuotes();
 
-    catch(error){
+    loadTradingView(
+        getTVSymbol(RJState.asset),
+        RJState.timeframe.replace("m","").replace("H","60").replace("D","1D")
+    );
 
-        console.error("RJAnalyser Startup Error:", error);
+    initTimeframes();
 
-    }
+    updateSelectedAsset();
 
-};
+    showPage("chart");
 
-/* ===========================
-   Load Market
-=========================== */
-
-function loadMarket(){
-
-    createList("forexList",RJAssets.forex);
-
-    createList("cryptoList",RJAssets.crypto);
-
-    createList("commodityList",RJAssets.commodities);
-
-    createList("indicesList",RJAssets.indices);
+    analyseMarket();
 
 }
 
+/* ======================================
+   UPDATE TOP BAR
+====================================== */
 
-/* ===========================
-   Create List
-=========================== */
+function updateSelectedAsset(){
 
-function createList(id,list){
+    const btn = document.getElementById("selectedAsset");
 
-    const box=document.getElementById(id);
+    if(btn){
 
-    if(!box) return;
+        btn.innerHTML = RJState.asset + " ▼";
 
-    box.innerHTML="";
-
-    list.forEach(asset=>{
-
-        const div=document.createElement("div");
-
-        div.className="asset";
-
-        div.innerHTML=asset;
-
-
-        if(asset==RJState.asset){
-
-            div.classList.add("active");
-
-        }
-
-
-        div.onclick=function(){
-
-            selectAsset(asset);
-
-        };
-
-
-        box.appendChild(div);
-
-    });
+    }
 
 }
 
+/* ======================================
+   TRADINGVIEW SYMBOL
+====================================== */
 
-/* ===========================
-   Select Asset
-=========================== */
+function getTVSymbol(asset){
 
-async function selectAsset(asset){
+    if(RJAssets.forex.includes(asset))
+        return "FX:" + asset;
+
+    if(RJAssets.commodities.includes(asset))
+        return "OANDA:" + asset;
+
+    if(RJAssets.indices.includes(asset))
+        return "FOREXCOM:" + asset;
+
+    return "BINANCE:" + asset;
+
+}
+
+/* ======================================
+   CHANGE ASSET
+====================================== */
+
+function selectAsset(asset){
 
     RJState.asset = asset;
 
-    const selected = document.getElementById("selectedAsset");
+    updateSelectedAsset();
 
-    if(selected){
+    loadTradingView(
 
-        selected.innerHTML = asset;
+        getTVSymbol(asset),
 
-    }
+        RJState.timeframe
 
+    );
 
-    removeSelection();
-
-    highlight(asset);
-
-
-    let symbol="BINANCE:"+asset;
-
-
-    if(RJAssets.forex.includes(asset)){
-
-        symbol="FX:"+asset;
-
-    }
-
-
-    if(RJAssets.commodities.includes(asset)){
-
-        symbol="OANDA:"+asset;
-
-    }
-
-
-    if(RJAssets.indices.includes(asset)){
-
-        symbol="FOREXCOM:"+asset;
-
-    }
-
-
-    loadTradingView(symbol, RJState.timeframe);
-
-await analyseMarket();
+    analyseMarket();
 
 }
 
+/* ======================================
+   TIMEFRAME BUTTONS
+====================================== */
 
+function initTimeframes(){
 
-/* ===========================
-   Highlight
-=========================== */
+    document
+    .querySelectorAll(".timeframes button")
+    .forEach(btn=>{
 
-function removeSelection(){
+        btn.onclick = function(){
 
-    document.querySelectorAll(".asset")
-    .forEach(item=>{
+            document
+            .querySelectorAll(".timeframes button")
+            .forEach(b=>b.classList.remove("active"));
 
-        item.classList.remove("active");
+            this.classList.add("active");
+
+            RJState.timeframe = this.innerText;
+
+            loadTradingView(
+
+                getTVSymbol(RJState.asset),
+
+                RJState.timeframe
+
+            );
+
+            analyseMarket();
+
+        };
 
     });
 
 }
 
+/* ======================================
+   PAGE NAVIGATION
+====================================== */
 
-function highlight(asset){
+function showPage(page){
 
-    document.querySelectorAll(".asset")
-    .forEach(item=>{
+    document
+    .querySelectorAll(".page")
+    .forEach(p=>p.style.display="none");
 
-        if(item.innerHTML===asset){
+    document
+    .querySelector(".chart-section")
+    .style.display="none";
 
-            item.classList.add("active");
+    document
+    .querySelector(".ai-panel")
+    .style.display="none";
+
+    switch(page){
+
+        case "quotes":
+
+            document
+            .getElementById("quotesPage")
+            .style.display="block";
+
+        break;
+
+        case "ai":
+
+            document
+            .getElementById("aiPage")
+            .style.display="block";
+
+        break;
+
+        default:
+
+            document
+            .querySelector(".chart-section")
+            .style.display="flex";
+
+            document
+            .querySelector(".ai-panel")
+            .style.display="block";
+
+    }
+
+}
+
+/* ======================================
+   BOTTOM NAVIGATION
+====================================== */
+
+document
+.querySelectorAll(".bottom-nav button")
+.forEach((btn,index)=>{
+
+    btn.onclick = function(){
+
+        document
+        .querySelectorAll(".bottom-nav button")
+        .forEach(b=>b.classList.remove("active"));
+
+        this.classList.add("active");
+
+        switch(index){
+
+            case 0:
+
+                showPage("quotes");
+
+            break;
+
+            case 1:
+
+                showPage("chart");
+
+            break;
+
+            case 5:
+
+                showPage("ai");
+
+            break;
+
+            default:
+
+                alert("Coming Soon");
 
         }
 
-    });
+    };
+
+});
+/* =====================================================
+   RJAnalyser AI
+   SCRIPT.JS
+   PART 2 - LIVE MARKET ENGINE
+===================================================== */
+
+/* ======================================
+   BINANCE INTERVAL
+====================================== */
+
+function getBinanceInterval(tf){
+
+    switch(tf){
+
+        case "1m": return "1m";
+        case "5m": return "5m";
+        case "15m": return "15m";
+        case "1H": return "1h";
+        case "4H": return "4h";
+        case "1D": return "1d";
+
+        default:
+            return "15m";
+
+    }
 
 }
 
+/* ======================================
+   LIVE CANDLE DOWNLOAD
+====================================== */
 
-
-/* ==========================================
-   Binance Live Candle Data
-========================================== */
-
-
-async function getCandles(symbol="BTCUSDT"){
+async function getCandles(){
 
     try{
 
+        if(!RJState.asset.includes("USDT")){
 
-        let url =
-        `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=5m&limit=50`;
+            return [];
 
+        }
 
-        let response = await fetch(url);
+        const url =
+        `https://api.binance.com/api/v3/klines?symbol=${RJState.asset}&interval=${getBinanceInterval(RJState.timeframe)}&limit=100`;
 
+        const response = await fetch(url);
 
-        let data = await response.json();
+        if(!response.ok){
 
+            throw new Error("Network Error");
 
+        }
+
+        const data = await response.json();
 
         return data.map(c=>({
 
@@ -212,380 +294,649 @@ async function getCandles(symbol="BTCUSDT"){
 
         }));
 
+    }
+
+    catch(error){
+
+        console.error("Binance Error:",error);
+
+        updateOfflineStatus();
+
+        return [];
+
+    }
+
+}
+
+/* ======================================
+   OFFLINE STATUS
+====================================== */
+
+function updateOfflineStatus(){
+
+    setText("trend","Offline");
+
+    setText("signal","WAIT");
+
+    setText("confidence","0%");
+
+    setText("aiSignal","WAIT");
+
+    setText("signalStrength","0%");
+
+    setText("buyerPower","0%");
+
+    setText("sellerPower","0%");
+
+    setText("reason","Unable to fetch live market data.");
+
+}
+
+/* ======================================
+   SAFE HTML UPDATE
+====================================== */
+
+function setText(id,value){
+
+    const el=document.getElementById(id);
+
+    if(el){
+
+        el.innerHTML=value;
+
+    }
+
+}
+
+/* ======================================
+   AUTO REFRESH
+====================================== */
+
+function startLiveEngine(){
+
+    analyseMarket();
+
+    setInterval(()=>{
+
+        analyseMarket();
+
+    },30000);
+
+}
+/* =====================================================
+   RJAnalyser AI
+   SCRIPT.JS
+   PART 3 - AI ENGINE CONNECTION
+===================================================== */
+
+/* ======================================
+   MAIN MARKET ANALYSIS
+====================================== */
+
+async function analyseMarket(){
+
+    const candles = await getCandles();
+
+    if(!candles || candles.length < 20){
+
+        updateOfflineStatus();
+
+        return;
+
+    }
+
+    let aiResult;
+
+    try{
+
+        aiResult = RJSignalEngine(candles);
 
     }
 
     catch(error){
 
-        console.log(error);
+        console.error("RJSignalEngine Error:", error);
+
+        return;
+
+    }
+
+    updateAIPanel(aiResult, candles);
+
+}
+
+/* ======================================
+   UPDATE AI PANEL
+====================================== */
+
+function updateAIPanel(result,candles){
+
+    setText("aiSignal", result.signal);
+
+    setText("signalStrength", result.strength + "%");
+
+    setText("buyerPower", result.buyer + "%");
+
+    setText("sellerPower", result.seller + "%");
+
+    setText("confidence", result.confidence + "%");
+
+    setText("reason", result.reason);
+
+    updateTrend(candles);
+
+    updateStrength(result);
+
+    updateTarget(candles,result);
+
+}
+
+/* ======================================
+   TREND
+====================================== */
+
+function updateTrend(candles){
+
+    const last = candles[candles.length-1];
+
+    const prev = candles[candles.length-2];
+
+    let trend="SIDEWAYS";
+
+    let signal="WAIT";
+
+    if(last.close > prev.close){
+
+        trend="BULLISH";
+
+        signal="BUY";
+
+    }
+
+    else if(last.close < prev.close){
+
+        trend="BEARISH";
+
+        signal="SELL";
+
+    }
+
+    setText("trend",trend);
+
+    setText("signal",signal);
+
+}
+
+/* ======================================
+   BUYER SELLER STRENGTH
+====================================== */
+
+function updateStrength(result){
+
+    let buyer="Weak";
+
+    let seller="Weak";
+
+    if(result.buyer>=70) buyer="Very Strong";
+    else if(result.buyer>=55) buyer="Strong";
+
+    if(result.seller>=70) seller="Very Strong";
+    else if(result.seller>=55) seller="Strong";
+
+    setText("buyerStrength",buyer);
+
+    setText("sellerStrength",seller);
+
+}
+
+/* ======================================
+   DYNAMIC TARGET
+====================================== */
+
+function updateTarget(candles,result){
+
+    const last = candles[candles.length-1];
+
+    let target = last.close;
+
+    if(result.signal==="BUY"){
+
+        target = last.close * 1.005;
+
+    }
+
+    else if(result.signal==="SELL"){
+
+        target = last.close * 0.995;
+
+    }
+
+    setText("dynamicTarget", target.toFixed(2));
+
+}
+/* =====================================================
+   RJAnalyser AI
+   SCRIPT.JS
+   PART 4 - QUOTES + AI ASSISTANT
+===================================================== */
+
+/* ======================================
+   LOAD QUOTES
+====================================== */
+
+function loadQuotes(){
+
+    const box = document.getElementById("quotesList");
+
+    if(!box) return;
+
+    box.innerHTML = "";
+
+    const markets = [
+
+        ...RJAssets.crypto,
+
+        ...RJAssets.forex,
+
+        ...RJAssets.commodities,
+
+        ...RJAssets.indices
+
+    ];
+
+    markets.forEach(asset=>{
+
+        const item = document.createElement("div");
+
+        item.className = "quote-item";
+
+        item.innerHTML = `
+
+            <div>
+
+                <b>${asset}</b>
+
+                <small>Tap to Open Chart</small>
+
+            </div>
+
+            <span>›</span>
+
+        `;
+
+        item.onclick = ()=>{
+
+            selectAsset(asset);
+
+            showPage("chart");
+
+        };
+
+        box.appendChild(item);
+
+    });
+
+}
+
+/* ======================================
+   SEARCH QUOTES
+====================================== */
+
+function searchQuotes(){
+
+    const value = document
+        .getElementById("quoteSearch")
+        .value
+        .toUpperCase();
+
+    document
+        .querySelectorAll(".quote-item")
+        .forEach(item=>{
+
+            item.style.display =
+                item.innerText.toUpperCase().includes(value)
+                ? "flex"
+                : "none";
+
+        });
+
+}
+
+/* ======================================
+   AI CHAT
+====================================== */
+
+function askRJAI(){
+
+    const input = document.getElementById("aiQuestion");
+
+    if(!input) return;
+
+    const question = input.value.trim();
+
+    if(question==="") return;
+
+    const chat = document.getElementById("aiChatBox");
+
+    chat.innerHTML += `
+
+        <div class="user-message">
+
+            👤 ${question}
+
+        </div>
+
+    `;
+
+    const answer = generateAIReply(question);
+
+    chat.innerHTML += `
+
+        <div class="ai-message">
+
+            🤖 ${answer}
+
+        </div>
+
+    `;
+
+    chat.scrollTop = chat.scrollHeight;
+
+    input.value="";
+
+}
+
+/* ======================================
+   SIMPLE AI REPLY
+====================================== */
+
+function generateAIReply(question){
+
+    const q = question.toLowerCase();
+
+    if(q.includes("buy"))
+
+        return "Current market data is being analyzed before confirming a BUY opportunity.";
+
+    if(q.includes("sell"))
+
+        return "RJ AI is checking seller pressure before confirming a SELL.";
+
+    if(q.includes("trend"))
+
+        return document.getElementById("trend")?.innerText || "Trend unavailable.";
+
+    if(q.includes("signal"))
+
+        return document.getElementById("aiSignal")?.innerText || "Signal unavailable.";
+
+    if(q.includes("confidence"))
+
+        return document.getElementById("confidence")?.innerText || "Confidence unavailable.";
+
+    return "Learning... This feature will become smarter after the AI Brain module is connected.";
+
+}
+
+/* ======================================
+   KEEP CHAT SIZE LIMITED
+====================================== */
+
+function trimChat(){
+
+    const chat = document.getElementById("aiChatBox");
+
+    if(!chat) return;
+
+    while(chat.children.length > 40){
+
+        chat.removeChild(chat.firstChild);
 
     }
 
 }
 
+/* ======================================
+   ENTER KEY SUPPORT
+====================================== */
 
+window.addEventListener("load",()=>{
 
-/* ==========================================
-   AI Candle Analysis Engine
-========================================== */
+    const input = document.getElementById("aiQuestion");
 
+    if(input){
 
-async function analyseMarket(){
+        input.addEventListener("keypress",e=>{
 
-    let asset = RJState.asset;
+            if(e.key==="Enter"){
 
-    // Convert selected asset to Binance symbol
-    if(!asset.includes("USDT")){
+                askRJAI();
 
-        if(asset === "BTCUSD") asset = "BTCUSDT";
-        else if(asset === "ETHUSD") asset = "ETHUSDT";
-        else asset = "BTCUSDT";
+            }
+
+        });
 
     }
 
-
-
-const candles = await getCandles(asset);
-
-if(!candles || candles.length < 50){
-
-    return;
-
-}
-
-    console.warn("Not enough candle data.");
-
-    return;
-
-}
-   const strength = buyerSellerEngine(candles);
-
-// Future Dashboard Binding
-// document.getElementById("buyerStrength").innerHTML = strength.buyer + "%";
-// document.getElementById("sellerStrength").innerHTML = strength.seller + "%";
-// document.getElementById("marketControl").innerHTML = strength.control;
-if(!candles) return;
-
-
-
-// AI Core Analysis
-
-const ai = RJEngine.analyse(candles);
-
-if(!ai){
-
-    return;
-
-}
-
-const last = candles.at(-1);
-
-const trend = ai.features.momentum;
-
-const signal = ai.brain
-    ? ai.brain.finalDecision
-    : ai.pattern.signal;
-
-
-
-
-
-
-
-const confidence = ai.confidence;
-
-
-
-document.getElementById("trend").innerHTML =
-ai.features.momentum;
-
-document.getElementById("signal").innerHTML =
-ai.brain.finalDecision;
-
-document.getElementById("confidence").innerHTML =
-ai.confidence + "%";
-
-
-let volatility = 0;
-
-candles.forEach(c => {
-    volatility += (c.high - c.low);
 });
+/* =====================================================
+   RJAnalyser AI
+   SCRIPT.JS
+   PART 5 - FINAL STABLE BUILD
+===================================================== */
 
-volatility = volatility / candles.length;
+/* ======================================
+   APP STATUS
+====================================== */
 
+const RJRuntime = {
 
-let entry = last.close;
+    online: true,
 
-let stopLoss;
-let target1;
-let target2;
-let target3;
+    lastUpdate: null,
 
+    refreshTime: 30000,
 
-if(signal === "BUY"){
-
-    stopLoss = entry - volatility;
-
-    target1 = entry + volatility;
-
-    target2 = entry + (volatility * 2);
-
-    target3 = entry + (volatility * 3);
-
-}
-
-
-if(signal === "SELL"){
-
-    stopLoss = entry + volatility;
-
-    target1 = entry - volatility;
-
-    target2 = entry - (volatility * 2);
-
-    target3 = entry - (volatility * 3);
-
-}
-
-
-document.getElementById("sl").innerHTML =
-stopLoss.toFixed(2);
-
-
-document.getElementById("tp1").innerHTML =
-target1.toFixed(2);
-
-
-document.getElementById("tp2").innerHTML =
-target2.toFixed(2);
-
-
-document.getElementById("tp3").innerHTML =
-target3.toFixed(2);
-
-
-document.getElementById("move").innerHTML =
-volatility.toFixed(2)+" Points";
-
-document.getElementById("reason").innerHTML =
-
-`Pattern: ${ai.pattern.pattern}
-<br>
-Memory: ${ai.memory.recommendation}
-<br>
-Brain: ${ai.brain.finalDecision}
-<br>
-Risk: ${ai.brain.riskLevel}`;
-
-
-
-}
-
-
-
-
-
-/* ==========================================
-   Timeframe Change
-========================================== */
-
-
-document.querySelectorAll(".timeframes button")
-.forEach(button=>{
-
-
-button.onclick=function(){
-
-
-document.querySelectorAll(".timeframes button")
-.forEach(btn=>btn.classList.remove("active"));
-
-
-this.classList.add("active");
-
-
-RJState.timeframe=this.innerText;
-
-
-selectAsset(RJState.asset);
-
-
+    analysing: false
 
 };
 
+/* ======================================
+   SAFE ANALYSIS
+====================================== */
 
-});
+async function safeAnalyse(){
 
+    if(RJRuntime.analysing) return;
 
-
-/* Auto Refresh */
-
-setInterval(async ()=>{
+    RJRuntime.analysing = true;
 
     try{
 
         await analyseMarket();
 
+        RJRuntime.online = true;
+
+        RJRuntime.lastUpdate = new Date();
+
+        updateSystemStatus();
+
     }
 
     catch(error){
 
-        console.error("Auto Analysis Error:", error);
+        console.error(error);
+
+        RJRuntime.online = false;
+
+        updateSystemStatus();
 
     }
 
-},30000);
-/* ==========================================
-   RJAnalyser Buyer Seller Strength Engine V1
-========================================== */
-
-function buyerSellerEngine(candles){
-
-    let buyerScore = 0;
-    let sellerScore = 0;
-
-
-    // Last 10 candles analysis
-
-    let recentCandles = candles.slice(-10);
-
-
-    recentCandles.forEach(candle => {
-
-
-        let body = candle.close - candle.open;
-
-        let range = candle.high - candle.low;
-
-
-        if(range === 0) return;
-
-
-        let strength = Math.abs(body) / range * 100;
-
-
-        // Buyer pressure
-
-        if(body > 0){
-
-            buyerScore += strength;
-
-        }
-
-
-        // Seller pressure
-
-        if(body < 0){
-
-            sellerScore += strength;
-
-        }
-
-
-        // Close position analysis
-
-        if(candle.close > candle.open){
-
-            buyerScore += 5;
-
-        }
-        else{
-
-            sellerScore += 5;
-
-        }
-
-
-    });
-
-
-
-    // Convert to percentage
-
-    let total = buyerScore + sellerScore;
-
-
-    if(total === 0){
-
-        total = 1;
-
-    }
-
-
-    buyerScore =
-    Math.round((buyerScore / total) * 100);
-
-
-    sellerScore =
-    Math.round((sellerScore / total) * 100);
-
-
-
-    let control="NEUTRAL";
-
-
-    if(buyerScore > sellerScore){
-
-        control="BUYERS DOMINATING";
-
-    }
-
-
-    if(sellerScore > buyerScore){
-
-        control="SELLERS DOMINATING";
-
-    }
-
-
-
-    return {
-
-        buyer: buyerScore,
-
-        seller: sellerScore,
-
-        control: control
-
-    };
-
+    RJRuntime.analysing = false;
 
 }
+
 /* ======================================
-   RJAnalyser App Navigation V1
+   SYSTEM STATUS
 ====================================== */
 
+function updateSystemStatus(){
 
-function showPage(page){
+    const learning = document.getElementById("learningStatus");
 
-    // Hide all pages
-    document.getElementById("quotesPage").style.display = "none";
-    document.getElementById("aiPage").style.display = "none";
+    const data = document.getElementById("dataStatus");
 
-    // Show Dashboard
-    document.querySelector(".app").style.display = "flex";
+    if(learning){
 
-    if(page==="quotes"){
+        learning.innerHTML =
 
-        document.querySelector(".app").style.display = "none";
-        document.getElementById("quotesPage").style.display = "block";
+        RJRuntime.online ?
 
-    }
+        "🟢 AI Monitoring Live Market"
 
-    if(page==="chart"){
+        :
 
-        document.querySelector(".app").style.display = "flex";
+        "🔴 Connection Lost";
 
     }
 
-    if(page==="ai"){
+    if(data){
 
-        document.querySelector(".app").style.display = "none";
-        document.getElementById("aiPage").style.display = "block";
+        data.innerHTML =
+
+        RJRuntime.online ?
+
+        "Receiving Live Candles"
+
+        :
+
+        "Waiting For Data";
 
     }
 
 }
 
+/* ======================================
+   AUTO REFRESH
+====================================== */
+
+function startBackgroundEngine(){
+
+    safeAnalyse();
+
+    setInterval(()=>{
+
+        safeAnalyse();
+
+    },RJRuntime.refreshTime);
+
 }
+
+/* ======================================
+   PAGE VISIBILITY
+====================================== */
+
+document.addEventListener(
+
+    "visibilitychange",
+
+    ()=>{
+
+        if(!document.hidden){
+
+            safeAnalyse();
+
+        }
+
+    }
+
+);
+
+/* ======================================
+   NETWORK CHANGE
+====================================== */
+
+window.addEventListener(
+
+    "online",
+
+    ()=>{
+
+        RJRuntime.online = true;
+
+        safeAnalyse();
+
+    }
+
+);
+
+window.addEventListener(
+
+    "offline",
+
+    ()=>{
+
+        RJRuntime.online = false;
+
+        updateSystemStatus();
+
+    }
+
+);
+
+/* ======================================
+   FINAL START
+====================================== */
+
+window.addEventListener(
+
+    "load",
+
+    ()=>{
+
+        startBackgroundEngine();
+
+        updateSystemStatus();
+
+    }
+
+);
+
+/* ======================================
+   VERSION
+====================================== */
+
+console.log(
+
+"===================================="
+
+);
+
+console.log(
+
+"RJAnalyser AI Stable Build Loaded"
+
+);
+
+console.log(
+
+"Version : 5.0"
+
+);
+
+console.log(
+
+"Founder : Rajveer"
+
+);
+
+console.log(
+
+"Status : READY"
+
+);
+
+console.log(
+
+"====================================");
