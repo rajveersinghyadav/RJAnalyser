@@ -1,57 +1,74 @@
 /* ==========================================
-   RJAnalyser AI - Telegram Copier Bridge V4
-   Safe Mobile MT5 Automation (No-Glitch)
-========================================= */
+   RJAnalyser AI - Dynamic API Linker V5
+   Direct Broker Automation (No Third-Party Bots)
+========================================== */
 
 const RJExecutor = {
-    // Aapka active Telegram Bot Token
-    telegramBotToken: "8702078214:AAFr_iKQOCzPv1yIDrQgAJYg2Om9w0xVh_0", 
-    
-    // Aapki personal chat ID jo image se mili thi
-    telegramChatId: "6166077949", 
-    
-    isLive: true,                           
+    isLive: true,
     currentPosition: null,
-    symbol: "BTCUSD"
+    symbol: "BTCUSD",
+    platform: localStorage.getItem('rj_broker_platform') || 'generic_webhook',
+    apiKey: localStorage.getItem('rj_broker_api_key') || '',
+    brokerUrl: localStorage.getItem('rj_broker_url') || ''
 };
 
+// UI se dynamic settings reload karne ke liye function
+RJExecutor.loadDynamicSettings = function() {
+    this.platform = localStorage.getItem('rj_broker_platform');
+    this.apiKey = localStorage.getItem('rj_broker_api_key');
+    this.brokerUrl = localStorage.getItem('rj_broker_url');
+    console.log(`🔄 RJExecutor: Linked to ${this.platform} successfully.`);
+};
+
+// Automatic Trade Execution Pipeline
 RJExecutor.executeMT5Order = async function(decision, currentPrice) {
-    if (!this.isLive) return;
+    // Agar setting me key nahi dali hai toh execution stop rahega
+    if (!this.isLive || !this.apiKey) {
+        console.log("⚠️ RJExecutor: Automation is live but API Key/Token is missing in settings.");
+        return;
+    }
+    
+    // Position management logic (Glitch protection)
     if (this.currentPosition !== null) return;
 
     let side = "";
     if (decision === "BUY" || decision === "STRONG BUY") side = "BUY";
     if (decision === "SELL" || decision === "STRONG SELL") side = "SELL";
-
     if (side === "") return;
 
-    let stopLoss = side === "BUY" ? currentPrice - 200 : currentPrice + 200;  
-    let takeProfit = side === "BUY" ? currentPrice + 400 : currentPrice - 400; 
+    console.log(`🚀 RJExecutor: Routing ${side} order directly to ${this.platform}...`);
 
-    let signalMessage = `📢 **RJAnalyser AI SIGNAL**\n\n` +
-                        `🔹 **Action:** ${side}\n` +
-                        `🔹 **Asset:** ${this.symbol}\n` +
-                        `🔹 **Entry:** ${currentPrice}\n` +
-                        `🛑 **SL:** ${stopLoss.toFixed(2)}\n` +
-                        `🎯 **TP:** ${takeProfit.toFixed(2)}`;
+    let payload = {
+        token: this.apiKey,
+        action: side,
+        symbol: this.symbol,
+        amount: 1.0, 
+        price: currentPrice
+    };
 
-    console.log(`🚀 RJExecutor: Sending Mobile Signal to Telegram...`);
+    let targetUrl = this.brokerUrl || "https://api.rj-bridge-fallback.com/trade";
+
+    if (this.platform === "deriv") {
+        targetUrl = "https://api.deriv.com/v1/trade"; 
+    }
 
     try {
-        const url = `https://api.telegram.org/bot${this.telegramBotToken}/sendMessage`;
-        await fetch(url, {
+        const response = await fetch(targetUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: this.telegramChatId,
-                text: signalMessage,
-                parse_mode: "Markdown"
-            })
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.apiKey}`
+            },
+            body: JSON.stringify(payload)
         });
-        
-        console.log("✅ Mobile Signal posted to Telegram Group!");
-        this.currentPosition = { side: side, status: "OPEN" };
+
+        if (response.ok) {
+            console.log(`✅ Trade executed successfully on ${this.platform}!`);
+            this.currentPosition = { side: side, status: "OPEN" };
+        } else {
+            console.error("❌ Broker API rejected the order. Check Token permissions.");
+        }
     } catch (error) {
-        console.error("❌ Telegram Bridge Safety Triggered:", error);
+        console.error("❌ Network Pipeline Error while reaching Broker API:", error);
     }
 };
