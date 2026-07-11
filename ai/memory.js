@@ -1,368 +1,182 @@
-/* ==========================================
+/* =========================================================
    RJAnalyser AI
-   Experience Memory V2
-   Part 1
-========================================== */
+   memory.js
+   PART 1 / 2
+========================================================= */
 
 const RJMemory = {
 
-    experiences: [],
+    version: "1.0",
 
-    maxMemory: 10000
+    maxRecords: 5000,
 
-};
+    records: [],
 
-// ==========================
-// Save Experience
-// ==========================
-RJMemory.save = function(record){
+    /* =====================================
+       Save Analysis
+    ===================================== */
 
-    if(!record) return;
+    save(decision) {
 
-    record.id =
-    "EXP-" +
-    String(this.experiences.length + 1).padStart(6,"0");
+        if (!decision) return;
 
-    record.timestamp =
-    Date.now();
+        const record = {
 
-    this.experiences.push(record);
+            id: Date.now(),
 
-    if(this.experiences.length > this.maxMemory){
+            asset: RJState.asset,
 
-        this.experiences.shift();
+            timeframe: RJState.timeframe,
 
-    }
+            time: new Date().toISOString(),
 
-};
+            signal: decision.signal,
 
-// ==========================
-// Get All Experiences
-// ==========================
-RJMemory.getAll = function(){
+            confidence: decision.confidence,
 
-    return this.experiences;
+            entry: decision.entry,
 
-};
+            stopLoss: decision.stopLoss,
 
-// ==========================
-// Total Memory
-// ==========================
-RJMemory.count = function(){
+            tp1: decision.tp1,
 
-    return this.experiences.length;
+            tp2: decision.tp2,
 
-};
-/* ==========================================
-   RJAnalyser AI
-   Experience Memory V2
-   Part 2 - Local Storage Engine
-========================================== */
+            tp3: decision.tp3,
 
-// ==========================
-// Save Memory to Local Storage
-// ==========================
-RJMemory.saveToDisk = function(){
+            riskReward: decision.riskReward,
 
-    try{
+            reason: decision.reason,
+
+            result: "PENDING",
+
+            profit: 0
+
+        };
+
+        this.records.push(record);
+
+        if (this.records.length > this.maxRecords) {
+
+            this.records.shift();
+
+        }
+
+        this.saveLocal();
+
+    },
+
+    /* =====================================
+       Local Storage
+    ===================================== */
+
+    saveLocal() {
 
         localStorage.setItem(
 
             "RJ_MEMORY",
 
-            JSON.stringify(this.experiences)
+            JSON.stringify(this.records)
 
         );
 
-    }
+    },
 
-    catch(error){
-
-        console.log("Memory Save Error",error);
-
-    }
-
-};
-
-// ==========================
-// Load Memory from Local Storage
-// ==========================
-RJMemory.loadFromDisk = function(){
-
-    try{
+    loadLocal() {
 
         const data = localStorage.getItem("RJ_MEMORY");
 
-        if(data){
+        if (!data) return;
 
-            this.experiences = JSON.parse(data);
+        this.records = JSON.parse(data);
 
-        }
+    },
+       /* =====================================
+       Update Trade Result
+    ===================================== */
 
-    }
+    updateResult(id, result, profit = 0) {
 
-    catch(error){
+        const trade = this.records.find(r => r.id === id);
 
-        console.log("Memory Load Error",error);
+        if (!trade) return;
 
-        this.experiences = [];
+        trade.result = result;
 
-    }
+        trade.profit = profit;
 
-};
+        this.saveLocal();
 
-// ==========================
-// Clear Memory
-// ==========================
-RJMemory.clear = function(){
+    },
 
-    this.experiences = [];
+    /* =====================================
+       Statistics
+    ===================================== */
 
-    localStorage.removeItem("RJ_MEMORY");
+    getStats() {
 
-};
+        let win = 0;
 
-// ==========================
-// Auto Save Experience
-// ==========================
-RJMemory.add = function(record){
+        let loss = 0;
 
-    this.save(record);
+        let pending = 0;
 
-    this.saveToDisk();
+        let totalProfit = 0;
 
-};
-/* ==========================================
-   RJAnalyser AI
-   Experience Memory V2
-   Part 3 - Experience Search Engine
-========================================== */
+        this.records.forEach(r => {
 
-// ==========================
-// Find Similar Experiences
-// ==========================
-RJMemory.findSimilar = function(current){
+            if (r.result === "WIN") win++;
 
-    if(!current) return [];
+            else if (r.result === "LOSS") loss++;
 
-    return this.experiences.filter(exp=>{
+            else pending++;
 
-        return (
+            totalProfit += Number(r.profit);
 
-            exp.pattern === current.pattern &&
+        });
 
-            exp.signal === current.signal &&
+        return {
 
-            exp.marketBias === current.marketBias
+            totalTrades: this.records.length,
 
-        );
+            wins: win,
 
-    });
+            losses: loss,
 
-};
+            pending,
 
-// ==========================
-// Experience Statistics
-// ==========================
-RJMemory.getStatistics = function(current){
-
-    const list = this.findSimilar(current);
-
-    let win = 0;
-    let loss = 0;
-
-    list.forEach(exp=>{
-
-        if(exp.outcome==="WIN"){
-
-            win++;
-
-        }
-
-        if(exp.outcome==="LOSS"){
-
-            loss++;
-
-        }
-
-    });
-
-    const total = win + loss;
-
-    let success = 0;
-
-    if(total>0){
-
-        success = Number(((win/total)*100).toFixed(2));
-
-    }
-
-    return{
-
-        total:list.length,
-
-        wins:win,
-
-        losses:loss,
-
-        successRate:success
-
-    };
-
-};
-
-// ==========================
-// Best Decision
-// ==========================
-RJMemory.getRecommendation = function(current){
-
-    const stats = this.getStatistics(current);
-
-    let action = "WAIT";
-
-    if(stats.successRate >= 70){
-
-        action = current.signal;
-
-    }
-
-    return{
-
-        recommendation:action,
-
-        confidence:stats.successRate,
-
-        history:stats.total
-
-    };
-
-};
-/* ==========================================
-   RJAnalyser AI
-   Experience Memory V2
-   Part 4 - Market DNA Search
-========================================== */
-
-// ==========================
-// DNA Similarity Score
-// ==========================
-RJMemory.getDNAScore = function(current, past){
-
-    let score = 0;
-
-    // Pattern
-    if(current.pattern === past.pattern){
-        score += 20;
-    }
-
-    // Signal
-    if(current.signal === past.signal){
-        score += 15;
-    }
-
-    // Market Bias
-    if(current.marketBias === past.marketBias){
-        score += 15;
-    }
-
-    // Momentum
-    if(current.momentum === past.momentum){
-        score += 15;
-    }
-
-    // Expansion
-    if(current.expansion === past.expansion){
-        score += 10;
-    }
-
-    // Compression
-    if(current.compression === past.compression){
-        score += 10;
-    }
-
-    // Buyer Pressure
-    if(Math.abs(current.buyerPressure - past.buyerPressure) <= 10){
-        score += 7;
-    }
-
-    // Seller Pressure
-    if(Math.abs(current.sellerPressure - past.sellerPressure) <= 10){
-        score += 4;
-    }
-
-    // Market Energy
-    if(Math.abs(current.marketEnergy - past.marketEnergy) <= 10){
-        score += 4;
-    }
-
-    return score;
-
-};
-
-// ==========================
-// Find Best DNA Match
-// ==========================
-RJMemory.findBestMatch = function(current){
-
-    let best = null;
-
-    let bestScore = -1;
-
-    this.experiences.forEach(exp=>{
-
-        const score = this.getDNAScore(current, exp);
-
-        if(score > bestScore){
-
-            bestScore = score;
-
-            best = exp;
-
-        }
-
-    });
-
-    return{
-
-        match: best,
-
-        score: bestScore
-
-    };
-
-};
-
-// ==========================
-// AI Decision From DNA
-// ==========================
-RJMemory.getDNADecision = function(current){
-
-    const result = this.findBestMatch(current);
-
-    if(!result.match){
-
-        return{
-
-            recommendation:"WAIT",
-
-            confidence:0,
-
-            dnaScore:0
+            totalProfit
 
         };
 
+    },
+
+    /* =====================================
+       Get Recent Memory
+    ===================================== */
+
+    latest(limit = 20) {
+
+        return this.records.slice(-limit);
+
+    },
+
+    /* =====================================
+       Clear Memory
+    ===================================== */
+
+    clear() {
+
+        this.records = [];
+
+        localStorage.removeItem("RJ_MEMORY");
+
     }
 
-    return{
-
-        recommendation: result.match.signal,
-
-        confidence: result.match.confidence || 50,
-
-        dnaScore: result.score,
-
-        previousOutcome: result.match.outcome || "UNKNOWN"
-
-    };
-
 };
+
+/* =====================================
+   Auto Load Memory
+===================================== */
+
+RJMemory.loadLocal();
