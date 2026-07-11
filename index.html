@@ -3,288 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RJAnalyser AI</title>
-    <link rel="stylesheet" href="style.css">
+    <title>RJAnalyser AI - MT5 Terminal</title>
     <style>
-        /* Fallback Styles for Page Switching toggles */
-        .page, .app { display: none; }
-        .page.active, .app.active { display: flex !important; flex-direction: column; }
-        .app.active { display: flex !important; }
-        .settings-view { display: none; color: white; padding: 20px; }
-        .settings-view.active { display: block !important; }
-        
-        /* Functional Panel Styling */
-        .trade-container, .history-container {
-            background: #1e222d;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 15px;
-            border: 1px solid #2a2e39;
-        }
-        .btn-buy { background: #00c853; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 48%; }
-        .btn-sell { background: #ff3d00; color: white; border: none; padding: 12px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 48%; }
-        .log-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        .log-table th, .log-table td { border-bottom: 1px solid #2a2e39; padding: 10px; text-align: left; }
-        .log-table th { color: #848e9c; }
+        body { margin: 0; background-color: #1c1e22; color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
+        .tab-content { display: none; padding: 15px; flex-grow: 1; overflow-y: auto; }
+        .active { display: block; }
+        .nav-bar { display: flex; justify-content: space-around; background: #252830; padding: 10px; position: fixed; bottom: 0; width: 100%; }
+        .nav-btn { cursor: pointer; text-align: center; font-size: 12px; }
+        /* MT5 Style */
+        .mt5-history-container { background: #1c1e22; color: #fff; }
+        .trade-row { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 10px 0; }
+        .summary-box { margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
     </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<header class="topbar">
-    <div class="brand">
-        <h1>🤖 RJAnalyser AI</h1>
-        <span>🟢 Live</span>
-    </div>
-    <button class="market-selector" id="selectedAsset">
-        BTCUSDT ▼
-    </button>
-</header>
-
-<!-- MAIN APP PAGES -->
-
-<!-- AI SCREEN -->
-<section id="aiPage" class="page">
-    <div class="ai-header">
-        <h2>🤖 RJ AI Assistant</h2>
-        <p>Personal Trading Intelligence</p>
-    </div>
-    <div class="ai-chat-box" id="aiChatBox">
-        <div class="ai-message">
-            🤖 Waiting for your instruction...
-        </div>
-    </div>
-    <div class="ai-input-box">
-        <input id="aiQuestion" placeholder="Ask RJ AI anything...">
-        <button onclick="askRJAI()">Send</button>
-    </div>
-    <div class="ai-info">
-        <div>
-            <h3>🧠 AI Learning</h3>
-            <p id="learningStatus">Monitoring market data...</p>
-        </div>
-        <div>
-            <h3>📊 Data Status</h3>
-            <p id="dataStatus">Waiting for data...</p>
-        </div>
-    </div>
-</section>
-
-<!-- QUOTES SCREEN -->
-<section id="quotesPage" class="page">
-    <div class="quotes-header">
-        <h2>📋 Quotes</h2>
-        <div class="search-box">
-            <input id="quoteSearch" type="text" placeholder="Search Market..." onkeyup="searchQuotes()">
-        </div>
-    </div>
-    <div id="quotesList" class="quotes-list"></div>
-    <button class="add-market">➕ Add Symbol</button>
-</section>
-
-<!-- TRADE VIEW (FUNCTIONAL CONSOLE) -->
-<section id="tradePage" class="page" style="padding:20px; color:#fff;">
-    <h2>💼 Trading Panel</h2>
-    <div class="trade-container">
-        <h3 style="margin-top:0;">Quick Execution</h3>
-        <p style="font-size: 12px; color: #848e9c;">Execute manual trades via linked Broker API</p>
-        
-        <div style="margin: 20px 0;">
-            <label style="display:block; margin-bottom: 5px;">Lot Size / Volume:</label>
-            <input type="number" id="manualLot" value="1.0" step="0.1" style="width: 100%; padding: 10px; background: #2a2e39; border: 1px solid #434651; color: white; border-radius: 4px;">
-        </div>
-
-        <div style="display: flex; justify-content: space-between;">
-            <button class="btn-buy" onclick="executeManualOrder('BUY')">BUY / LONG</button>
-            <button class="btn-sell" onclick="executeManualOrder('SELL')">SELL / SHORT</button>
-        </div>
-    </div>
-</section>
-
-<!-- HISTORY VIEW (REAL LOGS) -->
-<section id="historyPage" class="page" style="padding:20px; color:#fff;">
-    <h2>🕒 Order History</h2>
-    <div class="history-container">
-        <h3 style="margin-top:0;">Execution Logs</h3>
-        <table class="log-table">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>Type</th>
-                    <th>Asset</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="logTableBody">
-                <tr>
-                    <td colspan="4" style="text-align: center; color: #848e9c; padding: 20px;">No recent trades executed.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
-
-<!-- SETTINGS VIEW -->
-<section id="settingsPage" class="page" style="padding: 20px;">
-    <div class="settings-card" style="padding: 20px; background: #1e222d; border-radius: 8px; color: #fff; font-family: sans-serif; border: 1px solid #2a2e39;">
-        <h3 style="margin-top: 0;">🔌 Broker API Automation Link</h3>
-        <div style="margin-top: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">Select Platform:</label>
-            <select id="brokerPlatform" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
-                <option value="generic_webhook">Generic Webhook / Custom App</option>
-                <option value="deriv">Deriv / Binary.com API</option>
-                <option value="pocket_option">Pocket Option Token</option>
-            </select>
-
-            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">API Key / Token:</label>
-            <input type="password" id="brokerApiKey" placeholder="Yahan apni API Key ya Token dalein" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
-
-            <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">Server URL (Optional):</label>
-            <input type="text" id="brokerUrl" placeholder="https://api.yourbroker.com/v1" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
-
-            <button onclick="saveBrokerSettings()" style="background: #2962ff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold;">Save & Link Account</button>
-        </div>
-    </div>
-</section>
-  
-<!-- CHART & ANALYSIS VIEW (MAIN APP) -->
-<main id="chartPage" class="app active">
-    <!-- CHART AREA -->
-    <section class="chart-section">
-        <div class="timeframes">
-            <button>1m</button>
-            <button>5m</button>
-            <button>15m</button>
-            <button>1H</button>
-            <button>4H</button>
-            <button>1D</button>
-        </div>
-        <div class="chart-box">
-            <div id="tradingview_chart"></div>
-        </div>
-    </section>
-
-    <!-- AI INDICATOR PANEL -->
-    <section class="ai-panel">
-        <h2>🤖 RJ AI Analysis</h2>
-        <div class="ai-grid">
-            <div>
-                <label>Trend</label>
-                <p id="trend">Waiting...</p>
-            </div>
-            <div>
-                <label>Signal</label>
-                <p id="signal">Waiting...</p>
-            </div>
-            <div>
-                <label>Confidence</label>
-                <p id="confidence">0%</p>
-            </div>
-            <div>
-                <label>Buyer Strength</label>
-                <p id="buyerStrength">--</p>
-            </div>
-            <div>
-                <label>Seller Strength</label>
-                <p id="sellerStrength">--</p>
-            </div>
-            <div>
-                <label>Dynamic Target</label>
-                <p id="dynamicTarget">--</p>
+    <!-- HISTORY TAB CONTENT -->
+    <div id="history-tab" class="tab-content active">
+        <div class="mt5-history-container">
+            <h3>Order History</h3>
+            <div id="mt5-trades-list"></div>
+            <div class="summary-box">
+                <div style="display:flex; justify-content:space-between;"><span>Deposit</span><span>5 000.00</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>Profit</span><span id="prof" style="color:#3b82f6;">+0.00</span></div>
+                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:16px;">
+                    <span>Balance</span><span id="bal">5 000.00</span>
+                </div>
             </div>
         </div>
-        <div class="reason-box">
-            <b>AI Reason</b>
-            <p id="reason">Waiting for market analysis...</p>
-        </div>
-    </section>
-</main>
+    </div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-    <button onclick="switchView('quotes')">📋<span>Quotes</span></button>
-    <button onclick="switchView('chart')">📈<span>Chart</span></button>
-    <button onclick="switchView('trade')">💼<span>Trade</span></button>
-    <button onclick="switchView('history')">🕒<span>History</span></button>
-    <button onclick="switchView('settings')">⚙️<span>Settings</span></button>
-    <button onclick="switchView('ai')"><span class="nav-icon">🤖</span><span>AI</span></button>
-</nav>
+    <!-- NAVIGATION -->
+    <div class="nav-bar">
+        <div class="nav-btn" onclick="showTab('history-tab')">History</div>
+    </div>
 
-<!-- EXISTING FILES -->
-<script src="market/assets.js"></script>
-<script src="market/quotes.js"></script>
-<script src="market/state.js"></script>
-<script src="ai/memory.js"></script>
-<script src="ai/knowledge.js"></script>
-<script src="ai/pattern.js"></script>
-<script src="ai/decision.js"></script>
-<script src="ai/learning.js"></script>
-<script src="ai/reasoning.js"></script>
-<script src="ai/vision.js"></script>
-<script src="ai/brain.js"></script>
-<script src="ai/engine.js"></script>
-<script src="https://s3.tradingview.com/tv.js"></script>
-<script src="market/tradingview.js"></script>
-<script src="api/executor.js"></script>
-<script src="script.js?v=3"></script>
-
-<!-- ==========================================
-     ⚙️ CORE NAVIGATION, LOGS & STORAGE HANDLER
-========================================== -->
-<script>
-function switchView(viewName) {
-    document.querySelectorAll('.page, .app').forEach(el => {
-        el.classList.remove('active');
-    });
-    
-    const target = document.getElementById(viewName + 'Page');
-    if(target) {
-        target.classList.add('active');
-    }
-}
-
-function saveBrokerSettings() {
-    const platform = document.getElementById('brokerPlatform').value;
-    const apiKey = document.getElementById('brokerApiKey').value;
-    const brokerUrl = document.getElementById('brokerUrl').value;
-
-    localStorage.setItem('rj_broker_platform', platform);
-    localStorage.setItem('rj_broker_api_key', apiKey);
-    localStorage.setItem('rj_broker_url', brokerUrl);
-
-    alert('✅ Settings Saved! RJAnalyser AI is now linked to your broker.');
-    
-    if (typeof RJExecutor !== 'undefined' && typeof RJExecutor.loadDynamicSettings === 'function') {
-        RJExecutor.loadDynamicSettings();
-    }
-}
-
-// Manual Execution Router Linked to Engine
-function executeManualOrder(type) {
-    const lot = document.getElementById('manualLot').value;
-    alert(`🚀 Sending manual ${type} order (Lot: ${lot}) to API Bridge...`);
-    
-    // Add to logs dynamically
-    const tbody = document.getElementById('logTableBody');
-    const now = new Date().toLocaleTimeString();
-    const newRow = `<tr>
-        <td>${now}</td>
-        <td style="color:${type==='BUY'?'#00c853':'#ff3d00'}; font-weight:bold;">${type}</td>
-        <td>BTCUSD</td>
-        <td style="color:#00c853;">SENT</td>
-    </tr>`;
-    
-    if(tbody.innerHTML.includes("No recent trades")) {
-        tbody.innerHTML = newRow;
-    } else {
-        tbody.innerHTML = newRow + tbody.innerHTML;
-    }
-
-    if (typeof RJExecutor !== 'undefined' && typeof RJExecutor.executeMT5Order === 'function') {
-        RJExecutor.executeMT5Order(type, 65000); // Trigger backend API pipeline
-    }
-}
-</script>
-
+    <script src="api/executor.js"></script>
+    <script>
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+    </script>
 </body>
 </html>
