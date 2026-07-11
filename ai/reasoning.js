@@ -1,62 +1,210 @@
-/*
-=========================================
-RJAnalyser Reasoning Engine V1
-=========================================
-*/
+/* =========================================================
+   RJAnalyser AI
+   reasoning.js
+   PART 1 / 2
+========================================================= */
 
 const RJReasoning = {
 
-    analyse(data) {
+    version: "1.0",
 
-        let report = {
+    explain(brain, decision) {
 
-            trend: "Unknown",
+        if (!brain || !decision) {
 
-            confidence: 0,
-
-            decision: "WAIT",
-
-            brainScore: 0,
-            
-            riskLevel: "LOW",
-
-            reason: []
-
-        };
-
-        if (data.trend === "Bullish") {
-
-            report.trend = "Bullish";
-            report.confidence += 30;
-            report.reason.push("Market trend is bullish.");
+            return "Waiting for analysis...";
 
         }
 
-        if (data.pattern === "Bullish Engulfing") {
+        let reasons = [];
 
-            report.confidence += 40;
-            report.reason.push("Bullish Engulfing detected.");
+        /* ===============================
+           Signal
+        =============================== */
+
+        reasons.push(
+            "Signal : " + decision.signal
+        );
+
+        /* ===============================
+           Trend
+        =============================== */
+
+        if (brain.trend.state === "Bullish") {
+
+            reasons.push(
+                "Bullish Trend Confirmed"
+            );
 
         }
 
-        if (report.confidence >= 70) {
+        if (brain.trend.state === "Bearish") {
 
-            report.decision = "BUY";
+            reasons.push(
+                "Bearish Trend Confirmed"
+            );
 
         }
-if (data.brainScore) {
 
-    report.brainScore = data.brainScore;
+        if (brain.trend.state === "Sideways") {
 
-}
+            reasons.push(
+                "Sideways Market"
+            );
 
-if (data.riskLevel) {
+        }
 
-    report.riskLevel = data.riskLevel;
+        /* ===============================
+           Buyer Seller
+        =============================== */
 
-}
-        return report;
+        if (brain.buyers > brain.sellers) {
+
+            reasons.push(
+
+                "Buyer Strength : " +
+
+                brain.buyers + "%"
+
+            );
+
+        }
+
+        else {
+
+            reasons.push(
+
+                "Seller Strength : " +
+
+                brain.sellers + "%"
+
+            );
+
+        }
+
+        /* ===============================
+           Momentum
+        =============================== */
+
+        reasons.push(
+
+            "Momentum : " +
+
+            brain.momentum.state
+
+        );
+
+        /* ===============================
+           Volatility
+        =============================== */
+
+        reasons.push(
+
+            "Volatility : " +
+
+            brain.volatility.state
+
+        );
+                /* ===============================
+           Confidence
+        =============================== */
+
+        reasons.push(
+
+            "Confidence : " +
+
+            decision.confidence + "%"
+
+        );
+
+        /* ===============================
+           Entry
+        =============================== */
+
+        reasons.push(
+
+            "Entry : " +
+
+            decision.entry
+
+        );
+
+        /* ===============================
+           Stop Loss
+        =============================== */
+
+        reasons.push(
+
+            "SL : " +
+
+            decision.stopLoss
+
+        );
+
+        /* ===============================
+           Target
+        =============================== */
+
+        reasons.push(
+
+            "TP1 : " +
+
+            decision.tp1
+
+        );
+
+        /* ===============================
+           Risk Reward
+        =============================== */
+
+        reasons.push(
+
+            "RR : " +
+
+            decision.riskReward
+
+        );
+
+        return reasons.join(" | ");
+
+    },
+
+    /* =====================================
+       Short Reason
+    ===================================== */
+
+    shortReason(brain, decision) {
+
+        if (!brain || !decision)
+
+            return "Waiting...";
+
+        return (
+
+            decision.signal +
+
+            " | " +
+
+            brain.trend.state +
+
+            " | " +
+
+            decision.confidence +
+
+            "%"
+
+        );
 
     }
 
 };
+
+/* =====================================
+   Global Helper
+===================================== */
+
+function runReasoning(brain, decision) {
+
+    return RJReasoning.explain(brain, decision);
+
+}
