@@ -1,317 +1,187 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>RJAnalyser AI</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RJAnalyser AI</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <!-- TOP BAR -->
-
 <header class="topbar">
-
-<div class="brand">
-
-<h1>🤖 RJAnalyser AI</h1>
-
-<span>🟢 Live</span>
-
-</div>
-
-<button class="market-selector" id="selectedAsset">
-
-BTCUSDT ▼
-
-</button>
-
+    <div class="brand">
+        <h1>🤖 RJAnalyser AI</h1>
+        <span>🟢 Live</span>
+    </div>
+    <button class="market-selector" id="selectedAsset">
+        BTCUSDT ▼
+    </button>
 </header>
 
 <!-- MAIN APP -->
-
-  <!-- AI SCREEN -->
-
+<!-- AI SCREEN -->
 <section id="aiPage" class="page">
-
-<div class="ai-header">
-
-<h2>🤖 RJ AI Assistant</h2>
-
-<p>Personal Trading Intelligence</p>
-
-</div>
-
-<div class="ai-chat-box" id="aiChatBox">
-
-<div class="ai-message">
-
-🤖 Waiting for your instruction...
-
-</div>
-
-</div>
-
-<div class="ai-input-box">
-
-<input 
-id="aiQuestion"
-placeholder="Ask RJ AI anything..."
->
-
-<button onclick="askRJAI()">
-
-Send
-
-</button>
-
-</div>
-
-<div class="ai-info">
-
-<div>
-
-<h3>🧠 AI Learning</h3>
-
-<p id="learningStatus">
-Monitoring market data...
-</p>
-
-</div>
-
-<div>
-
-<h3>📊 Data Status</h3>
-
-<p id="dataStatus">
-Waiting for data...
-</p>
-
-</div>
-
-</div>
-
+    <div class="ai-header">
+        <h2>🤖 RJ AI Assistant</h2>
+        <p>Personal Trading Intelligence</p>
+    </div>
+    <div class="ai-chat-box" id="aiChatBox">
+        <div class="ai-message">
+            🤖 Waiting for your instruction...
+        </div>
+    </div>
+    <div class="ai-input-box">
+        <input id="aiQuestion" placeholder="Ask RJ AI anything...">
+        <button onclick="askRJAI()">Send</button>
+    </div>
+    <div class="ai-info">
+        <div>
+            <h3>🧠 AI Learning</h3>
+            <p id="learningStatus">Monitoring market data...</p>
+        </div>
+        <div>
+            <h3>📊 Data Status</h3>
+            <p id="dataStatus">Waiting for data...</p>
+        </div>
+    </div>
 </section>
+
 <!-- QUOTES SCREEN -->
-
 <section id="quotesPage" class="page">
-
-<div class="quotes-header">
-
-<h2>📋 Quotes</h2>
-
-<div class="search-box">
-
-<input 
-id="quoteSearch"
-type="text"
-placeholder="Search Market..."
-onkeyup="searchQuotes()"
->
-
-</div>
-
-</div>
-
-<div id="quotesList" class="quotes-list">
-
-</div>
-
-<button class="add-market">
-
-➕ Add Symbol
-
-</button>
-
+    <div class="quotes-header">
+        <h2>📋 Quotes</h2>
+        <div class="search-box">
+            <input id="quoteSearch" type="text" placeholder="Search Market..." onkeyup="searchQuotes()">
+        </div>
+    </div>
+    <div id="quotesList" class="quotes-list"></div>
+    <button class="add-market">➕ Add Symbol</button>
 </section>
   
 <main class="app">
+    <!-- CHART AREA -->
+    <section class="chart-section">
+        <div class="timeframes">
+            <button>1m</button>
+            <button>5m</button>
+            <button>15m</button>
+            <button>1H</button>
+            <button>4H</button>
+            <button>1D</button>
+        </div>
+        <div class="chart-box">
+            <div id="tradingview_chart"></div>
+        </div>
+    </section>
 
-<!-- CHART AREA -->
+    <!-- AI INDICATOR PANEL -->
+    <section class="ai-panel">
+        <h2>🤖 RJ AI Analysis</h2>
+        <div class="ai-grid">
+            <div>
+                <label>Trend</label>
+                <p id="trend">Waiting...</p>
+            </div>
+            <div>
+                <label>Signal</label>
+                <p id="signal">Waiting...</p>
+            </div>
+            <div>
+                <label>Confidence</label>
+                <p id="confidence">0%</p>
+            </div>
+            <div>
+                <label>Buyer Strength</label>
+                <p id="buyerStrength">--</p>
+            </div>
+            <div>
+                <label>Seller Strength</label>
+                <p id="sellerStrength">--</p>
+            </div>
+            <div>
+                <label>Dynamic Target</label>
+                <p id="dynamicTarget">--</p>
+            </div>
+        </div>
+        <div class="reason-box">
+            <b>AI Reason</b>
+            <p id="reason">Waiting for market analysis...</p>
+        </div>
 
-<section class="chart-section">
+        <!-- ==========================================
+             🔌 BROKER API SETTINGS PANEL (ADDED HERE)
+        ========================================== -->
+        <div class="settings-card" style="padding: 20px; background: #1e222d; border-radius: 8px; color: #fff; margin-top: 20px; font-family: sans-serif; border: 1px solid #2a2e39;">
+            <h3 style="margin-top: 0;">🔌 Broker API Automation Link</h3>
+            <div style="margin-top: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">Select Platform:</label>
+                <select id="brokerPlatform" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
+                    <option value="generic_webhook">Generic Webhook / Custom App</option>
+                    <option value="deriv">Deriv / Binary.com API</option>
+                    <option value="pocket_option">Pocket Option Token</option>
+                </select>
 
-<div class="timeframes">
+                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">API Key / Token:</label>
+                <input type="password" id="brokerApiKey" placeholder="Yahan apni API Key ya Token dalein" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
 
-<button>1m</button>
+                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #848e9c;">Server URL (Optional):</label>
+                <input type="text" id="brokerUrl" placeholder="https://api.yourbroker.com/v1" style="width: 100%; padding: 8px; margin-bottom: 15px; background: #2a2e39; color: #fff; border: 1px solid #434651; border-radius: 4px;">
 
-<button>5m</button>
-
-<button>15m</button>
-
-<button>1H</button>
-
-<button>4H</button>
-
-<button>1D</button>
-
-</div>
-
-<div class="chart-box">
-
-<div id="tradingview_chart"></div>
-
-</div>
-
-</section>
-
-<!-- AI INDICATOR PANEL -->
-
-<section class="ai-panel">
-
-<h2>🤖 RJ AI Analysis</h2>
-
-<div class="ai-grid">
-
-<div>
-
-<label>Trend</label>
-
-<p id="trend">Waiting...</p>
-
-</div>
-
-<div>
-
-<label>Signal</label>
-
-<p id="signal">Waiting...</p>
-
-</div>
-
-<div>
-
-<label>Confidence</label>
-
-<p id="confidence">0%</p>
-
-</div>
-
-<div>
-
-<label>Buyer Strength</label>
-
-<p id="buyerStrength">--</p>
-
-</div>
-
-<div>
-
-<label>Seller Strength</label>
-
-<p id="sellerStrength">--</p>
-
-</div>
-
-<div>
-
-<label>Dynamic Target</label>
-
-<p id="dynamicTarget">--</p>
-
-</div>
-
-</div>
-
-<div class="reason-box">
-
-<b>AI Reason</b>
-
-<p id="reason">
-
-Waiting for market analysis...
-
-</p>
-
-</div>
-
-</section>
-
+                <button onclick="saveBrokerSettings()" style="background: #2962ff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold;">Save & Link Account</button>
+            </div>
+        </div>
+    </section>
 </main>
 
 <!-- BOTTOM NAV -->
-
 <nav class="bottom-nav">
-
-<button onclick="showPage('quotes')">
-📋
-<span>Quotes</span>
-</button>
-
-<button onclick="showPage('chart')">
-📈
-<span>Chart</span>
-</button>
-
-<button>
-💼
-<span>Trade</span>
-</button>
-
-<button>
-🕒
-<span>History</span>
-</button>
-
-<button>
-⚙️
-<span>Settings</span>
-</button>
-
-  <button onclick="showPage('ai')">
-
-<span class="nav-icon">🤖</span>
-
-<span>AI</span>
-
-</button>
-
+    <button onclick="showPage('quotes')">📋<span>Quotes</span></button>
+    <button onclick="showPage('chart')">📈<span>Chart</span></button>
+    <button>💼<span>Trade</span></button>
+    <button>🕒<span>History</span></button>
+    <button>⚙️<span>Settings</span></button>
+    <button onclick="showPage('ai')"><span class="nav-icon">🤖</span><span>AI</span></button>
 </nav>
 
 <!-- EXISTING FILES -->
-
 <script src="market/assets.js"></script>
-  
 <script src="market/quotes.js"></script>
-
 <script src="market/state.js"></script>
-
 <script src="ai/memory.js"></script>
-
 <script src="ai/knowledge.js"></script>
-
 <script src="ai/pattern.js"></script>
-
 <script src="ai/decision.js"></script>
-
 <script src="ai/learning.js"></script>
-
 <script src="ai/reasoning.js"></script>
-
 <script src="ai/vision.js"></script>
-
 <script src="ai/brain.js"></script>
-
 <script src="ai/engine.js"></script>
-
 <script src="https://s3.tradingview.com/tv.js"></script>
-
 <script src="market/tradingview.js"></script>
-  
 <script src="api/executor.js"></script>
-
-<script src="api/executor.js"></script>
-
 <script src="script.js?v=3"></script>
 
-</body>
+<!-- ==========================================
+     ⚙️ UI SETTINGS SAVER SCRIPT
+========================================== -->
+<script>
+function saveBrokerSettings() {
+    const platform = document.getElementById('brokerPlatform').value;
+    const apiKey = document.getElementById('brokerApiKey').value;
+    const brokerUrl = document.getElementById('brokerUrl').value;
 
+    localStorage.setItem('rj_broker_platform', platform);
+    localStorage.setItem('rj_broker_api_key', apiKey);
+    localStorage.setItem('rj_broker_url', brokerUrl);
+
+    alert('✅ Settings Saved! RJAnalyser AI is now linked to your broker.');
+    
+    if (typeof RJExecutor !== 'undefined' && typeof RJExecutor.loadDynamicSettings === 'function') {
+        RJExecutor.loadDynamicSettings();
+    }
+}
+</script>
+
+</body>
 </html>
