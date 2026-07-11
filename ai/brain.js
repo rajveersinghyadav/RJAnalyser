@@ -1,460 +1,380 @@
-/* ==========================================
+/* =========================================================
    RJAnalyser AI
-   Brain Engine V2
-   Part 1 - Decision Brain
-========================================== */
+   brain.js
+   PART 1 / 2
+========================================================= */
 
 const RJBrain = {
 
-    version: "2.0",
+    version: "1.0",
 
-    status: "READY",
+    analyse(candles = []) {
 
-    lastDecision: null
+        if (!candles || candles.length < 20) {
 
-};
+            return null;
 
-// ==========================
-// Get Status
-// ==========================
-RJBrain.getStatus = function(){
+        }
 
-    return{
+        const trend = this.getTrend(candles);
 
-        version: this.version,
+        const pressure = this.getBuyerSeller(candles);
 
-        status: this.status
+        const momentum = this.getMomentum(candles);
 
-    };
+        const volatility = this.getVolatility(candles);
 
-};
+        const confidence = this.getConfidence(
 
-// ==========================
-// Reset Brain
-// ==========================
-RJBrain.reset = function(){
+            trend,
 
-    this.lastDecision = null;
+            pressure,
 
-};
-/* ==========================================
-   RJAnalyser AI
-   Brain Engine V2
-   Part 2 - Brain Score Engine
-========================================== */
+            momentum,
 
-// ==========================
-// Calculate Brain Score
-// ==========================
-RJBrain.calculateScore = function(data){
+            volatility
 
-    if(!data){
+        );
 
-        return 0;
+        return {
 
-    }
+            time: Date.now(),
 
-    let score = 0;
+            asset: RJState.asset,
 
-    // Pattern Score (20)
-    score += (data.pattern.confidence || 0) * 0.20;
+            timeframe: RJState.timeframe,
 
-    // Memory Score (20)
-    score += (data.memory.confidence || 0) * 0.20;
+            trend,
 
-    // Learning Score (20)
-    score += (data.learningConfidence || 0) * 0.20;
+            buyers: pressure.buyers,
 
-    // Market Energy (15)
-    score += (data.features.marketEnergy || 0) * 0.15;
+            sellers: pressure.sellers,
 
-    // Buyer Pressure (10)
-    score += (data.features.buyerPressure || 0) * 0.10;
+            control: pressure.control,
 
-    // Momentum (10)
-    if(data.features.momentum==="BULLISH"){
+            momentum,
 
-        score += 10;
+            volatility,
 
-    }
+            confidence
 
-    if(data.features.momentum==="BEARISH"){
+        };
 
-        score += 10;
+    },
 
-    }
+    /* =====================================
+       Trend Engine
+    ===================================== */
 
-    // Pattern Bonus (5)
-    if(data.pattern.pattern!=="NONE"){
+    getTrend(candles) {
 
-        score += 5;
+        const recent = candles.slice(-20);
 
-    }
+        let up = 0;
 
-    if(score>100){
+        let down = 0;
 
-        score=100;
+        recent.forEach(c => {
 
-    }
+            if (c.close > c.open) up++;
 
-    return Math.round(score);
+            if (c.close < c.open) down++;
 
-};
+        });
 
-// ==========================
-// Brain Level
-// ==========================
-RJBrain.getBrainLevel = function(score){
+        if (up >= 14)
 
-    if(score>=90){
+            return {
 
-        return "EXCELLENT";
+                state: "Bullish",
 
-    }
+                strength: Math.round((up / 20) * 100)
 
-    if(score>=75){
+            };
 
-        return "STRONG";
+        if (down >= 14)
 
-    }
+            return {
 
-    if(score>=60){
+                state: "Bearish",
 
-        return "GOOD";
+                strength: Math.round((down / 20) * 100)
 
-    }
+            };
 
-    if(score>=40){
+        return {
 
-        return "AVERAGE";
+            state: "Sideways",
 
-    }
+            strength: 50
 
-    return "WEAK";
+        };
 
-};
-/* ==========================================
-   RJAnalyser AI
-   Brain Engine V2
-   Part 3 - Decision Engine
-========================================== */
+    },
 
-// ==========================
-// Final Decision
-// ==========================
-RJBrain.makeDecision = function(data){
+    /* =====================================
+       Buyer Seller Engine
+    ===================================== */
 
-    if(!data){
+    getBuyerSeller(candles) {
 
-        return null;
+        const recent = candles.slice(-20);
 
-    }
+        let buyer = 0;
 
-    const score = this.calculateScore(data);
+        let seller = 0;
 
-    let buyVotes = 0;
-    let sellVotes = 0;
+        recent.forEach(c => {
 
-    // Pattern Vote
-    if(data.pattern.signal==="BUY") buyVotes++;
-    if(data.pattern.signal==="SELL") sellVotes++;
+            const range = c.high - c.low;
 
-    // Memory Vote
-    if(data.memory.recommendation==="BUY") buyVotes++;
-    if(data.memory.recommendation==="SELL") sellVotes++;
+            if (range <= 0) return;
 
-    // Momentum Vote
-    if(data.features.momentum==="BULLISH") buyVotes++;
-    if(data.features.momentum==="BEARISH") sellVotes++;
+            const body = Math.abs(c.close - c.open);
 
-    // Market Bias Vote
-    if(data.features.marketBias==="BUYERS") buyVotes++;
-    if(data.features.marketBias==="SELLERS") sellVotes++;
+            const power = (body / range) * 100;
 
-    // Buyer/Seller Pressure Vote
-    if(data.features.buyerPressure >
-       data.features.sellerPressure){
+            if (c.close > c.open)
 
-        buyVotes++;
+                buyer += power;
 
-    }else if(
+            else
 
-        data.features.sellerPressure >
-        data.features.buyerPressure){
+                seller += power;
 
-        sellVotes++;
+        });
 
-    }
+        const total = buyer + seller || 1;
 
-    let decision = "WAIT";
+        buyer = Math.round((buyer / total) * 100);
 
-    if(score >= 90 && buyVotes >= 4){
+        seller = Math.round((seller / total) * 100);
 
-        decision = "STRONG BUY";
+        let control = "Neutral";
 
-    }
-    else if(score >= 75 && buyVotes >= 3){
+        if (buyer > seller)
 
-        decision = "BUY";
+            control = "Buyers";
 
-    }
-    else if(score <= 25 && sellVotes >= 4){
+        if (seller > buyer)
 
-        decision = "STRONG SELL";
+            control = "Sellers";
 
-    }
-    else if(score <= 45 && sellVotes >= 3){
+        return {
 
-        decision = "SELL";
+            buyers: buyer,
 
-    }
+            sellers: seller,
 
-    this.lastDecision = {
+            control
 
-        score: score,
+        };
 
-        decision: decision,
+    },
 
-        buyVotes: buyVotes,
+    /* =====================================
+       Momentum Engine
+    ===================================== */
 
-        sellVotes: sellVotes,
+    getMomentum(candles) {
 
-        level: this.getBrainLevel(score)
+        const last = candles[candles.length - 1];
 
-    };
+        const prev = candles[candles.length - 2];
 
-    return this.lastDecision;
+        const move =
 
-};
-/* ==========================================
-   RJAnalyser AI
-   Brain Engine V2
-   Part 4 - Risk Filter
-========================================== */
+            ((last.close - prev.close) /
 
-// ==========================
-// Risk Analysis
-// ==========================
-RJBrain.analyseRisk = function(data){
+                prev.close) *
 
-    if(!data){
+            100;
 
-        return{
+        if (move > 0.60)
 
-            risk:100,
+            return {
 
-            level:"UNKNOWN"
+                state: "Strong Bullish",
+
+                value: move.toFixed(2)
+
+            };
+
+        if (move > 0)
+
+            return {
+
+                state: "Bullish",
+
+                value: move.toFixed(2)
+
+            };
+
+        if (move < -0.60)
+
+            return {
+
+                state: "Strong Bearish",
+
+                value: move.toFixed(2)
+
+            };
+
+        return {
+
+            state: "Bearish",
+
+            value: move.toFixed(2)
+
+        };
+
+    },
+       /* =====================================
+       Volatility Engine
+    ===================================== */
+
+    getVolatility(candles) {
+
+        const recent = candles.slice(-20);
+
+        let totalRange = 0;
+
+        recent.forEach(c => {
+
+            totalRange += (c.high - c.low);
+
+        });
+
+        const avgRange = totalRange / recent.length;
+
+        let state = "Low";
+
+        if (avgRange > 0.5) state = "Medium";
+        if (avgRange > 1.5) state = "High";
+
+        return {
+
+            state,
+
+            averageRange: Number(avgRange.toFixed(4))
+
+        };
+
+    },
+
+    /* =====================================
+       Confidence Engine
+    ===================================== */
+
+    getConfidence(
+
+        trend,
+
+        pressure,
+
+        momentum,
+
+        volatility
+
+    ) {
+
+        let score = 50;
+
+        if (trend.state === "Bullish")
+            score += 10;
+
+        if (trend.state === "Bearish")
+            score += 10;
+
+        if (pressure.buyers >= 70)
+            score += 15;
+
+        if (pressure.sellers >= 70)
+            score += 15;
+
+        if (
+            momentum.state === "Strong Bullish" ||
+            momentum.state === "Strong Bearish"
+        )
+            score += 15;
+
+        if (volatility.state === "Medium")
+            score += 5;
+
+        if (volatility.state === "High")
+            score += 10;
+
+        if (score > 100)
+            score = 100;
+
+        return score;
+
+    },
+
+    /* =====================================
+       Decision Preparation
+    ===================================== */
+
+    prepareDecision(brain) {
+
+        if (!brain)
+            return null;
+
+        let signal = "WAIT";
+
+        if (
+            brain.control === "Buyers" &&
+            brain.trend.state === "Bullish" &&
+            brain.confidence >= 75
+        ) {
+
+            signal = "BUY";
+
+        }
+
+        if (
+            brain.control === "Sellers" &&
+            brain.trend.state === "Bearish" &&
+            brain.confidence >= 75
+        ) {
+
+            signal = "SELL";
+
+        }
+
+        return {
+
+            signal,
+
+            confidence: brain.confidence,
+
+            trend: brain.trend.state,
+
+            buyers: brain.buyers,
+
+            sellers: brain.sellers,
+
+            momentum: brain.momentum.state,
+
+            volatility: brain.volatility.state
 
         };
 
     }
 
-    let risk = 0;
-
-    // Low Memory Confidence
-    if(data.memory.confidence < 50){
-
-        risk += 25;
-
-    }
-
-    // Weak Pattern
-    if(data.pattern.strength < 50){
-
-        risk += 20;
-
-    }
-
-    // Low Brain Confidence
-    if(data.learningConfidence < 60){
-
-        risk += 20;
-
-    }
-
-    // Low Market Energy
-    if(data.features.marketEnergy < 30){
-
-        risk += 15;
-
-    }
-
-    // Compression Market
-    if(data.features.compression === "COMPRESSION"){
-
-        risk += 10;
-
-    }
-
-    // Buyer/Seller Almost Equal
-    if(Math.abs(
-        data.features.buyerPressure -
-        data.features.sellerPressure
-    ) < 10){
-
-        risk += 10;
-
-    }
-
-    if(risk > 100){
-
-        risk = 100;
-
-    }
-
-    let level = "LOW";
-
-    if(risk >= 75){
-
-        level = "EXTREME";
-
-    }
-    else if(risk >= 50){
-
-        level = "HIGH";
-
-    }
-    else if(risk >= 25){
-
-        level = "MEDIUM";
-
-    }
-
-    return{
-
-        risk:risk,
-
-        level:level
-
-    };
-
 };
 
-// ==========================
-// Apply Risk Filter
-// ==========================
-RJBrain.applyRiskFilter = function(decision,data){
+/* =====================================
+   Global Helper
+===================================== */
 
-    const risk = this.analyseRisk(data);
+function runBrain(candles) {
 
-    let finalDecision = decision.decision;
+    const brain = RJBrain.analyse(candles);
 
-    // High Risk Protection
-    if(risk.level === "HIGH"){
-
-        if(finalDecision === "BUY"){
-
-            finalDecision = "WAIT";
-
-        }
-
-        if(finalDecision === "SELL"){
-
-            finalDecision = "WAIT";
-
-        }
-
-    }
-
-    // Extreme Risk Protection
-    if(risk.level === "EXTREME"){
-
-        finalDecision = "WAIT";
-
-    }
-
-    decision.risk = risk.risk;
-
-    decision.riskLevel = risk.level;
-
-    decision.finalDecision = finalDecision;
-
-    return decision;
-
-};
-/* ==========================================
-   RJAnalyser AI
-   Brain Engine V2
-   Part 5 - Final Brain
-========================================== */
-
-// ==========================
-// Complete Brain Analysis
-// ==========================
-RJBrain.analyse = function(data){
-
-    if(!data){
-
+    if (!brain)
         return null;
 
-    }
+    return RJBrain.prepareDecision(brain);
 
-    // Brain Score
-    const brainScore = this.calculateScore(data);
-
-    // Decision
-    const decision = this.makeDecision(data);
-
-    // Risk Filter
-    const finalDecision = this.applyRiskFilter(decision,data);
-
-    // Final Result
-    const result = {
-
-        brainScore: brainScore,
-
-        brainLevel: this.getBrainLevel(brainScore),
-
-        decision: decision.decision,
-
-        finalDecision: finalDecision.finalDecision,
-
-        confidence: data.learningConfidence,
-
-        risk: finalDecision.risk,
-
-        riskLevel: finalDecision.riskLevel,
-
-        buyVotes: finalDecision.buyVotes,
-
-        sellVotes: finalDecision.sellVotes,
-
-        pattern: data.pattern.pattern,
-
-        signal: data.pattern.signal,
-
-        timestamp: Date.now()
-
-    };
-
-    this.lastDecision = result;
-
-    return result;
-
-};
-
-// ==========================
-// Last Brain Result
-// ==========================
-RJBrain.getLastDecision = function(){
-
-    return this.lastDecision;
-
-};
-
-// ==========================
-// Brain Health
-// ==========================
-RJBrain.health = function(){
-
-    return{
-
-        version: this.version,
-
-        status: this.status,
-
-        lastDecision: this.lastDecision
-
-    };
-
-};
+}
