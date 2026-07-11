@@ -125,23 +125,34 @@ function showPage(page){
 }
 
 /* ======================================
-   BOTTOM NAVIGATION (INDEX FIXED)
+   BOTTOM NAVIGATION (NAME-BASED ROUTER)
 ====================================== */
-document.querySelectorAll(".bottom-nav button").forEach((btn, index) => {
+document.querySelectorAll(".bottom-nav button").forEach((btn) => {
     btn.onclick = function(){
+        // Pehle saare buttons se active class hatao
         document.querySelectorAll(".bottom-nav button").forEach(b => b.classList.remove("active"));
+        // Current button ko active karo
         this.classList.add("active");
 
-        switch(index){
-            case 0: showPage("quotes"); break;
-            case 1: showPage("chart"); break;
-            case 2: showPage("trade"); break;
-            case 3: showPage("history"); break;
-            case 4: showPage("settings"); break;
-            case 5: showPage("ai"); break;
+        // Button ke andar ke text ya emoji ke mutabik direct page switch karo
+        const btnText = this.innerText.toLowerCase();
+
+        if (btnText.includes("quotes") || btnText.includes("📋")) {
+            showPage("quotes");
+        } else if (btnText.includes("chart") || btnText.includes("📈")) {
+            showPage("chart");
+        } else if (btnText.includes("trade") || btnText.includes("💼")) {
+            showPage("trade");
+        } else if (btnText.includes("history") || btnText.includes("🕒")) {
+            showPage("history");
+        } else if (btnText.includes("settings") || btnText.includes("⚙️")) {
+            showPage("settings");
+        } else if (btnText.includes("ai") || btnText.includes("🤖")) {
+            showPage("ai");
         }
     };
 });
+
 
 /* =====================================================
    PART 2 - LIVE MARKET ENGINE
