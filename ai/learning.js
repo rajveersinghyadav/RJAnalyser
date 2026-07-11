@@ -1,525 +1,168 @@
-/* ==========================================
+/* =========================================================
    RJAnalyser AI
-   Learning Engine V1
-   Part 1 - Learning Memory
-========================================== */
+   learning.js
+   PART 1 / 2
+========================================================= */
 
 const RJLearning = {
 
-    database:{},
+    version: "1.0",
 
-    totalLearning:0
+    model: {
 
-};
+        totalTrades: 0,
 
-// ==========================
-// Create Learning Record
-// ==========================
-RJLearning.create = function(pattern){
+        wins: 0,
 
-    if(!this.database[pattern]){
+        losses: 0,
 
-        this.database[pattern]={
+        winRate: 0,
 
-            wins:0,
+        bestSignal: "",
 
-            losses:0,
+        bestConfidence: 0,
 
-            trades:0,
+        averageProfit: 0
 
-            weight:50,
+    },
 
-            accuracy:0
+    /* =====================================
+       Learn From Memory
+    ===================================== */
 
-        };
+    learn() {
 
-    }
+        const trades = RJMemory.records;
 
-};
+        if (!trades.length) return;
 
-// ==========================
-// Get Record
-// ==========================
-RJLearning.get = function(pattern){
+        let wins = 0;
 
-    this.create(pattern);
+        let losses = 0;
 
-    return this.database[pattern];
+        let totalProfit = 0;
 
-};
+        let bestConfidence = 0;
 
-// ==========================
-// Total Learned Patterns
-// ==========================
-RJLearning.count = function(){
+        let bestSignal = "";
 
-    return Object.keys(this.database).length;
+        trades.forEach(trade => {
 
-};
-/* ==========================================
-   RJAnalyser AI
-   Learning Engine V1
-   Part 2 - Win/Loss Trainer
-========================================== */
+            if (trade.result === "WIN") {
 
-// ==========================
-// Learn From Result
-// ==========================
-RJLearning.learn = function(pattern,outcome){
+                wins++;
 
-    this.create(pattern);
+            }
 
-    let record = this.database[pattern];
+            if (trade.result === "LOSS") {
 
-    record.trades++;
+                losses++;
 
-    if(outcome==="WIN"){
+            }
 
-        record.wins++;
+            totalProfit += Number(trade.profit);
 
-    }
+            if (trade.confidence > bestConfidence) {
 
-    if(outcome==="LOSS"){
+                bestConfidence = trade.confidence;
 
-        record.losses++;
+                bestSignal = trade.signal;
 
-    }
+            }
 
-    // Accuracy
-    record.accuracy =
-    Number(
-        (
-            record.wins /
-            record.trades
-        ) * 100
-    ).toFixed(2);
+        });
 
-    // Weight Update
-    if(record.accuracy >= 80){
+        this.model.totalTrades = trades.length;
 
-        record.weight += 3;
+        this.model.wins = wins;
 
-    }
+        this.model.losses = losses;
 
-    else if(record.accuracy >= 60){
+        this.model.winRate =
+            Number(((wins / trades.length) * 100).toFixed(2));
 
-        record.weight += 1;
+        this.model.bestSignal = bestSignal;
 
-    }
+        this.model.bestConfidence = bestConfidence;
 
-    else if(record.accuracy < 40){
+        this.model.averageProfit =
+            Number((totalProfit / trades.length).toFixed(2));
 
-        record.weight -= 2;
+        this.save();
 
-    }
+    },
 
-    // Limit Weight
-    if(record.weight > 100){
+    /* =====================================
+       Save Learning
+    ===================================== */
 
-        record.weight = 100;
+    save() {
 
-    }
+        localStorage.setItem(
 
-    if(record.weight < 0){
+            "RJ_LEARNING",
 
-        record.weight = 0;
-
-    }
-
-    this.totalLearning++;
-
-};
-
-// ==========================
-// Get Accuracy
-// ==========================
-RJLearning.getAccuracy = function(pattern){
-
-    this.create(pattern);
-
-    return this.database[pattern].accuracy;
-
-};
-
-// ==========================
-// Get Weight
-// ==========================
-RJLearning.getWeight = function(pattern){
-
-    this.create(pattern);
-
-    return this.database[pattern].weight;
-
-};
-/* ==========================================
-   RJAnalyser AI
-   Learning Engine V1
-   Part 3 - Dynamic Weight Engine
-========================================== */
-
-// ==========================
-// Feature Weights
-// ==========================
-RJLearning.featureWeights = {
-
-    pattern:20,
-
-    memory:20,
-
-    momentum:15,
-
-    buyerPressure:10,
-
-    sellerPressure:10,
-
-    marketBias:10,
-
-    marketEnergy:10,
-
-    confidence:5
-
-};
-
-// ==========================
-// Get Feature Weight
-// ==========================
-RJLearning.getFeatureWeight = function(feature){
-
-    return this.featureWeights[feature] || 0;
-
-};
-
-// ==========================
-// Update Feature Weight
-// ==========================
-RJLearning.updateFeatureWeight = function(feature,result){
-
-    if(this.featureWeights[feature]===undefined){
-
-        return;
-
-    }
-
-    if(result==="WIN"){
-
-        this.featureWeights[feature] += 1;
-
-    }
-
-    if(result==="LOSS"){
-
-        this.featureWeights[feature] -= 1;
-
-    }
-
-    // Limit
-
-    if(this.featureWeights[feature] > 30){
-
-        this.featureWeights[feature] = 30;
-
-    }
-
-    if(this.featureWeights[feature] < 1){
-
-        this.featureWeights[feature] = 1;
-
-    }
-
-};
-
-// ==========================
-// Get Total Weight
-// ==========================
-RJLearning.getTotalWeight = function(){
-
-    let total = 0;
-
-    Object.values(this.featureWeights).forEach(value=>{
-
-        total += value;
-
-    });
-
-    return total;
-
-};
-
-// ==========================
-// Normalize Weights
-// ==========================
-RJLearning.normalizeWeights = function(){
-
-    const total = this.getTotalWeight();
-
-    Object.keys(this.featureWeights).forEach(key=>{
-
-        this.featureWeights[key] = Number(
-
-            (
-
-                (this.featureWeights[key] / total) * 100
-
-            ).toFixed(2)
+            JSON.stringify(this.model)
 
         );
 
-    });
+    },
+       /* =====================================
+       Load Learning
+    ===================================== */
 
-};
-/* ==========================================
-   RJAnalyser AI
-   Learning Engine V1
-   Part 4 - Confidence Optimizer
-========================================== */
+    load() {
 
-// ==========================
-// Calculate Confidence
-// ==========================
-RJLearning.calculateConfidence = function(data){
+        const data = localStorage.getItem("RJ_LEARNING");
 
-    if(!data){
+        if (!data) return;
 
-        return 0;
+        this.model = JSON.parse(data);
 
-    }
+    },
 
-    let score = 0;
+    /* =====================================
+       Get AI Learning Model
+    ===================================== */
 
-    // Pattern
-    score += (data.patternStrength || 0) *
-             (this.getFeatureWeight("pattern") / 100);
+    getModel() {
 
-    // Memory
-    score += (data.memoryConfidence || 0) *
-             (this.getFeatureWeight("memory") / 100);
+        return this.model;
 
-    // Momentum
-    score += (data.momentumScore || 0) *
-             (this.getFeatureWeight("momentum") / 100);
+    },
 
-    // Buyer Pressure
-    score += (data.buyerPressure || 0) *
-             (this.getFeatureWeight("buyerPressure") / 100);
+    /* =====================================
+       Reset Learning
+    ===================================== */
 
-    // Seller Pressure
-    score += (data.sellerPressure || 0) *
-             (this.getFeatureWeight("sellerPressure") / 100);
+    reset() {
 
-    // Market Energy
-    score += (data.marketEnergy || 0) *
-             (this.getFeatureWeight("marketEnergy") / 100);
+        this.model = {
 
-    // Market Bias Bonus
-    if(data.marketBias==="BUYERS"){
+            totalTrades: 0,
 
-        score += 3;
+            wins: 0,
 
-    }
+            losses: 0,
 
-    if(data.marketBias==="SELLERS"){
+            winRate: 0,
 
-        score += 3;
+            bestSignal: "",
+
+            bestConfidence: 0,
+
+            averageProfit: 0
+
+        };
+
+        localStorage.removeItem("RJ_LEARNING");
 
     }
-
-    if(score>100){
-
-        score=100;
-
-    }
-
-    return Math.round(score);
 
 };
 
-// ==========================
-// Confidence Level
-// ==========================
-RJLearning.getConfidenceLevel = function(confidence){
-
-    if(confidence>=90){
-
-        return "VERY HIGH";
-
-    }
-
-    if(confidence>=75){
-
-        return "HIGH";
-
-    }
-
-    if(confidence>=60){
-
-        return "MEDIUM";
-
-    }
-
-    if(confidence>=40){
-
-        return "LOW";
-
-    }
-
-    return "VERY LOW";
-
-};
-
-// ==========================
-// Trade Decision
-// ==========================
-RJLearning.getDecision = function(confidence){
-
-    if(confidence>=90){
-
-        return "STRONG BUY";
-
-    }
-
-    if(confidence>=75){
-
-        return "BUY";
-
-    }
-
-    if(confidence>=60){
-
-        return "WAIT";
-
-    }
-
-    if(confidence>=40){
-
-        return "SELL";
-
-    }
-
-    return "STRONG SELL";
-
-};
-/* ==========================================
-   RJAnalyser AI
-   Learning Engine V1
-   Part 5 - Self Improvement Engine
-========================================== */
-
-// ==========================
-// Improve AI
-// ==========================
-RJLearning.selfImprove = function(){
-
-    Object.keys(this.database).forEach(pattern=>{
-
-        let record = this.database[pattern];
-
-        // Accuracy
-
-        if(record.trades > 0){
-
-            record.accuracy = Number(
-
-                (
-
-                    (record.wins / record.trades) * 100
-
-                ).toFixed(2)
-
-            );
-
-        }
-
-        // Auto Weight
-
-        if(record.accuracy >= 90){
-
-            record.weight += 2;
-
-        }
-
-        else if(record.accuracy >= 80){
-
-            record.weight += 1;
-
-        }
-
-        else if(record.accuracy < 50){
-
-            record.weight -= 2;
-
-        }
-
-        // Limits
-
-        if(record.weight > 100){
-
-            record.weight = 100;
-
-        }
-
-        if(record.weight < 1){
-
-            record.weight = 1;
-
-        }
-
-    });
-
-};
-
-// ==========================
-// Overall Learning Score
-// ==========================
-RJLearning.getLearningScore = function(){
-
-    let totalAccuracy = 0;
-
-    let count = 0;
-
-    Object.keys(this.database).forEach(pattern=>{
-
-        totalAccuracy += this.database[pattern].accuracy;
-
-        count++;
-
-    });
-
-    if(count===0){
-
-        return 0;
-
-    }
-
-    return Math.round(totalAccuracy / count);
-
-};
-
-// ==========================
-// AI Status
-// ==========================
-RJLearning.getStatus = function(){
-
-    return{
-
-        patterns:this.count(),
-
-        totalLearning:this.totalLearning,
-
-        learningScore:this.getLearningScore(),
-
-        featureWeights:this.featureWeights
-
-    };
-
-};
-
-// ==========================
-// Auto Improve
-// ==========================
-RJLearning.autoTrain = function(){
-
-    this.selfImprove();
-
-    this.normalizeWeights();
-
-};
+/* =====================================
+   Auto Load Learning
+===================================== */
+
+RJLearning.load();
