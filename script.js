@@ -306,10 +306,6 @@ document.getElementById("confidence").innerHTML =
 ai.confidence + "%";
 
 
-
-document.getElementById("entry").innerHTML =
-last.close.toFixed(2);
-
 let volatility = 0;
 
 candles.forEach(c => {
@@ -382,10 +378,6 @@ Brain: ${ai.brain.finalDecision}
 <br>
 Risk: ${ai.brain.riskLevel}`;
 
-
-
-document.getElementById("score").innerHTML =
-ai.brain.brainScore + " / 100";
 
 
 }
