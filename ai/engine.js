@@ -1,208 +1,175 @@
-/* ==========================================
+/* =========================================================
    RJAnalyser AI
-   Engine V2
-   Part 1 - Master Controller
-========================================== */
+   engine.js
+   PART 1 / 2
+========================================================= */
 
-const RJEngine = {
-
-    version: "2.0",
-
-    status: "READY",
-
-    lastAnalysis: null,
-
-    totalAnalysis: 0
-
-};
-
-// ==========================
-// Engine Status
-// ==========================
-RJEngine.getStatus = function(){
-
-    return{
-
-        version: this.version,
-
-        status: this.status,
-
-        totalAnalysis: this.totalAnalysis
-
-    };
-
-};
-
-// ==========================
-// Reset Engine
-// ==========================
-RJEngine.reset = function(){
-
-    this.lastAnalysis = null;
-
-    this.totalAnalysis = 0;
-
-    this.status = "READY";
-
-};
-/* ==========================================
-   RJAnalyser AI
-   Engine V2
-   Part 2 - Analysis Pipeline
-========================================== */
-
-// ==========================
-// Main Analysis
-// ==========================
-RJEngine.analyse = function(candles){
-
-    if(!candles || candles.length===0){
-
-        return null;
-
-    }
-
-    // STEP 1
-    const features =
-    RJFeature.extractFeatures(candles);
-
-    // STEP 2
-    const pattern =
-    RJPattern.analyse(candles);
-
-    // STEP 3
-    const memory =
-    RJMemory.getDNADecision({
-
-        pattern:pattern.pattern,
-
-        signal:pattern.signal,
-
-        marketBias:features.marketBias,
-
-        momentum:features.momentum,
-
-        buyerPressure:features.buyerPressure,
-
-        sellerPressure:features.sellerPressure,
-
-        marketEnergy:features.marketEnergy,
-
-        expansion:features.expansion,
-
-        compression:features.compression
-
-    });
-
-    // STEP 4
-    const confidence =
-    RJLearning.calculateConfidence({
-
-        patternStrength:pattern.strength,
-
-        memoryConfidence:memory.confidence,
-
-        momentumScore:
-        features.powerScore,
-
-        buyerPressure:
-        features.buyerPressure,
-
-        sellerPressure:
-        features.sellerPressure,
-
-        marketEnergy:
-        features.marketEnergy,
-
-        marketBias:
-        features.marketBias
-
-    });
-
-    // Brain Analysis
-    const brain = RJBrain.analyse({
-        features,
-        pattern,
-        memory,
-        learningConfidence: confidence
-    });
-
-    // Safety Trigger for Automation
-    if (brain && brain.finalDecision && typeof RJExecutor !== 'undefined') {
-        RJExecutor.executeMT5Order(brain.finalDecision, candles[candles.length - 1].close);
-    }
-
-    // Save Final Analysis
-    this.lastAnalysis = {
-        features,
-        pattern,
-        memory,
-        confidence,
-        brain
-    };
-
-    this.totalAnalysis++;
-    return this.lastAnalysis;
-};
-
-
-this.totalAnalysis++;
-
-return this.lastAnalysis;
-
-};
-=========================================
-RJAnalyser Engine V1
-Main AI Workflow
-=========================================
-*/
-/* ===== OLD ENGINE V1 (DISABLED) =====
 const RJEngine = {
 
     version: "1.0",
 
-    analyse(input) {
+    async run(candles = []) {
 
-        console.log("===== RJAnalyser Started =====");
+        if (!candles || candles.length < 20) {
 
-        // Brain
-        RJBrain.start();
+            return null;
 
-        // Memory
-        RJMemory.add("analysis", input);
+        }
 
-        // Pattern
-        let pattern = RJPattern.find("Bullish Engulfing");
+        /* ===============================
+           Brain
+        =============================== */
 
-        // Reasoning
-        let report = RJReasoning.analyse({
+        const brain = RJBrain.analyse(candles);
 
-            trend: "Bullish",
+        if (!brain) return null;
 
-            pattern: pattern ? pattern.name : ""
+        const brainDecision =
+            RJBrain.prepareDecision(brain);
 
-        });
+        /* ===============================
+           Pattern
+        =============================== */
 
-        // Decision
-        let decision = RJDecision.decide(report);
+        const pattern =
+            runPattern(candles);
+
+        /* ===============================
+           Vision
+        =============================== */
+
+        const vision =
+            runVision(candles);
+
+        /* ===============================
+           Decision
+        =============================== */
+
+        const decision =
+            runDecision(
+                brainDecision,
+                candles
+            );
+
+        /* ===============================
+           Reasoning
+        =============================== */
+
+        const reasoning =
+            runReasoning(
+                brain,
+                decision
+            );
+
+        /* ===============================
+           Memory
+        =============================== */
+
+        RJMemory.save(decision);
+
+        /* ===============================
+           Learning
+        =============================== */
+
+        RJLearning.learn();
 
         return {
 
-            input,
+            brain,
 
             pattern,
 
-            report,
+            vision,
 
-            decision
+            decision,
+
+            reasoning
 
         };
 
+    },
+       /* =====================================
+       Get Latest Result
+    ===================================== */
+
+    latest: null,
+
+    /* =====================================
+       Start Engine
+    ===================================== */
+
+    start(candles = []) {
+
+        return this.run(candles)
+
+            .then(result => {
+
+                this.latest = result;
+
+                return result;
+
+            })
+
+            .catch(error => {
+
+                console.error(
+
+                    "RJEngine Error",
+
+                    error
+
+                );
+
+                return null;
+
+            });
+
+    },
+
+    /* =====================================
+       Get Latest Analysis
+    ===================================== */
+
+    getLatest() {
+
+        return this.latest;
+
     }
 
 };
-    }
 
-};
+/* =====================================
+   Global Helper
+===================================== */
 
-===== END OLD ENGINE V1 ===== */
+async function runAI(candles) {
+
+    const result = await RJEngine.start(candles);
+
+    if (!result) return null;
+
+    return {
+
+        signal: result.decision.signal,
+
+        confidence: result.decision.confidence,
+
+        entry: result.decision.entry,
+
+        stopLoss: result.decision.stopLoss,
+
+        tp1: result.decision.tp1,
+
+        tp2: result.decision.tp2,
+
+        tp3: result.decision.tp3,
+
+        reason: result.reasoning,
+
+        pattern: result.pattern.summary,
+
+        structure: result.vision.summary
+
+    };
+
+}
