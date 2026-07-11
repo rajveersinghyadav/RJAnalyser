@@ -3,42 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RJAnalyser AI - MT5 Terminal</title>
+    <title>RJAnalyser AI - Terminal</title>
     <style>
-        body { margin: 0; background-color: #1c1e22; color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; }
-        .tab-content { display: none; padding: 15px; flex-grow: 1; overflow-y: auto; }
+        body { margin: 0; background-color: #1c1e22; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+        .tab-content { display: none; padding: 15px; padding-bottom: 80px; }
         .active { display: block; }
-        .nav-bar { display: flex; justify-content: space-around; background: #252830; padding: 10px; position: fixed; bottom: 0; width: 100%; }
-        .nav-btn { cursor: pointer; text-align: center; font-size: 12px; }
-        /* MT5 Style */
-        .mt5-history-container { background: #1c1e22; color: #fff; }
-        .trade-row { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 10px 0; }
-        .summary-box { margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
+        .nav-bar { display: flex; justify-content: space-around; background: #252830; position: fixed; bottom: 0; width: 100%; padding: 10px 0; border-top: 1px solid #333; }
+        .nav-btn { cursor: pointer; text-align: center; font-size: 11px; color: #a0a5b1; }
+        .mt5-history-container { color: #fff; }
+        .trade-row { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 10px 0; font-size: 13px; }
+        .summary-box { margin-top: 20px; border-top: 1px solid #444; padding-top: 10px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-    <!-- HISTORY TAB CONTENT -->
-    <div id="history-tab" class="tab-content active">
+    <!-- Quotes Tab -->
+    <div id="quotes" class="tab-content active"><h3>Quotes</h3><p>Market Data...</p></div>
+
+    <!-- Chart Tab -->
+    <div id="chart" class="tab-content"><h3>Chart</h3><p>Technical Analysis...</p></div>
+
+    <!-- Trade Tab -->
+    <div id="trade" class="tab-content"><h3>Trade</h3><p>Open Positions...</p></div>
+
+    <!-- History Tab (MT5 Style) -->
+    <div id="history" class="tab-content">
         <div class="mt5-history-container">
             <h3>Order History</h3>
             <div id="mt5-trades-list"></div>
             <div class="summary-box">
                 <div style="display:flex; justify-content:space-between;"><span>Deposit</span><span>5 000.00</span></div>
                 <div style="display:flex; justify-content:space-between;"><span>Profit</span><span id="prof" style="color:#3b82f6;">+0.00</span></div>
-                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:16px;">
+                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:16px; margin-top:5px;">
                     <span>Balance</span><span id="bal">5 000.00</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- NAVIGATION -->
+    <!-- Settings Tab -->
+    <div id="settings" class="tab-content"><h3>Settings</h3><p>Configure API...</p></div>
+
+    <!-- Navigation -->
     <div class="nav-bar">
-        <div class="nav-btn" onclick="showTab('history-tab')">History</div>
+        <div class="nav-btn" onclick="showTab('quotes')">Quotes</div>
+        <div class="nav-btn" onclick="showTab('chart')">Chart</div>
+        <div class="nav-btn" onclick="showTab('trade')">Trade</div>
+        <div class="nav-btn" onclick="showTab('history')">History</div>
+        <div class="nav-btn" onclick="showTab('settings')">Settings</div>
     </div>
 
-    <script src="api/executor.js"></script>
+    <script src="js/executor.js"></script>
     <script>
         function showTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
