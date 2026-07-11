@@ -88,41 +88,24 @@ function initTimeframes(){
    PAGE NAVIGATION (FIXED ALIGNMENT)
 ====================================== */
 function showPage(page){
-    // Sabhi separate screens ko hide karein
     document.querySelectorAll(".page").forEach(p => p.style.display = "none");
     
     const chartSec = document.querySelector(".chart-section");
     const aiPan = document.querySelector(".ai-panel");
     const mainApp = document.querySelector(".app");
     
-    if(chartSec) chartSec.style.display = "none";
-    if(aiPan) aiPan.style.display = "none";
     if(mainApp) mainApp.style.display = "none";
 
-    // Dynamic rendering mapping targets
-    switch(page){
-        case "quotes":
-            if(document.getElementById("quotesPage")) document.getElementById("quotesPage").style.display = "block";
-            break;
-        case "ai":
-            if(document.getElementById("aiPage")) document.getElementById("aiPage").style.display = "block";
-            break;
-        case "trade":
-            if(document.getElementById("tradePage")) document.getElementById("tradePage").style.display = "block";
-            break;
-        case "history":
-            if(document.getElementById("historyPage")) document.getElementById("historyPage").style.display = "block";
-            break;
-        case "settings":
-            if(document.getElementById("settingsPage")) document.getElementById("settingsPage").style.display = "block";
-            break;
-        default:
-            // Default views (Chart view setup handles double elements)
-            if(mainApp) mainApp.style.display = "flex";
-            if(chartSec) chartSec.style.display = "flex";
-            if(aiPan) aiPan.style.display = "block";
+    if(page === "chart"){
+        if(mainApp) mainApp.style.display = "flex";
+        if(chartSec) chartSec.style.display = "flex";
+        if(aiPan) aiPan.style.display = "block";
+    } else {
+        const target = document.getElementById(page + "Page");
+        if(target) target.style.display = "block";
     }
 }
+
 
 /* ======================================
    BOTTOM NAVIGATION (NAME-BASED ROUTER)
