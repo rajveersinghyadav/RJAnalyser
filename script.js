@@ -272,7 +272,13 @@ function updateTrend(candles, result){
         if(typeof RJExecutor !== 'undefined' && typeof RJExecutor.executeMT5Order === 'function') {
             console.log(`🤖 Global Core Engine: Firing automatic ${signal} request payload.`);
             RJExecutor.executeMT5Order(signal, last.close);
+                   if(typeof RJExecutor.updateUILogs === 'function') {
+                let time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                RJExecutor.updateUILogs(time, signal, RJState.asset, "EXECUTED");
+            }
+
         }
+    
     }
 }
 
