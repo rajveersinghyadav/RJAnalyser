@@ -120,32 +120,31 @@ RJEngine.analyse = function(candles){
     });
 
     // Brain Analysis
-const brain = RJBrain.analyse({
+    const brain = RJBrain.analyse({
+        features,
+        pattern,
+        memory,
+        learningConfidence: confidence
+    });
 
-    features,
+    // Safety Trigger for Automation
+    if (brain && brain.finalDecision && typeof RJExecutor !== 'undefined') {
+        RJExecutor.executeMT5Order(brain.finalDecision, candles[candles.length - 1].close);
+    }
 
-    pattern,
+    // Save Final Analysis
+    this.lastAnalysis = {
+        features,
+        pattern,
+        memory,
+        confidence,
+        brain
+    };
 
-    memory,
-
-    learningConfidence: confidence
-
-});
-
-// Save Final Analysis
-this.lastAnalysis = {
-
-    features,
-
-    pattern,
-
-    memory,
-
-    confidence,
-
-    brain
-
+    this.totalAnalysis++;
+    return this.lastAnalysis;
 };
+
 
 this.totalAnalysis++;
 
