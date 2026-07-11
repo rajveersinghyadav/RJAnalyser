@@ -1,88 +1,91 @@
+/* =====================================================
+   RJAnalyser AI V5
+   market/tradingview.js
+===================================================== */
+
+let tvWidget = null;
+
 /* ======================================
-   RJAnalyser AI
-   TradingView Engine V1
+   Convert Timeframe
 ====================================== */
 
-function loadTradingView(symbol = "BINANCE:BTCUSDT", interval = "15") {
+function tvInterval(tf){
 
-    const chart = document.getElementById("tradingview_chart");
+    switch(tf){
 
-    if (!chart) return;
+        case "1m": return "1";
+        case "5m": return "5";
+        case "15m": return "15";
+        case "1H": return "60";
+        case "4H": return "240";
+        case "1D": return "D";
 
-    chart.innerHTML = "";
+        default: return "15";
 
-    new TradingView.widget({
+    }
 
-        autosize: true,
+}
 
-        symbol: symbol,
+/* ======================================
+   Load TradingView
+====================================== */
 
-        interval: interval,
+function loadTradingView(symbol="BINANCE:BTCUSDT", timeframe="15m"){
 
-        timezone: "Etc/UTC",
+    const chart=document.getElementById("tradingview_chart");
 
-        theme: "dark",
+    if(!chart) return;
 
-        style: "1",
+    chart.innerHTML="";
 
-        locale: "en",
+    tvWidget=new TradingView.widget({
 
-        enable_publishing: false,
+        autosize:true,
 
-        allow_symbol_change: false,
+        symbol:symbol,
 
-        hide_top_toolbar: false,
+        interval:tvInterval(timeframe),
 
-        hide_legend: false,
+        timezone:"Etc/UTC",
 
-        save_image: false,
+        theme:"dark",
 
-        toolbar_bg: "#161b22",
+        style:"1",
 
-        container_id: "tradingview_chart"
+        locale:"en",
+
+        toolbar_bg:"#11151c",
+
+        enable_publishing:false,
+
+        allow_symbol_change:false,
+
+        hide_side_toolbar:false,
+
+        hide_top_toolbar:false,
+
+        withdateranges:true,
+
+        save_image:false,
+
+        container_id:"tradingview_chart"
 
     });
 
 }
 
-/* ==========================
-   Change Asset
-========================== */
+/* ======================================
+   Reload Current Chart
+====================================== */
 
-function changeAsset(symbol){
-
-    RJState.asset = symbol;
-
-    document.getElementById("selectedAsset").innerText = symbol;
-
-    loadTradingView("BINANCE:" + symbol);
-
-}
-
-/* ==========================
-   Change Timeframe
-========================== */
-
-function changeTimeframe(tf){
-
-    RJState.timeframe = tf;
+function reloadChart(){
 
     loadTradingView(
 
-        "BINANCE:" + RJState.asset,
+        getTVSymbol(RJState.asset),
 
-        tf
+        RJState.timeframe
 
     );
 
 }
-
-/* ==========================
-   Start
-========================== */
-
-window.addEventListener("load",()=>{
-
-    loadTradingView();
-
-});
