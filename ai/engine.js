@@ -61,11 +61,29 @@ const RJEngine = {
                 decision
             );
 
-        /* ===============================
+               /* ===============================
            Memory
         =============================== */
 
-        RJMemory.save(decision);
+        RJMemory.save({
+
+            ...decision,
+
+            asset: RJState.asset,
+
+            timeframe: RJState.timeframe,
+
+            brain,
+
+            pattern,
+
+            vision,
+
+            reasoning,
+
+            createdAt: Date.now()
+
+        });
 
         /* ===============================
            Learning
@@ -73,7 +91,15 @@ const RJEngine = {
 
         RJLearning.learn();
 
-        return {
+                return {
+
+            version: this.version,
+
+            timestamp: Date.now(),
+
+            asset: RJState.asset,
+
+            timeframe: RJState.timeframe,
 
             brain,
 
@@ -83,7 +109,11 @@ const RJEngine = {
 
             decision,
 
-            reasoning
+            reasoning,
+
+            learning: RJLearning.getModel(),
+
+            memory: RJMemory.getStats()
 
         };
 
@@ -168,7 +198,13 @@ async function runAI(candles) {
 
         pattern: result.pattern.summary,
 
-        structure: result.vision.summary
+        structure: result.vision.summary,
+
+        learning: result.learning,
+
+        memory: result.memory,
+
+        brain: result.brain
 
     };
 
